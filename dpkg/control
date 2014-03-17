@@ -1,0 +1,36 @@
+Source: libmsiecf
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <joachim.metz@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev, python-dev
+Standards-Version: 3.8.3
+Homepage: http://code.google.com/p/libmsiecf/
+
+Package: libmsiecf
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library to access the MSIE Cache File (index.dat) format.
+ libmsiecf is a library to access the MSIE Cache File (index.dat) format.
+
+Package: libmsiecf-dev
+Section: libdevel
+Architecture: any
+Depends: libmsiecf (= ${Source-Version})
+Description: Header files and libraries for developing applications for libmsiecf
+ Header files and libraries for developing applications for libmsiecf.
+
+Package: libmsiecf-tools
+Section: utils
+Architecture: any
+Depends: libmsiecf (= ${Source-Version}), ${shlibs:Depends}
+Description: Several tools for reading MSIE Cache File (index.dat).
+ Several tools for reading MSIE Cache File (index.dat).
+
+Package: libmsiecf-python
+Section: python
+Architecture: any
+Depends: libmsiecf (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Description: Python bindings for libmsiecf
+ Python bindings for libmsiecf.
+

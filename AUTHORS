@@ -1,0 +1,10 @@
+Acknowledgements: libmsiecf
+
+Copyright (c) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
+
+This code is derived from information and software contributed by:
+* Earlier work on the MSIE Cache File format in Forensic Analysis
+  of Internet Explorer Activity Files by Keith J. Jones
+  http://sourceforge.net/projects/odessa/
+* Several resources on reverse engineering index.dat
+

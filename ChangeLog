@@ -1,0 +1,365 @@
+TODO
+* hash calculation: check what the preceding bytes could be
+* use libfdata ?
+* msiecfexport:
+  - URL what about unknown timestamps
+* code clean up
+  - add initialize functions
+  - rename item values to item value
+  - change read values to match libwrc
+
+File format
+* implement MSIE 3 cache file formats ?
+* access records not referred by hash table
+  - flag if items are hashed
+
+Performance improvement
+* pre allocate item/directory array entries
+
+Tools
+* msiecfinfo
+  - print cache directories
+* msiecfexport
+  - export to TSV ?
+  - flexible output formatting
+  - flexible date/time string formatting
+
+In progress:
+* record scan
+  - flag entries in hash table as hashed
+
+20140317
+* worked on setup.py
+
+20140131
+* 2014 update
+* updated dependencies
+
+20131015
+* updated dependencies
+* updated msvscpp files
+
+20131008
+* improved pymsiecf as integer functions
+
+20130929
+* worked on setup.py, largely for MSI builds
+
+20120923
+* updated msvscpp files
+
+20120922
+* updated dependencies
+
+20120806
+* fixes for building with stand-alone libuna and libbfio
+
+20120805
+* updated dependencies
+* bug fix in pymsiecf file object libbfio glue code
+* worked on tests
+
+20120529
+* updated dependencies
+
+20120528
+* worked on pymsiecf simple inheritance of leak, redirected and url items
+
+20120425
+* worked on hash calculation
+
+20120423
+* added resource file to msvscpp files
+
+20120421
+* worked on tests
+
+20120417
+* bug fix in record scan due to recent dependency update
+
+20120416
+* code clean up
+
+20120414
+* textual changes
+* worked on tests
+* updates and bug fixes in pymsiecf
+* fixed codepage 1255 restriction
+
+20120413
+* updated dependencies
+
+20120409
+* fixed codepage 949 and 950 restriction
+
+20120319
+* updated dependencies
+
+20130317
+* Small updates
+
+20130310
+* worked on url item type support
+* msiecfinfo: small changes to output, added major and minor version
+* worked on MSIECF 4.7 format support
+
+20130306
+* worked on libfole support
+
+20130305
+* changes for pymsiecf
+* updated libfdatetime
+* msiecfexport added expiration and last checked time
+
+20130304
+* updated PackageMaker files
+* bug fix in pymsiecf FAT date time conversion
+
+20130119
+* updated rpm files to include Python bindings
+
+20130114
+* updated dpkg files to include Python bindings
+* pymsiecf: added generic item fallback object
+
+20130113
+* worked on msvscpp files
+
+20130112
+* worked on pymsiecf
+* fixed issue in spec files
+
+20130111
+* worked on pymsiecf
+
+20130110
+* removed deprecated functions
+* added missing API functions
+* worked on pymsiecf
+
+20130109
+* 2013 update
+* updated dependencies
+
+20120930
+* updated dependencies
+* changes for libcdata update
+
+20120627
+* updated dependencies
+* reversed library order in tools for mingw
+
+20120428
+* updated dependencies
+
+20120102
+* 2012 update
+
+20111120
+* updated libfvalue
+
+20111114
+* code clean up
+* updated array type, list type, offset list
+* updated libcstring, libsystem, libfdatetime, libfvalue
+
+20111101
+* fix in msiecftools to set codepage
+
+20111031
+* updated libcstring, libsystem, libuna, libbfio, libfdatetime, libfvalue
+
+20111030
+* worked on UTF8 and UTF16 support
+* code clean up
+  - added info handle
+  - added export handle
+* updated msvscpp files
+
+20111029
+* updated m4 files
+* updated libfdatetime
+* added libfvalue
+* code clean up
+  - removed libmsiecf_item_attach
+  - removed libmsiecf_item_detach
+* worked on UTF8 and UTF16 support
+
+20111009
+* 2011 update
+* updated configure.ac and m4 files
+* updated include/codepage.h, include/types.h, include/error.h
+* updated common
+* updated array type, list type, offset list
+* updated libcstring, liberror, libnotify, libsystem, libuna, libbfio,
+  libfdatetime
+* updated pc and spec file
+* added gettext support
+* updates msvscpp files
+* added unused macros
+* code clean up
+* fixed some leaks in error paths
+
+20101111
+* updated configure.ac
+* updated include/error.h, include/types.h
+* updated common
+* updated array type, offset list
+* updated liberror, libsystem
+* added libmsiecf.rc
+* code clean up
+* updated msvscpp files
+
+20101023
+* added system string support in debug output of url values
+
+20100917
+* code clean up
+* worked on libcstring support
+* worked on offset list changes
+* updated log handle
+* fix for clean-up bug
+
+20100916
+* worked on offset list update
+* updated liberror, libbfio
+
+20100912
+* email change
+* updated configure
+* updated include/codepage.h
+* updated include/error.h
+* updated include/types.h
+* added libcstring
+* updated common, liberror, libnotify, libsystem, libuna, libbfio,
+  libfdatetime 
+* updated array type
+
+20100319
+* fix in msvscpp files
+
+20100114
+* small changes and fixes
+* updated check signature
+* fix for date time string size for invalid date/time values
+
+20010113
+* 2010 update
+* updated common, liberror, libnotify, libsystem, libfdatetime, libuna, libbfio
+* small changes
+* update for libnotify
+
+20091220
+* updated libuna
+* worked on generic item layer
+
+20091219
+* msiecfexport: changed default codepage
+* msiecfexport: now used libfdatetime
+* library: worked on codepage support
+* worked on man pages
+
+20091217
+* updated common, libnotify, liberror, libuna, libbfio, libfdatetime
+* replaced endian by byte_stream
+* worked on generic item layer
+  - removed item reference list
+
+20091013
+* small adjustments
+
+20091010
+* small adjustments
+
+20091009
+* worked on msvscpp project files
+* updated libmsiecf_notify
+
+20091008
+* worked on msvscpp project files
+* updated common, libuna, libbfio, liberror, libnotify, libsystem
+* updated list and array type
+
+20090912
+* worked on file format
+
+20090911
+* updated libfdatetime, libbfio, libuna, liberror, libnotify, common
+* added libsystem
+* added support for m4 directory
+* updated spec file and support for empty requires and build requires
+* worked on local library support
+* updated libmsiecf_error
+* updated types.h
+* worked on BFIO API functions
+* worked on libsystem integration
+* worked on support for reading partial recovered records
+* added export mode to msiecfexport
+* added function to determine item offset range
+
+20090622
+* implemented libnotify
+* updated liberror
+* added access to cache directories
+* fixed error in array type append
+
+20090620
+* worked on libfiletime
+* worked on libfatdatetime
+* merged libfiletime and libfatdatetime into libfdatetime
+* updated msvscpp files
+* fixed make dist
+* updated manual libmsiecf.3
+* fixed missing open_wide in msiecfexport
+
+20090618
+* worked on libfiletime
+* fixed several memory errors
+* added support for LEAK record type
+
+20090617
+* worked on libfiletime
+
+20090614
+* changed url and redirected into x_values
+* removed item_values
+* worked on URL API
+
+20090613
+* worked on API
+* renamed server and client time to primary and secondary time
+* worked on support for partial records
+
+20090612
+* updated libbfio
+* worked on support for partial records
+
+20090524
+* worked on msvscpp compilation
+* implemented cache directory descriptor
+* updated libbfio
+* worked on record scan
+* worked on record recovery
+* all URL and REDR record data is now read at once
+
+20090523
+* implemented FAT date time support
+* implemented REDR record support
+* worked on file format
+* worked on cache directory support
+* now skips a FAT date time of 0xffff 0xffff
+
+20090522
+* updated libbfio
+* created an array append entry function
+* array type now allows to be initialized with 0 entries
+* worked on item API
+* created a runtime version of the hash table
+* worked on file format
+
+20090521
+* Created initial version based on libpff
+* Worked on initial version
+* worked on hash table records
+* worked on url records
+

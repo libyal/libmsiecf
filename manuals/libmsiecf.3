@@ -1,0 +1,227 @@
+.Dd January 31, 2014
+.Dt libmsiecf 3
+.Os libmsiecf
+.Sh NAME
+.Nm libmsiecf.h
+.Nd Library to access the MSIE Cache File (index.dat) format.
+.Sh LIBRARY
+.Lb libmsiecf
+.Sh SYNOPSIS
+.In libmsiecf.h
+.Pp
+Support functions
+.Ft const char *
+.Fn libmsiecf_get_version "void"
+.Ft int
+.Fn libmsiecf_get_access_flags_read
+.Ft int
+.Fn libmsiecf_get_codepage "int *codepage, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_set_codepage "int codepage, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_check_file_signature "const char *filename, libmsiecf_error_t **error"
+.Pp
+Available when compiled with wide character string support:
+.Ft int
+.Fn libmsiecf_check_file_signature_wide "const wchar_t *filename, libmsiecf_error_t **error"
+.Pp
+Available when compiled with libbfio support:
+.Ft int
+.Fn libmsiecf_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle, libmsiecf_error_t **error"
+.Pp
+Notify functions
+.Ft void
+.Fn libmsiecf_notify_set_verbose "int verbose"
+.Ft int
+.Fn libmsiecf_notify_set_stream "FILE *stream, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_notify_stream_open "const char *filename, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_notify_stream_close "libmsiecf_error_t **error"
+.Pp
+Error functions
+.Ft void
+.Fn libmsiecf_error_free "libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_error_fprint "libmsiecf_error_t *error, FILE *stream"
+.Ft int
+.Fn libmsiecf_error_sprint "libmsiecf_error_t *error, char *string, size_t size"
+.Ft int
+.Fn libmsiecf_error_backtrace_fprint "libmsiecf_error_t *error, FILE *stream"
+.Ft int
+.Fn libmsiecf_error_backtrace_sprint "libmsiecf_error_t *error, char *string, size_t size"
+.Pp
+File functions
+.Ft int
+.Fn libmsiecf_file_initialize "libmsiecf_file_t **file, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_free "libmsiecf_file_t **file, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_open "libmsiecf_file_t *file, const char *filename, int flags, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_close "libmsiecf_file_t *file, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_size "libmsiecf_file_t *file, size64_t *size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_ascii_codepage "libmsiecf_file_t *file, int *ascii_codepage, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_set_ascii_codepage "libmsiecf_file_t *file, int ascii_codepage, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_format_version "libmsiecf_file_t *file, uint8_t *major_version, uint8_t *minor_version, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_number_of_unallocated_blocks "libmsiecf_file_t *file, int *number_of_unallocated_blocks, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_unallocated_block "libmsiecf_file_t *file, int unallocated_block_index, off64_t *offset, size64_t *size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_number_of_cache_directories "libmsiecf_file_t *file, int *number_of_cache_directories, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_cache_directory_name "libmsiecf_file_t *file, int cache_directory_index, char *cache_directory_name, size_t cache_directory_name_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_number_of_items "libmsiecf_file_t *file, int *number_of_items, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_item "libmsiecf_file_t *file, int item_index, libmsiecf_item_t **item, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_number_of_recovered_items "libmsiecf_file_t *file, int *number_of_recovered_items, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_file_get_recovered_item "libmsiecf_file_t *file, int recovered_item_index, libmsiecf_item_t **recovered_item, libmsiecf_error_t **error"
+.Pp
+Available when compiled with wide character string support:
+.Ft int
+.Fn libmsiecf_file_open_wide "libmsiecf_file_t *file, const wchar_t *filename, int flags, libmsiecf_error_t **error"
+.Pp
+Available when compiled with libbfio support:
+.Ft int
+.Fn libmsiecf_file_open_file_io_handle "libmsiecf_file_t *file, libbfio_handle_t *file_io_handle, int flags, libmsiecf_error_t **error"
+.Pp
+Item functions
+.Ft int
+.Fn libmsiecf_item_free "libmsiecf_item_t **item, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_item_get_type "libmsiecf_item_t *item, uint8_t *item_type, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_item_get_flags "libmsiecf_item_t *item, uint8_t *item_flags, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_item_get_offset_range "libmsiecf_item_t *item, off64_t *offset, size64_t *size, libmsiecf_error_t **error"
+.Pp
+URL item functions
+.Ft int
+.Fn libmsiecf_url_get_type "libmsiecf_item_t *item, uint8_t *url_item_type, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_primary_time "libmsiecf_item_t *url, uint64_t *primary_time, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_secondary_time "libmsiecf_item_t *url, uint64_t *secondary_time, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_expiration_time "libmsiecf_item_t *url, uint64_t *expiration_time, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_last_checked_time "libmsiecf_item_t *url, uint32_t *last_checked_time, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_cached_file_size "libmsiecf_item_t *url, uint64_t *cached_file_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_cache_directory_index "libmsiecf_item_t *url, uint8_t *cache_directory_index, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_number_of_hits "libmsiecf_item_t *url, uint32_t *number_of_hits, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_location_size "libmsiecf_item_t *url, size_t *string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_location "libmsiecf_item_t *url, char *string, size_t string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf8_location_size "libmsiecf_item_t *url, size_t *utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf8_location "libmsiecf_item_t *url, uint8_t *utf8_string, size_t utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf16_location_size "libmsiecf_item_t *url, size_t *utf16_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf16_location "libmsiecf_item_t *url, uint8_t *utf16_string, size_t utf16_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_filename_size "libmsiecf_item_t *url, size_t *string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_filename "libmsiecf_item_t *url, char *string, size_t string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf8_filename_size "libmsiecf_item_t *url, size_t *utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf8_filename "libmsiecf_item_t *url, uint8_t *utf8_string, size_t utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf16_filename_size "libmsiecf_item_t *url, size_t *utf16_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_utf16_filename "libmsiecf_item_t *url, uint8_t *utf16_string, size_t utf16_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_data_size "libmsiecf_item_t *url, size_t *data_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_url_get_data "libmsiecf_item_t *url, uint8_t *data, size_t data_size, libmsiecf_error_t **error"
+.Pp
+Redirected item functions
+.Ft int
+.Fn libmsiecf_redirected_get_location_size "libmsiecf_item_t *redirected, size_t *string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_redirected_get_location "libmsiecf_item_t *redirected, char *string, size_t string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_redirected_get_utf8_location_size "libmsiecf_item_t *redirected, size_t *utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_redirected_get_utf8_location "libmsiecf_item_t *redirected, uint8_t *utf8_string, size_t utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_redirected_get_utf16_location_size "libmsiecf_item_t *redirected, size_t *utf16_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_redirected_get_utf16_location "libmsiecf_item_t *redirected, uint8_t *utf16_string, size_t utf16_string_size, libmsiecf_error_t **error"
+.Pp
+Leak item functions
+.Ft int
+.Fn libmsiecf_leak_get_cached_file_size "libmsiecf_item_t *leak, uint64_t *cached_file_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_leak_get_cache_directory_index "libmsiecf_item_t *url, uint8_t *cache_directory_index, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_leak_get_filename_size "libmsiecf_item_t *leak, size_t *string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_leak_get_filename "libmsiecf_item_t *leak, char *string, size_t string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_leak_get_utf8_filename_size "libmsiecf_item_t *leak, size_t *utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_leak_get_utf8_filename "libmsiecf_item_t *leak, uint8_t *utf8_string, size_t utf8_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_leak_get_utf16_filename_size "libmsiecf_item_t *leak, size_t *utf16_string_size, libmsiecf_error_t **error"
+.Ft int
+.Fn libmsiecf_leak_get_utf16_filename "libmsiecf_item_t *leak, uint8_t *utf16_string, size_t utf16_string_size, libmsiecf_error_t **error"
+.Sh DESCRIPTION
+The
+.Fn libmsiecf_get_version
+function is used to retrieve the library version.
+.Sh RETURN VALUES
+Most of the functions return NULL or -1 on error, dependent on the return type. For the actual return values refer to libmsiecf.h
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh NOTES
+libmsiecf uses UTF-8 encoded strings except for filenames.
+
+ASCII strings in a MSIECF file contain an extended ASCII string using the codepage of the system it was created on. The function
+.Ar libmsiecf_set_ascii_codepage
+ allows to set the required codepage for reading and writing. The default codepage is ASCII and replaces all extended characters to the Unicode replacement character (U+fffd) when reading and the ASCII substitude character (0x1a) when writing.
+
+libmsiecf allows to be compiled with wide character support.
+To compile libmsiecf with wide character support use
+.Ar ./configure --enable-wide-character-type=yes
+or pass the definition
+.Ar HAVE_WIDE_CHARACTER_TYPE
+ to the compiler (i.e. in case of Microsoft Visual Studio (MSVS) C++).
+
+To have other code to determine if libmsiecf was compiled with wide character support it defines
+.Ar LIBMSIECF_HAVE_WIDE_CHARACTER_TYPE
+ in libmsiecf/features.h.
+
+libmsiecf allows to be compiled with chained IO support using libbfio.
+libmsiecf will automatically detect if a compatible version of libbfio is available.
+
+To have other code to determine if libmsiecf was compiled with libbfio support it defines
+.Ar LIBMSIECF_HAVE_BFIO
+ in libmsiecf/features.h.
+
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libmsiecf/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright (c) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+the libmsiecf.h include file

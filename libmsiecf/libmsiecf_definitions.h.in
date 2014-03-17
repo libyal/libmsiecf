@@ -1,0 +1,131 @@
+/*
+ * The internal definitions
+ *
+ * Copyright (C) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
+ *
+ * Refer to AUTHORS for acknowledgements.
+ *
+ * This software is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#if !defined( _LIBMSIECF_INTERNAL_DEFINITIONS_H )
+#define _LIBMSIECF_INTERNAL_DEFINITIONS_H
+
+#include <common.h>
+#include <byte_stream.h>
+
+#define LIBMSIECF_ENDIAN_BIG				_BYTE_STREAM_ENDIAN_BIG
+#define LIBMSIECF_ENDIAN_LITTLE				_BYTE_STREAM_ENDIAN_LITTLE
+
+/* Define HAVE_LOCAL_LIBMSIECF for local use of libmsiecf
+ */
+#if !defined( HAVE_LOCAL_LIBMSIECF )
+#include <libmsiecf/definitions.h>
+
+/* The definitions in <libmsiecf/definitions.h> are copied here
+ * for local use of libmsiecf
+ */
+#else
+
+#define LIBMSIECF_VERSION				@VERSION@
+
+/* The version string
+ */
+#define LIBMSIECF_VERSION_STRING			"@VERSION@"
+
+/* The file access flags
+ * bit 1        set to 1 for read access
+ * bit 2        set to 1 for write access
+ * bit 3-8      not used
+ */
+enum LIBMSIECF_ACCESS_FLAGS
+{
+	LIBMSIECF_ACCESS_FLAG_READ			= 0x01,
+/* Reserved: not supported yet */
+	LIBMSIECF_ACCESS_FLAG_WRITE			= 0x02
+};
+
+/* The file access macros
+ */
+#define LIBMSIECF_OPEN_READ				( LIBMSIECF_ACCESS_FLAG_READ )
+/* Reserved: not supported yet */
+#define LIBMSIECF_OPEN_WRITE				( LIBMSIECF_ACCESS_FLAG_WRITE )
+/* Reserved: not supported yet */
+#define LIBMSIECF_OPEN_READ_WRITE			( LIBMSIECF_ACCESS_FLAG_READ | LIBMSIECF_ACCESS_FLAG_WRITE )
+
+/* The item type definitions
+ */
+enum LIBMSIECF_ITEM_TYPES
+{
+	LIBMSIECF_ITEM_TYPE_UNDEFINED,
+	LIBMSIECF_ITEM_TYPE_URL,
+	LIBMSIECF_ITEM_TYPE_REDIRECTED,
+	LIBMSIECF_ITEM_TYPE_LEAK,
+	LIBMSIECF_ITEM_TYPE_UNKNOWN
+};
+
+/* The item flags
+ */
+enum LIBMSIECF_ITEM_FLAGS
+{
+	LIBMSIECF_ITEM_FLAG_RECOVERED			= 0x01,
+	LIBMSIECF_ITEM_FLAG_PARTIAL			= 0x02,
+	LIBMSIECF_ITEM_FLAG_HASHED			= 0x04,
+	LIBMSIECF_ITEM_FLAG_TAINTED			= 0x08
+};
+
+/* The URL item type definitions
+ */
+enum LIBMSIECF_URL_ITEM_TYPES
+{
+	LIBMSIECF_URL_ITEM_TYPE_UNDEFINED,
+	LIBMSIECF_URL_ITEM_TYPE_CACHE,
+	LIBMSIECF_URL_ITEM_TYPE_COMPATIBILITY,
+	LIBMSIECF_URL_ITEM_TYPE_COOKIE,
+	LIBMSIECF_URL_ITEM_TYPE_DOM_STORE,
+	LIBMSIECF_URL_ITEM_TYPE_DOWNLOAD,
+	LIBMSIECF_URL_ITEM_TYPE_HISTORY,
+	LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY,
+	LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY,
+	LIBMSIECF_URL_ITEM_TYPE_INPRIVATE_FILTERING,
+	LIBMSIECF_URL_ITEM_TYPE_RSS_FEED,
+	LIBMSIECF_URL_ITEM_TYPE_TLD,
+	LIBMSIECF_URL_ITEM_TYPE_USER_DATA,
+	LIBMSIECF_URL_ITEM_TYPE_UNKNOWN
+};
+
+#endif
+
+/* The cache entry flags
+ */
+enum LIBMSIECF_CACHE_ENTRY_FLAGS
+{
+	LIBMSIECF_CACHE_ENTRY_FLAG_NORMAL		= 0x00000001,
+	LIBMSIECF_CACHE_ENTRY_FLAG_STABLE		= 0x00000002,
+	LIBMSIECF_CACHE_ENTRY_FLAG_STICKY		= 0x00000004,
+	LIBMSIECF_CACHE_ENTRY_FLAG_EDITED		= 0x00000008,
+	LIBMSIECF_CACHE_ENTRY_FLAG_TRACK_OFFLINE	= 0x00000010,
+	LIBMSIECF_CACHE_ENTRY_FLAG_TRACK_ONLINE		= 0x00000020,
+
+	LIBMSIECF_CACHE_ENTRY_FLAG_SPARSE		= 0x00010000,
+	LIBMSIECF_CACHE_ENTRY_FLAG_OCX			= 0x00020000,
+
+	LIBMSIECF_CACHE_ENTRY_FLAG_COOKIE		= 0x00100000,
+	LIBMSIECF_CACHE_ENTRY_FLAG_URLHISTORY		= 0x00200000,
+};
+
+#define LIBMSIECF_DEFAULT_BLOCK_SIZE			128
+
+#endif
+

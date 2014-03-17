@@ -1,0 +1,86 @@
+#!/usr/bin/make -f
+# debian/rules that uses debhelper >= 7.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
+PYTHON_PACKAGE_DIR=$(shell python -c "import distutils.sysconfig;print distutils.sysconfig.get_python_lib(True) ")
+
+
+%:
+	dh  $@
+
+install_libmsiecf:
+	# Set up libmsiecf package directories and files
+	mkdir -p debian/libmsiecf/usr/lib
+	install -p -m755 debian/tmp/usr/lib/lib*.so.*.*.* debian/libmsiecf/usr/lib
+
+install_libmsiecf_dev:
+	# Set up libmsiecf-dev package directories and files
+	mkdir -p debian/libmsiecf-dev/usr/include
+	mkdir -p debian/libmsiecf-dev/usr/include/libmsiecf
+	mkdir -p debian/libmsiecf-dev/usr/lib
+	mkdir -p debian/libmsiecf-dev/usr/lib/pkgconfig
+	mkdir -p debian/libmsiecf-dev/usr/share/man/man3
+	install -p -m755 debian/tmp/usr/include/*.h debian/libmsiecf-dev/usr/include
+	install -p -m755 debian/tmp/usr/include/libmsiecf/*.h debian/libmsiecf-dev/usr/include/libmsiecf
+	install -p -m755 debian/tmp/usr/lib/*.la debian/libmsiecf-dev/usr/lib
+	install -p -m755 debian/tmp/usr/lib/lib*.a debian/libmsiecf-dev/usr/lib
+	install -p -m755 debian/tmp/usr/lib/lib*.so debian/libmsiecf-dev/usr/lib
+	install -p -m755 debian/tmp/usr/lib/pkgconfig/* debian/libmsiecf-dev/usr/lib/pkgconfig
+	install -p -m755 debian/tmp/usr/share/man/man3/* debian/libmsiecf-dev/usr/share/man/man3
+
+install_libmsiecf_tools:
+	# Set up libmsiecf-tools package directories and files
+	mkdir -p debian/libmsiecf-tools/usr/bin
+	mkdir -p debian/libmsiecf-tools/usr/share/man/man1
+	install -p -m755 debian/tmp/usr/bin/* debian/libmsiecf-tools/usr/bin
+	install -p -m755 debian/tmp/usr/share/man/man1/* debian/libmsiecf-tools/usr/share/man/man1
+
+install_libmsiecf_python:
+	# Set up libmsiecf-python package directories and files
+	mkdir -p debian/libmsiecf-python/$(PYTHON_PACKAGE_DIR)
+	install -p -m775 debian/tmp$(PYTHON_PACKAGE_DIR)/pymsiecf.* debian/libmsiecf-python$(PYTHON_PACKAGE_DIR)
+
+override_dh_auto_configure:
+	dh_auto_configure -- --enable-python
+
+override_dh_auto_test:
+
+override_dh_installinit: install_libmsiecf install_libmsiecf_dev install_libmsiecf_tools install_libmsiecf_python
+
+override_dh_installmenu:
+
+override_dh_installmime:
+
+override_dh_installmodules:
+
+override_dh_installlogcheck:
+
+override_dh_installlogrotate:
+
+override_dh_installpam:
+
+override_dh_installppp:
+
+override_dh_installudev:
+
+override_dh_installwm:
+
+override_dh_installxfonts:
+
+override_dh_gconf:
+
+override_dh_icons:
+
+override_dh_perl:
+
+override_dh_shlibdeps:
+	dh_shlibdeps -Llibmsiecf -l${PWD}/debian/tmp/usr/lib
+
+override_dh_makeshlibs:
+	dh_makeshlibs -Xlibmsiecf-dev
+

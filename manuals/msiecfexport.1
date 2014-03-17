@@ -1,0 +1,87 @@
+.Dd January 31, 2014
+.Dt msiecfexport
+.Os libmsiecf
+.Sh NAME
+.Nm msiecfexport
+.Nd exports items stored in a MSIE Cache File (index.dat)
+.Sh SYNOPSIS
+.Nm msiecfexport
+.Op Fl c Ar codepage
+.Op Fl l Ar logfile
+.Op Fl m Ar mode
+.Op Fl t Ar target
+.Op Fl hvV
+.Va Ar source
+.Sh DESCRIPTION
+.Nm msiecfexport
+is a utility to export items stored in a MSIE Cache File (index.dat)
+.Pp
+.Nm msiecfexport
+is part of the
+.Nm libmsiecf
+package.
+.Nm libmsiecf
+is a library to access the MSIE Cache File (index.dat) format
+.Pp
+.Ar source
+is the source file.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl c Ar codepage
+specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
+.It Fl h
+shows this help
+.It Fl l Ar logfile
+specify the file in which to log information about the exported items
+.It Fl m Ar mode
+specify the export mode, option: all, items (default), recovered 'all' exports the (allocated) items and recovered items, 'items' exports the (allocated) items and 'recovered' exports
+the recovered items
+.It Fl t Ar target
+specify the target directory to export to (default is the source filename followed by .export)
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# msiecfexport index.dat
+msiecfexport 20111030
+
+Opening file.
+Exporting items.
+Number of items: 42.
+
+Record type		: URL
+Offset range		: 20480 - 20736 (256)
+Location		: Cookie:username@domain.com/
+Primary time		: Mar 23, 2009 17:23:01.515000
+Secondary time		: Nov 29, 2007 11:23:44.906000
+Filename		: username@domain[1].txt
+Cache directory index	: -2 (0xfe)
+
+.Dl ...
+Exporting recovered items.
+Number of recovered items: 0.
+
+Export completed.
+
+.Ed
+.Sh DIAGNOSTICS
+Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Verbose and debug output are only printed when enabled at compilation.
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libmsiecf/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright 2009-2014, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+.Xr msiecfinfo 1
