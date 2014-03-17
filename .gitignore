@@ -100,7 +100,7 @@ stamp-h1
 /include/libmsiecf/features.h
 /include/libmsiecf/types.h
 /libmsiecf/libmsiecf.rc
-/libmsiecf/libmsiecf_definition.h
+/libmsiecf/libmsiecf_definitions.h
 /macosx/Introduction.rtf
 /macosx/libmsiecf.pmdoc/01bin.xml
 /macosx/libmsiecf.pmdoc/02include.xml
