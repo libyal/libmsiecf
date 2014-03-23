@@ -75,7 +75,7 @@ int pymsiecf_file_object_io_handle_initialize(
 		return( -1 );
 	}
 	*file_object_io_handle = (pymsiecf_file_object_io_handle_t *) PyMem_Malloc(
-	                                                             sizeof( pymsiecf_file_object_io_handle_t ) );
+	                                                               sizeof( pymsiecf_file_object_io_handle_t ) );
 
 	if( *file_object_io_handle == NULL )
 	{
@@ -129,7 +129,7 @@ int pymsiecf_file_object_initialize(
      libcerror_error_t **error )
 {
 	pymsiecf_file_object_io_handle_t *file_object_io_handle = NULL;
-	static char *function                                 = "pymsiecf_file_object_initialize";
+	static char *function                                   = "pymsiecf_file_object_initialize";
 
 	if( handle == NULL )
 	{
@@ -211,7 +211,8 @@ int pymsiecf_file_object_io_handle_free(
      pymsiecf_file_object_io_handle_t **file_object_io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "pymsiecf_file_object_io_handle_free";
+	PyGILState_STATE gil_state = 0;
+	static char *function      = "pymsiecf_file_object_io_handle_free";
 
 	if( file_object_io_handle == NULL )
 	{
@@ -226,8 +227,13 @@ int pymsiecf_file_object_io_handle_free(
 	}
 	if( *file_object_io_handle != NULL )
 	{
+		gil_state = PyGILState_Ensure();
+
 		Py_DecRef(
 		 ( *file_object_io_handle )->file_object );
+
+		PyGILState_Release(
+		 gil_state );
 
 		PyMem_Free(
 		 *file_object_io_handle );

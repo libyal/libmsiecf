@@ -384,9 +384,8 @@ int pymsiecf_file_init(
 
 		return( -1 );
 	}
-	/* Make sure libmsiecf file is set to NULL
-	 */
-	pymsiecf_file->file = NULL;
+	pymsiecf_file->file           = NULL;
+	pymsiecf_file->file_io_handle = NULL;
 
 	if( libmsiecf_file_initialize(
 	     &( pymsiecf_file->file ),
@@ -628,13 +627,12 @@ PyObject *pymsiecf_file_open_file_object(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *file_object            = NULL;
-	libbfio_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error         = NULL;
-        char *mode                       = NULL;
-	static char *keyword_list[]      = { "file_object", "mode", NULL };
-	static char *function            = "pymsiecf_file_open_file_object";
-	int result                       = 0;
+	PyObject *file_object       = NULL;
+	libcerror_error_t *error    = NULL;
+        char *mode                  = NULL;
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	static char *function       = "pymsiecf_file_open_file_object";
+	int result                  = 0;
 
 	if( pymsiecf_file == NULL )
 	{
@@ -667,7 +665,7 @@ PyObject *pymsiecf_file_open_file_object(
 		return( NULL );
 	}
 	if( pymsiecf_file_object_initialize(
-	     &file_io_handle,
+	     &( pymsiecf_file->file_io_handle ),
 	     file_object,
 	     &error ) != 1 )
 	{
@@ -686,7 +684,7 @@ PyObject *pymsiecf_file_open_file_object(
 
 	result = libmsiecf_file_open_file_io_handle(
 	          pymsiecf_file->file,
-                  file_io_handle,
+                  pymsiecf_file->file_io_handle,
                   LIBMSIECF_OPEN_READ,
 	          &error );
 
@@ -711,10 +709,10 @@ PyObject *pymsiecf_file_open_file_object(
 	return( Py_None );
 
 on_error:
-	if( file_io_handle != NULL )
+	if( pymsiecf_file->file_io_handle != NULL )
 	{
 		libbfio_handle_free(
-		 &file_io_handle,
+		 &( pymsiecf_file->file_io_handle ),
 		 NULL );
 	}
 	return( NULL );
@@ -762,6 +760,30 @@ PyObject *pymsiecf_file_close(
 		 &error );
 
 		return( NULL );
+	}
+	if( pymsiecf_file->file_io_handle != NULL )
+	{
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libbfio_handle_free(
+		          &( pymsiecf_file->file_io_handle ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pymsiecf_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to free libbfio file IO handle.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
 	}
 	Py_IncRef(
 	 Py_None );

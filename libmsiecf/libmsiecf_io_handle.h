@@ -72,6 +72,10 @@ int libmsiecf_io_handle_free(
      libmsiecf_io_handle_t **io_handle,
      libcerror_error_t **error );
 
+int libmsiecf_io_handle_clear(
+     libmsiecf_io_handle_t *io_handle,
+     libcerror_error_t **error );
+
 int libmsiecf_io_handle_read_file_header(
      libmsiecf_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,

@@ -117,6 +117,7 @@ int libmsiecf_file_close(
 
 int libmsiecf_file_open_read(
      libmsiecf_internal_file_t *internal_file,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
 LIBMSIECF_EXTERN \

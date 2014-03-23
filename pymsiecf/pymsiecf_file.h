@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "pymsiecf_libbfio.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
 
@@ -43,6 +44,10 @@ struct pymsiecf_file
 	/* The libmsiecf file
 	 */
 	libmsiecf_file_t *file;
+
+	/* The libbfio file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
 
 	/* The major version
 	 */

@@ -616,6 +616,7 @@ int libmsiecf_file_open_file_io_handle(
 
 	if( libmsiecf_file_open_read(
 	     internal_file,
+	     file_io_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -630,14 +631,14 @@ int libmsiecf_file_open_file_io_handle(
 	return( 1 );
 
 on_error:
-	if( file_io_handle_is_open == 0 )
+	if( ( file_io_handle_is_open == 0 )
+	 && ( internal_file->file_io_handle_opened_in_library != 0 ) )
 	{
 		libbfio_handle_close(
 		 file_io_handle,
 		 error );
 	}
-	internal_file->file_io_handle                   = NULL;
-	internal_file->file_io_handle_opened_in_library = 0;
+	internal_file->file_io_handle = NULL;
 
 	return( -1 );
 }
@@ -677,10 +678,10 @@ int libmsiecf_file_close(
 
 		return( -1 );
 	}
-	if( internal_file->file_io_handle_created_in_library != 0 )
-	{
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
+	{
+		if( internal_file->file_io_handle_created_in_library != 0 )
 		{
 			if( libmsiecf_debug_print_read_offsets(
 			     internal_file->file_io_handle,
@@ -692,28 +693,29 @@ int libmsiecf_file_close(
 				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
 				 "%s: unable to print the read offsets.",
 				 function );
-
-				result = -1;
 			}
 		}
+	}
 #endif
-		if( internal_file->file_io_handle_opened_in_library != 0 )
+	if( internal_file->file_io_handle_opened_in_library != 0 )
+	{
+		if( libbfio_handle_close(
+		     internal_file->file_io_handle,
+		     error ) != 0 )
 		{
-			if( libbfio_handle_close(
-			     internal_file->file_io_handle,
-			     error ) != 0 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-				 "%s: unable to close file IO handle.",
-				 function );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+			 "%s: unable to close file IO handle.",
+			 function );
 
-				result = -1;
-			}
-			internal_file->file_io_handle_opened_in_library = 0;
+			result = -1;
 		}
+		internal_file->file_io_handle_opened_in_library = 0;
+	}
+	if( internal_file->file_io_handle_created_in_library != 0 )
+	{
 		if( libbfio_handle_free(
 		     &( internal_file->file_io_handle ),
 		     error ) != 1 )
@@ -727,10 +729,23 @@ int libmsiecf_file_close(
 
 			result = -1;
 		}
+		internal_file->file_io_handle_created_in_library = 0;
 	}
-	internal_file->file_io_handle                    = NULL;
-	internal_file->file_io_handle_created_in_library = 0;
+	internal_file->file_io_handle = NULL;
 
+	if( libmsiecf_io_handle_clear(
+	     internal_file->io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to clear IO handle.",
+		 function );
+
+		result = -1;
+	}
 	if( internal_file->directory_array != NULL )
 	{
 		if( libcdata_array_free(
@@ -807,6 +822,7 @@ int libmsiecf_file_close(
  */
 int libmsiecf_file_open_read(
      libmsiecf_internal_file_t *internal_file,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
 	static char *function      = "libmsiecf_file_open_read";
@@ -942,7 +958,7 @@ int libmsiecf_file_open_read(
 #endif
 	if( libmsiecf_io_handle_read_file_header(
 	     internal_file->io_handle,
-	     internal_file->file_io_handle,
+	     file_io_handle,
 	     &hash_table_offset,
 	     internal_file->directory_array,
 	     internal_file->unallocated_block_list,
@@ -967,7 +983,7 @@ int libmsiecf_file_open_read(
 	if( libmsiecf_io_handle_read_hash_table(
 	     internal_file->item_array,
 	     internal_file->io_handle,
-	     internal_file->file_io_handle,
+	     file_io_handle,
 	     hash_table_offset,
 	     error ) != 1 )
 	{
@@ -991,7 +1007,7 @@ int libmsiecf_file_open_read(
 	     internal_file->item_array,
 	     internal_file->recovered_item_array,
 	     internal_file->io_handle,
-	     internal_file->file_io_handle,
+	     file_io_handle,
 	     hash_table_offset,
 	     internal_file->unallocated_block_list,
 	     error ) != 1 )
