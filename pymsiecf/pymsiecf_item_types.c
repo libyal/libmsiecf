@@ -72,7 +72,7 @@ PyTypeObject pymsiecf_item_types_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pymsiecf item types object (wraps LIBMSIECF_ITEM_TYPES)",
@@ -145,42 +145,42 @@ int pymsiecf_item_types_init_type(
 		return( -1 );
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "UNDEFINED",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_TYPE_UNDEFINED ) ) != 0 )
+	     type_object->tp_dict,
+	     "UNDEFINED",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_TYPE_UNDEFINED ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "URL",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_TYPE_URL ) ) != 0 )
+	     type_object->tp_dict,
+	     "URL",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_TYPE_URL ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "REDIRECTED",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_TYPE_REDIRECTED ) ) != 0 )
+	     type_object->tp_dict,
+	     "REDIRECTED",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_TYPE_REDIRECTED ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "LEAK",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_TYPE_LEAK ) ) != 0 )
+	     type_object->tp_dict,
+	     "LEAK",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_TYPE_LEAK ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "UNKNOWN",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_TYPE_UNKNOWN ) ) != 0 )
+	     type_object->tp_dict,
+	     "UNKNOWN",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_TYPE_UNKNOWN ) ) != 0 )
 	{
 		goto on_error;
 	}

@@ -14,7 +14,7 @@ MSVSCPP_FILES = \
 	libfguid/libfguid.vcproj \
 	libfole/libfole.vcproj \
 	libfvalue/libfvalue.vcproj \
-	libmsiecf_dll/libmsiecf_dll.vcproj \
+	libmsiecf/libmsiecf.vcproj \
 	libuna/libuna.vcproj \
 	msiecfexport/msiecfexport.vcproj \
 	msiecfinfo/msiecfinfo.vcproj \

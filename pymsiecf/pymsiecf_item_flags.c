@@ -72,7 +72,7 @@ PyTypeObject pymsiecf_item_flags_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pymsiecf item flags object (wraps LIBMSIECF_ITEM_FLAGS)",
@@ -145,34 +145,34 @@ int pymsiecf_item_flags_init_type(
 		return( -1 );
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "RECOVERED",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_FLAG_RECOVERED ) ) != 0 )
+	     type_object->tp_dict,
+	     "RECOVERED",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_FLAG_RECOVERED ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "PARTIAL",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_FLAG_PARTIAL ) ) != 0 )
+	     type_object->tp_dict,
+	     "PARTIAL",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_FLAG_PARTIAL ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "HASHED",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_FLAG_HASHED ) ) != 0 )
+	     type_object->tp_dict,
+	     "HASHED",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_FLAG_HASHED ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "TAINTED",
-             PyInt_FromLong(
-              LIBMSIECF_ITEM_FLAG_TAINTED ) ) != 0 )
+	     type_object->tp_dict,
+	     "TAINTED",
+	     PyInt_FromLong(
+	      LIBMSIECF_ITEM_FLAG_TAINTED ) ) != 0 )
 	{
 		goto on_error;
 	}

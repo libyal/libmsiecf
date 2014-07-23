@@ -265,7 +265,7 @@ PyTypeObject pymsiecf_url_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pymsiecf URL object (wraps libmsiecf_item_t type LIBMSIECF_ITEM_TYPE_URL)",

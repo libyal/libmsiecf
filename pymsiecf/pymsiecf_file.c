@@ -223,7 +223,7 @@ PyTypeObject pymsiecf_file_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pymsiecf file object (wraps libmsiecf_file_t)",
@@ -522,6 +522,211 @@ PyObject *pymsiecf_file_signal_abort(
 	return( Py_None );
 }
 
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+
+/* Opens a file
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_file_open(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *exception_string    = NULL;
+	PyObject *exception_traceback = NULL;
+	PyObject *exception_type      = NULL;
+	PyObject *exception_value     = NULL;
+	PyObject *string_object       = NULL;
+	libcerror_error_t *error      = NULL;
+	static char *function         = "pymsiecf_file_open";
+	static char *keyword_list[]   = { "filename", "mode", NULL };
+	const wchar_t *filename_wide  = NULL;
+	const char *filename_narrow   = NULL;
+	char *error_string            = NULL;
+	int result                    = 0;
+
+	if( pymsiecf_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	/* Note that PyArg_ParseTupleAndKeywords with "s" will force Unicode strings to be converted to narrow character string.
+	 * On Windows the narrow character strings contains an extended ASCII string with a codepage. Hence we get a conversion
+	 * exception. We cannot use "u" here either since that does not allow us to pass non Unicode string objects and
+	 * Python (at least 2.7) does not seems to automatically upcast them.
+	 */
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "O|s",
+	     keyword_list,
+	     &string_object ) == 0 )
+	{
+		return( NULL );
+	}
+	PyErr_Clear();
+
+	result = PyObject_IsInstance(
+	          string_object,
+	          (PyObject *) &PyUnicode_Type );
+
+	if( result == -1 )
+	{
+		PyErr_Fetch(
+		 &exception_type,
+		 &exception_value,
+		 &exception_traceback );
+
+		exception_string = PyObject_Repr(
+		                    exception_value );
+
+		error_string = PyString_AsString(
+		                exception_string );
+
+		if( error_string != NULL )
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type unicode with error: %s.",
+			 function,
+			 error_string );
+		}
+		else
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type unicode.",
+			 function );
+		}
+		Py_DecRef(
+		 exception_string );
+
+		return( NULL );
+	}
+	else if( result != 0 )
+	{
+		PyErr_Clear();
+
+		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
+		                             string_object );
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libmsiecf_file_open_wide(
+		          pymsiecf_file->file,
+	                  filename_wide,
+		          LIBMSIECF_OPEN_READ,
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result == -1 )
+		{
+			pymsiecf_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to open file.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+		if( result != 0 )
+		{
+			return( Py_True );
+		}
+		return( Py_False );
+	}
+	PyErr_Clear();
+
+	result = PyObject_IsInstance(
+		  string_object,
+		  (PyObject *) &PyString_Type );
+
+	if( result == -1 )
+	{
+		PyErr_Fetch(
+		 &exception_type,
+		 &exception_value,
+		 &exception_traceback );
+
+		exception_string = PyObject_Repr(
+				    exception_value );
+
+		error_string = PyString_AsString(
+				exception_string );
+
+		if( error_string != NULL )
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type string with error: %s.",
+			 function,
+			 error_string );
+		}
+		else
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type string.",
+			 function );
+		}
+		Py_DecRef(
+		 exception_string );
+
+		return( NULL );
+	}
+	else if( result != 0 )
+	{
+		PyErr_Clear();
+
+		filename_narrow = PyString_AsString(
+				   string_object );
+
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libmsiecf_file_open(
+		          pymsiecf_file->file,
+	                  filename_narrow,
+		          LIBMSIECF_OPEN_READ,
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result == -1 )
+		{
+			pymsiecf_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to open file.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+		if( result != 0 )
+		{
+			return( Py_True );
+		}
+		return( Py_False );
+	}
+	PyErr_Format(
+	 PyExc_TypeError,
+	 "%s: unsupported string object type",
+	 function );
+
+	return( NULL );
+}
+
+#else
+
 /* Opens a file
  * Returns a Python object if successful or NULL on error
  */
@@ -546,6 +751,9 @@ PyObject *pymsiecf_file_open(
 
 		return( NULL );
 	}
+	/* Note that PyArg_ParseTupleAndKeywords with "s" will force Unicode strings to be converted to narrow character string.
+	 * For systems that support UTF-8 this works for Unicode string objects as well.
+	 */
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
@@ -553,10 +761,10 @@ PyObject *pymsiecf_file_open(
 	     keyword_list,
 	     &filename,
 	     &mode ) == 0 )
-        {
-                return( NULL );
-        }
-        if( ( mode != NULL )
+	{
+		return( NULL );
+	}
+	if( ( mode != NULL )
 	 && ( mode[ 0 ] != 'r' ) )
 	{
 		PyErr_Format(
@@ -571,8 +779,8 @@ PyObject *pymsiecf_file_open(
 
 	result = libmsiecf_file_open(
 	          pymsiecf_file->file,
-                  filename,
-                  LIBMSIECF_OPEN_READ,
+	          filename,
+	          LIBMSIECF_OPEN_READ,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -590,34 +798,13 @@ PyObject *pymsiecf_file_open(
 
 		return( NULL );
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libmsiecf_file_get_format_version(
-	          pymsiecf_file->file,
-	          &( pymsiecf_file->major_version ),
-	          &( pymsiecf_file->minor_version ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pymsiecf_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to determine format version.",
-		 function );
-
-		libcerror_error_free(
-		 &error );
-
-		return( NULL );
-	}
 	Py_IncRef(
 	 Py_None );
 
 	return( Py_None );
 }
+
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
 
 /* Opens a file using a file-like object
  * Returns a Python object if successful or NULL on error
@@ -629,7 +816,7 @@ PyObject *pymsiecf_file_open_file_object(
 {
 	PyObject *file_object       = NULL;
 	libcerror_error_t *error    = NULL;
-        char *mode                  = NULL;
+	char *mode                  = NULL;
 	static char *keyword_list[] = { "file_object", "mode", NULL };
 	static char *function       = "pymsiecf_file_open_file_object";
 	int result                  = 0;
@@ -650,10 +837,10 @@ PyObject *pymsiecf_file_open_file_object(
 	     keyword_list,
 	     &file_object,
 	     &mode ) == 0 )
-        {
-                return( NULL );
-        }
-        if( ( mode != NULL )
+	{
+		return( NULL );
+	}
+	if( ( mode != NULL )
 	 && ( mode[ 0 ] != 'r' ) )
 	{
 		PyErr_Format(
@@ -684,8 +871,8 @@ PyObject *pymsiecf_file_open_file_object(
 
 	result = libmsiecf_file_open_file_io_handle(
 	          pymsiecf_file->file,
-                  pymsiecf_file->file_io_handle,
-                  LIBMSIECF_OPEN_READ,
+	          pymsiecf_file->file_io_handle,
+	          LIBMSIECF_OPEN_READ,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -957,9 +1144,9 @@ PyObject *pymsiecf_file_set_ascii_codepage(
 	     "s",
 	     keyword_list,
 	     &codepage_string ) == 0 )
-        {
-                return( NULL );
-        }
+	{
+		return( NULL );
+	}
 	result = pymsiecf_file_set_ascii_codepage_from_string(
 	          pymsiecf_file,
 	          codepage_string );
@@ -1243,9 +1430,9 @@ PyObject *pymsiecf_file_get_item(
 	     "i",
 	     keyword_list,
 	     &item_index ) == 0 )
-        {
+	{
 		return( NULL );
-        }
+	}
 	item_object = pymsiecf_file_get_item_by_index(
 	               pymsiecf_file,
 	               item_index );
@@ -1498,9 +1685,9 @@ PyObject *pymsiecf_file_get_recovered_item(
 	     "i",
 	     keyword_list,
 	     &item_index ) == 0 )
-        {
+	{
 		return( NULL );
-        }
+	}
 	item_object = pymsiecf_file_get_recovered_item_by_index(
 	               pymsiecf_file,
 	               item_index );

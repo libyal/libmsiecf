@@ -101,13 +101,6 @@ stamp-h1
 /include/libmsiecf/types.h
 /libmsiecf/libmsiecf.rc
 /libmsiecf/libmsiecf_definitions.h
-/macosx/Introduction.rtf
-/macosx/libmsiecf.pmdoc/01bin.xml
-/macosx/libmsiecf.pmdoc/02include.xml
-/macosx/libmsiecf.pmdoc/03lib.xml
-/macosx/libmsiecf.pmdoc/04share.xml
-/macosx/libmsiecf.pmdoc/05python.xml
-/macosx/libmsiecf.pmdoc/index.xml
 /pymsiecf/setup.py
 /tests/input
 /tests/msiecf_test_open_close

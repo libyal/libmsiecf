@@ -25,7 +25,6 @@ SUBDIRS = \
 	po \
 	manuals \
 	tests \
-	macosx \
 	msvscpp
 
 DPKG_FILES = \
@@ -124,4 +123,5 @@ splint:
 	(cd $(srcdir)/msiecftools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pymsiecf && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/tests && $(MAKE) splint $(AM_MAKEFLAGS))
 

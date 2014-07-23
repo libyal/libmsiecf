@@ -10,8 +10,16 @@ Package: libmsiecf
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libmsiecf-dbg
 Description: Library to access the MSIE Cache File (index.dat) format.
  libmsiecf is a library to access the MSIE Cache File (index.dat) format.
+
+Package: libmsiecf-dbg
+Architecture: any
+Section: debug
+Depends: libmsiecf (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libmsiecf
+ Debugging symbols for libmsiecf.
 
 Package: libmsiecf-dev
 Section: libdevel
@@ -31,6 +39,14 @@ Package: libmsiecf-python
 Section: python
 Architecture: any
 Depends: libmsiecf (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Suggests: libmsiecf-python-dbg
 Description: Python bindings for libmsiecf
  Python bindings for libmsiecf.
+
+Package: libmsiecf-python-dbg
+Section: debug
+Architecture: any
+Depends: libmsiecf-python (= ${Source-Version})
+Description: Debugging symbols for libmsiecf-python
+ Debugging symbols for libmsiecf-python.
 

@@ -72,7 +72,7 @@ PyTypeObject pymsiecf_url_types_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pymsiecf url types object (wraps LIBMSIECF_URL_ITEM_TYPES)",
@@ -145,114 +145,114 @@ int pymsiecf_url_types_init_type(
 		return( -1 );
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "UNDEFINED",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_UNDEFINED ) ) != 0 )
+	     type_object->tp_dict,
+	     "UNDEFINED",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_UNDEFINED ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "CACHE",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_CACHE ) ) != 0 )
+	     type_object->tp_dict,
+	     "CACHE",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_CACHE ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "COMPATIBILITY",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_COMPATIBILITY ) ) != 0 )
+	     type_object->tp_dict,
+	     "COMPATIBILITY",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_COMPATIBILITY ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "COOKIE",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_COOKIE ) ) != 0 )
+	     type_object->tp_dict,
+	     "COOKIE",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_COOKIE ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "DOM_STORE",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_DOM_STORE ) ) != 0 )
+	     type_object->tp_dict,
+	     "DOM_STORE",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_DOM_STORE ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "DOWNLOAD",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_DOWNLOAD ) ) != 0 )
+	     type_object->tp_dict,
+	     "DOWNLOAD",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_DOWNLOAD ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "HISTORY",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_HISTORY ) ) != 0 )
+	     type_object->tp_dict,
+	     "HISTORY",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_HISTORY ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "HISTORY_DAILY",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY ) ) != 0 )
+	     type_object->tp_dict,
+	     "HISTORY_DAILY",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "HISTORY_WEEKLY",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY ) ) != 0 )
+	     type_object->tp_dict,
+	     "HISTORY_WEEKLY",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "INPRIVATE_FILTERING",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_INPRIVATE_FILTERING ) ) != 0 )
+	     type_object->tp_dict,
+	     "INPRIVATE_FILTERING",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_INPRIVATE_FILTERING ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "RSS_FEED",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_RSS_FEED ) ) != 0 )
+	     type_object->tp_dict,
+	     "RSS_FEED",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_RSS_FEED ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "TLD",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_TLD ) ) != 0 )
+	     type_object->tp_dict,
+	     "TLD",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_TLD ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "USER_DATA",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_USER_DATA ) ) != 0 )
+	     type_object->tp_dict,
+	     "USER_DATA",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_USER_DATA ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "UNKNOWN",
-             PyInt_FromLong(
-              LIBMSIECF_URL_ITEM_TYPE_UNKNOWN ) ) != 0 )
+	     type_object->tp_dict,
+	     "UNKNOWN",
+	     PyInt_FromLong(
+	      LIBMSIECF_URL_ITEM_TYPE_UNKNOWN ) ) != 0 )
 	{
 		goto on_error;
 	}
