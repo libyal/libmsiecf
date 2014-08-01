@@ -323,7 +323,7 @@ int libmsiecf_hash_table_read(
 		}
 #endif
 
-		/* Skip emtpy entries
+		/* Skip empty entries
 		 */
 		if( entry_hash == entry_offset )
 		{

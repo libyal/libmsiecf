@@ -1253,7 +1253,7 @@ int libmsiecf_file_get_format_version(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing IO handle.",
+		 "%s: invalid file - missing IO handle.",
 		 function );
 
 		return( -1 );

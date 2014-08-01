@@ -233,8 +233,14 @@ PyObject *pymsiecf_check_file_signature(
 		}
 		if( result != 0 )
 		{
+			Py_IncRef(
+			 (PyObject *) Py_True );
+
 			return( Py_True );
 		}
+		Py_IncRef(
+		 (PyObject *) Py_False );
+
 		return( Py_False );
 	}
 	PyErr_Clear();
@@ -306,8 +312,14 @@ PyObject *pymsiecf_check_file_signature(
 		}
 		if( result != 0 )
 		{
+			Py_IncRef(
+			 (PyObject *) Py_True );
+
 			return( Py_True );
 		}
+		Py_IncRef(
+		 (PyObject *) Py_False );
+
 		return( Py_False );
 	}
 	PyErr_Format(
@@ -368,8 +380,14 @@ PyObject *pymsiecf_check_file_signature(
 	}
 	if( result != 0 )
 	{
+		Py_IncRef(
+		 (PyObject *) Py_True );
+
 		return( Py_True );
 	}
+	Py_IncRef(
+	 (PyObject *) Py_False );
+
 	return( Py_False );
 }
 
@@ -455,8 +473,14 @@ PyObject *pymsiecf_check_file_signature_file_object(
 	}
 	if( result != 0 )
 	{
+		Py_IncRef(
+		 (PyObject *) Py_True );
+
 		return( Py_True );
 	}
+	Py_IncRef(
+	 (PyObject *) Py_False );
+
 	return( Py_False );
 
 on_error:

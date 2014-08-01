@@ -623,7 +623,7 @@ PyObject *pymsiecf_file_open(
 
 		Py_END_ALLOW_THREADS
 
-		if( result == -1 )
+		if( result != 1 )
 		{
 			pymsiecf_error_raise(
 			 error,
@@ -636,11 +636,10 @@ PyObject *pymsiecf_file_open(
 
 			return( NULL );
 		}
-		if( result != 0 )
-		{
-			return( Py_True );
-		}
-		return( Py_False );
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
 	}
 	PyErr_Clear();
 
@@ -698,7 +697,7 @@ PyObject *pymsiecf_file_open(
 
 		Py_END_ALLOW_THREADS
 
-		if( result == -1 )
+		if( result != 1 )
 		{
 			pymsiecf_error_raise(
 			 error,
@@ -711,11 +710,10 @@ PyObject *pymsiecf_file_open(
 
 			return( NULL );
 		}
-		if( result != 0 )
-		{
-			return( Py_True );
-		}
-		return( Py_False );
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
 	}
 	PyErr_Format(
 	 PyExc_TypeError,

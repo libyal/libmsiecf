@@ -28,6 +28,9 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20140731
+* bug fix in Python-bindings
+
 20140723
 * worked on dpkg debug packages support
 
