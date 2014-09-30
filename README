@@ -1,4 +1,10 @@
-See:
-* http://code.google.com/p/libmsiecf/wiki/Building
-* README.macosx
+libmsiecf is a library to access the Microsoft Internet Explorer (MSIE) Cache File (index.dat) files.
+
+Planned:
+* Multi-threading support
+* Python 3 support
+
+For more information see:
+* Project documentation: https://github.com/libyal/libmsiecf/wiki/Home
+* How to build from source: https://github.com/libyal/libmsiecf/wiki/Building
 

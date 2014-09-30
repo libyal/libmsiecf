@@ -28,7 +28,7 @@ BEGIN
       VALUE "OriginalFilename",		"libmsiecf.dll\0"
       VALUE "ProductName",		"libmsiecf\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit http://code.google.com/p/libmsiecf/\0"
+      VALUE "Comments",			"For more information visit https://github.com/libyal/libmsiecf/\0"
     END
   END
   BLOCK "VarFileInfo"
