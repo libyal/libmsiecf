@@ -101,6 +101,8 @@ stamp-h1
 /include/libmsiecf/types.h
 /libmsiecf/libmsiecf.rc
 /libmsiecf/libmsiecf_definitions.h
+/msiecftools/msiecfexport
+/msiecftools/msiecfinfo
 /pymsiecf/setup.py
 /tests/input
 /tests/msiecf_test_open_close
