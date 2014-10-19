@@ -28,6 +28,9 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20141019
+* changes for deployment
+
 20141004
 * bug fix in Python-bindings
 * update Python-bindings tests
