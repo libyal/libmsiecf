@@ -135,7 +135,7 @@ int main( int argc, char * const argv[] )
 	 1 );
 
 	if( libclocale_initialize(
-	     "evttools",
+	     "msiecftools",
 	     &error ) != 1 )
 	{
 		fprintf(
