@@ -27,6 +27,7 @@
 #include <types.h>
 
 #include "msiecftools_libcerror.h"
+#include "msiecftools_libcstring.h"
 #include "msiecftools_libcsystem.h"
 #include "msiecftools_libmsiecf.h"
 
