@@ -28,6 +28,9 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20141118
+* code clean up
+
 20141025
 * changes for deployment
 
