@@ -73,7 +73,7 @@ int libmsiecf_set_codepage(
      int codepage,
      libmsiecf_error_t **error );
 
-/* Determines if a file is a MSIECF file (check for the MSIECF file signature)
+/* Determines if a file contains a MSIECF file signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBMSIECF_EXTERN \
@@ -82,24 +82,28 @@ int libmsiecf_check_file_signature(
      libmsiecf_error_t **error );
 
 #if defined( LIBMSIECF_HAVE_WIDE_CHARACTER_TYPE )
-/* Determines if a file is a MSIECF file (check for the MSIECF file signature)
+
+/* Determines if a file contains a MSIECF file signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBMSIECF_EXTERN \
 int libmsiecf_check_file_signature_wide(
      const wchar_t *filename,
      libmsiecf_error_t **error );
-#endif
+
+#endif /* defined( LIBMSIECF_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBMSIECF_HAVE_BFIO )
-/* Determines if a file is a MSIECF file (check for the MSIECF file signature) using a Basic File IO (bfio) handle
+
+/* Determines if a file contains a MSIECF file signature using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBMSIECF_EXTERN \
 int libmsiecf_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libmsiecf_error_t **error );
-#endif
+
+#endif /* defined( LIBMSIECF_HAVE_BFIO ) */
 
 /* -------------------------------------------------------------------------
  * Notify functions
@@ -219,6 +223,7 @@ int libmsiecf_file_open(
      libmsiecf_error_t **error );
 
 #if defined( LIBMSIECF_HAVE_WIDE_CHARACTER_TYPE )
+
 /* Opens a file
  * Returns 1 if successful or -1 on error
  */
@@ -228,9 +233,11 @@ int libmsiecf_file_open_wide(
      const wchar_t *filename,
      int access_flags,
      libmsiecf_error_t **error );
-#endif
+
+#endif /* defined( LIBMSIECF_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBMSIECF_HAVE_BFIO )
+
 /* Opens a MSIE File using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
@@ -240,7 +247,8 @@ int libmsiecf_file_open_file_io_handle(
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libmsiecf_error_t **error );
-#endif
+
+#endif /* defined( LIBMSIECF_HAVE_BFIO ) */
 
 /* Closes a file
  * Returns 0 if successful or -1 on error
