@@ -113,7 +113,7 @@ PyObject *pymsiecf_file_set_ascii_codepage(
 
 int pymsiecf_file_set_ascii_codepage_setter(
      pymsiecf_file_t *pymsiecf_file,
-     PyObject *value_object,
+     PyObject *string_object,
      void *closure );
 
 /* TODO cache directories */

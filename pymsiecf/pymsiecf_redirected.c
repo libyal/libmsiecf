@@ -63,10 +63,8 @@ PyGetSetDef pymsiecf_redirected_object_get_set_definitions[] = {
 };
 
 PyTypeObject pymsiecf_redirected_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pymsiecf.redirected",
 	/* tp_basicsize */

@@ -56,10 +56,8 @@ PySequenceMethods pymsiecf_items_sequence_methods = {
 };
 
 PyTypeObject pymsiecf_items_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pymsiecf._items",
 	/* tp_basicsize */
@@ -258,7 +256,8 @@ int pymsiecf_items_init(
 void pymsiecf_items_free(
       pymsiecf_items_t *pymsiecf_items )
 {
-	static char *function = "pymsiecf_items_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pymsiecf_items_free";
 
 	if( pymsiecf_items == NULL )
 	{
@@ -269,20 +268,23 @@ void pymsiecf_items_free(
 
 		return;
 	}
-	if( pymsiecf_items->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pymsiecf_items );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - missing ob_type.",
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pymsiecf_items->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - invalid ob_type - missing tp_free.",
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -292,7 +294,7 @@ void pymsiecf_items_free(
 		Py_DecRef(
 		 (PyObject *) pymsiecf_items->file_object );
 	}
-	pymsiecf_items->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pymsiecf_items );
 }
 

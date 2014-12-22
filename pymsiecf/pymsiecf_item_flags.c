@@ -32,10 +32,8 @@
 #include "pymsiecf_unused.h"
 
 PyTypeObject pymsiecf_item_flags_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pymsiecf.item_flags",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pymsiecf_item_flags_type_object = {
 int pymsiecf_item_flags_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,35 +144,59 @@ int pymsiecf_item_flags_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_FLAG_RECOVERED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_FLAG_RECOVERED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "RECOVERED",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_FLAG_RECOVERED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_FLAG_PARTIAL );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_FLAG_PARTIAL );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "PARTIAL",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_FLAG_PARTIAL ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_FLAG_HASHED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_FLAG_HASHED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "HASHED",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_FLAG_HASHED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_FLAG_TAINTED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_FLAG_TAINTED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "TAINTED",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_FLAG_TAINTED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -257,7 +281,8 @@ int pymsiecf_item_flags_init(
 void pymsiecf_item_flags_free(
       pymsiecf_item_flags_t *pymsiecf_item_flags )
 {
-	static char *function = "pymsiecf_item_flags_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pymsiecf_item_flags_free";
 
 	if( pymsiecf_item_flags == NULL )
 	{
@@ -268,25 +293,28 @@ void pymsiecf_item_flags_free(
 
 		return;
 	}
-	if( pymsiecf_item_flags->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pymsiecf_item_flags );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid item flags - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pymsiecf_item_flags->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid item flags - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pymsiecf_item_flags->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pymsiecf_item_flags );
 }
 

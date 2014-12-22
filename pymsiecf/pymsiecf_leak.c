@@ -90,10 +90,8 @@ PyGetSetDef pymsiecf_leak_object_get_set_definitions[] = {
 };
 
 PyTypeObject pymsiecf_leak_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pymsiecf.leak",
 	/* tp_basicsize */
@@ -246,6 +244,7 @@ PyObject *pymsiecf_leak_get_cache_directory_index(
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error      = NULL;
+	PyObject *integer_object      = NULL;
 	static char *function         = "pymsiecf_leak_get_cache_directory_index";
 	uint8_t cache_directory_index = 0;
 	int result                    = 0;
@@ -283,8 +282,14 @@ PyObject *pymsiecf_leak_get_cache_directory_index(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) cache_directory_index ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) cache_directory_index );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) cache_directory_index );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves the filename

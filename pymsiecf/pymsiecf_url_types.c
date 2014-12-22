@@ -32,10 +32,8 @@
 #include "pymsiecf_url_types.h"
 
 PyTypeObject pymsiecf_url_types_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pymsiecf.url_types",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pymsiecf_url_types_type_object = {
 int pymsiecf_url_types_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,115 +144,199 @@ int pymsiecf_url_types_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_UNDEFINED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_UNDEFINED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "UNDEFINED",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_UNDEFINED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_CACHE );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_CACHE );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "CACHE",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_CACHE ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_COMPATIBILITY );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_COMPATIBILITY );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "COMPATIBILITY",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_COMPATIBILITY ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_COOKIE );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_COOKIE );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "COOKIE",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_COOKIE ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_DOM_STORE );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_DOM_STORE );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "DOM_STORE",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_DOM_STORE ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_DOWNLOAD );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_DOWNLOAD );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "DOWNLOAD",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_DOWNLOAD ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_HISTORY );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_HISTORY );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "HISTORY",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_HISTORY ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "HISTORY_DAILY",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "HISTORY_WEEKLY",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_INPRIVATE_FILTERING );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_INPRIVATE_FILTERING );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "INPRIVATE_FILTERING",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_INPRIVATE_FILTERING ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_RSS_FEED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_RSS_FEED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "RSS_FEED",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_RSS_FEED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_TLD );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_TLD );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "TLD",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_TLD ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_USER_DATA );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_USER_DATA );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "USER_DATA",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_USER_DATA ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_UNKNOWN );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_URL_ITEM_TYPE_UNKNOWN );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "UNKNOWN",
-	     PyInt_FromLong(
-	      LIBMSIECF_URL_ITEM_TYPE_UNKNOWN ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -337,7 +421,8 @@ int pymsiecf_url_types_init(
 void pymsiecf_url_types_free(
       pymsiecf_url_types_t *pymsiecf_url_types )
 {
-	static char *function = "pymsiecf_url_types_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pymsiecf_url_types_free";
 
 	if( pymsiecf_url_types == NULL )
 	{
@@ -348,25 +433,28 @@ void pymsiecf_url_types_free(
 
 		return;
 	}
-	if( pymsiecf_url_types->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pymsiecf_url_types );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid url types - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pymsiecf_url_types->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid url types - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pymsiecf_url_types->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pymsiecf_url_types );
 }
 

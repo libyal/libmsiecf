@@ -225,10 +225,8 @@ PyGetSetDef pymsiecf_url_object_get_set_definitions[] = {
 };
 
 PyTypeObject pymsiecf_url_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pymsiecf.url",
 	/* tp_basicsize */
@@ -954,6 +952,7 @@ PyObject *pymsiecf_url_get_cache_directory_index(
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error     = NULL;
+	PyObject *integer_object     = NULL;
 	static char *function        = "pymsiecf_url_get_cache_directory_index";
 	int8_t cache_directory_index = 0;
 	int result                   = 0;
@@ -991,8 +990,14 @@ PyObject *pymsiecf_url_get_cache_directory_index(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) cache_directory_index ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) cache_directory_index );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) cache_directory_index );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves the number of hits
@@ -1003,6 +1008,7 @@ PyObject *pymsiecf_url_get_number_of_hits(
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pymsiecf_url_get_number_of_hits";
 	uint32_t number_of_hits  = 0;
 	int result               = 0;
@@ -1040,8 +1046,14 @@ PyObject *pymsiecf_url_get_number_of_hits(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) number_of_hits ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_hits );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_hits );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves the location
@@ -1362,10 +1374,15 @@ PyObject *pymsiecf_url_get_data(
 
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	string_object = PyBytes_FromStringAndSize(
+			 (char *) data,
+			 (Py_ssize_t) data_size );
+#else
 	string_object = PyString_FromStringAndSize(
 			 (char *) data,
 			 (Py_ssize_t) data_size );
-
+#endif
 	PyMem_Free(
 	 data );
 

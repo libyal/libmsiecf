@@ -32,10 +32,8 @@
 #include "pymsiecf_unused.h"
 
 PyTypeObject pymsiecf_item_types_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pymsiecf.item_types",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pymsiecf_item_types_type_object = {
 int pymsiecf_item_types_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,43 +144,73 @@ int pymsiecf_item_types_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_TYPE_UNDEFINED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_TYPE_UNDEFINED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "UNDEFINED",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_TYPE_UNDEFINED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_TYPE_URL );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_TYPE_URL );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "URL",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_TYPE_URL ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_TYPE_REDIRECTED );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_TYPE_REDIRECTED );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "REDIRECTED",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_TYPE_REDIRECTED ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_TYPE_LEAK );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_TYPE_LEAK );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "LEAK",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_TYPE_LEAK ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBMSIECF_ITEM_TYPE_UNKNOWN );
+#else
+	value_object = PyInt_FromLong(
+	                LIBMSIECF_ITEM_TYPE_UNKNOWN );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "UNKNOWN",
-	     PyInt_FromLong(
-	      LIBMSIECF_ITEM_TYPE_UNKNOWN ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -265,7 +295,8 @@ int pymsiecf_item_types_init(
 void pymsiecf_item_types_free(
       pymsiecf_item_types_t *pymsiecf_item_types )
 {
-	static char *function = "pymsiecf_item_types_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pymsiecf_item_types_free";
 
 	if( pymsiecf_item_types == NULL )
 	{
@@ -276,25 +307,28 @@ void pymsiecf_item_types_free(
 
 		return;
 	}
-	if( pymsiecf_item_types->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pymsiecf_item_types );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid item types - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pymsiecf_item_types->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid item types - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pymsiecf_item_types->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pymsiecf_item_types );
 }
 
