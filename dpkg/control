@@ -1,13 +1,12 @@
 Source: libmsiecf
-Section: unknown
+Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev, python-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libmsiecf/
 
 Package: libmsiecf
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libmsiecf-dbg
@@ -17,28 +16,28 @@ Description: Library to access the MSIE Cache File (index.dat) format.
 Package: libmsiecf-dbg
 Architecture: any
 Section: debug
-Depends: libmsiecf (= ${Source-Version}), ${misc:Depends}
+Depends: libmsiecf (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libmsiecf
  Debugging symbols for libmsiecf.
 
 Package: libmsiecf-dev
 Section: libdevel
 Architecture: any
-Depends: libmsiecf (= ${Source-Version})
+Depends: libmsiecf (= ${binary:Version}), ${misc:Depends}
 Description: Header files and libraries for developing applications for libmsiecf
  Header files and libraries for developing applications for libmsiecf.
 
 Package: libmsiecf-tools
 Section: utils
 Architecture: any
-Depends: libmsiecf (= ${Source-Version}), ${shlibs:Depends}
+Depends: libmsiecf (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Several tools for reading MSIE Cache File (index.dat).
  Several tools for reading MSIE Cache File (index.dat).
 
 Package: libmsiecf-python
 Section: python
 Architecture: any
-Depends: libmsiecf (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Depends: libmsiecf (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Suggests: libmsiecf-python-dbg
 Description: Python bindings for libmsiecf
  Python bindings for libmsiecf.
@@ -46,7 +45,7 @@ Description: Python bindings for libmsiecf
 Package: libmsiecf-python-dbg
 Section: debug
 Architecture: any
-Depends: libmsiecf-python (= ${Source-Version})
+Depends: libmsiecf-python (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libmsiecf-python
  Debugging symbols for libmsiecf-python.
 

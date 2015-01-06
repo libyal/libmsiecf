@@ -1,7 +1,7 @@
 /*
  * Python bindings module for libmsiecf (pymsiecf)
  *
- * Copyright (C) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2015, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -468,6 +468,14 @@ PyMODINIT_FUNC initpymsiecf(
 	PyTypeObject *url_type_object        = NULL;
 	PyTypeObject *url_types_type_object  = NULL;
 	PyGILState_STATE gil_state           = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	libmsiecf_notify_set_stream(
+	 stderr,
+	 NULL );
+	libmsiecf_notify_set_verbose(
+	 1 );
+#endif
 
 	/* Create the module
 	 * This function must be called before grabbing the GIL

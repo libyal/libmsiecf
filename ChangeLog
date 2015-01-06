@@ -28,6 +28,9 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20150106
+* 2015 update
+
 20141222
 * worked on Python 3 support
 * worked on tests
