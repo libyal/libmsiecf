@@ -172,8 +172,8 @@ The History (periodic) in the following sections indicates both the History (dai
 | Type of MSIECF file | Characteristics
 | Temporary Internet Files (Cache) | %USERPROFILE%\AppData\Local\Microsoft\Windows\Temporary Internet Files\Content.IE5\index.dat +
 %USERPROFILE%\AppData\Local\Microsoft\Windows\Temporary Internet Files\Low\Content.IE5\index.dat
-| History (global) | %USERPROFILE%\AppData\Local\Microsoft\Windows\History\History.IE5\index.dat
-| %USERPROFILE%\AppData\Local\Microsoft\Windows\History\Low\History.IE5\index.dat +
+| History (global) | %USERPROFILE%\AppData\Local\Microsoft\Windows\History\History.IE5\index.dat +
+%USERPROFILE%\AppData\Local\Microsoft\Windows\History\Low\History.IE5\index.dat +
 | History (periodic) | %USERPROFILE%\AppData\Local\Microsoft\Windows\History\History.IE5\MSHist01yyyymmddyyyymmdd\index.dat +
 %USERPROFILE%\AppData\Local\Microsoft\Windows\History\Low\History.IE5\MSHist01yyyymmddyyyymmdd\index.dat
 | Cookies | %USERPROFILE%\AppData\Roaming\Microsoft\Windows\Cookies\index.dat +
