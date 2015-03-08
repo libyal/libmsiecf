@@ -616,7 +616,7 @@ The cache entry flags consist of the following values:
 3+| 
 | 0x00001000 | | [yellow-background]*HTTP request method* +
 [yellow-background]*0 => GET* +
-[yellow-background]*| 1 => POST*
+[yellow-background]*1 => POST*
 3+| 
 | 0x00010000 | SPARSE_CACHE_ENTRY | Partial response cache entry.
 | 0x00020000 | OCX_CACHE_ENTRY | OLE Control Extension (OCX) cache entry. +
