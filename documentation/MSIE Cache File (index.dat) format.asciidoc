@@ -976,7 +976,7 @@ Destination filename
 00000350: 00 00                                              .. 
 ....
 
-=== [use_of_filetime_values]Use of the FILETIME values
+=== [[use_of_filetime_values]]Use of the FILETIME values
 The FILETIME values in the URL record have different meanings for different 
 types of MSIECF files.
 
@@ -1010,7 +1010,7 @@ Contains the creation date and time of the MSIECF index.dat file | Last visited 
 
 **TODO: migrate rest of documentation**
 
-== [fat_date_time]FAT date time
+== [[fat_date_time]]FAT date time
 
 **TODO: migrate rest of documentation**
 
