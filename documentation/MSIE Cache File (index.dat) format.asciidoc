@@ -84,10 +84,6 @@ A MSIECF consist of the following distinguishable elements:
 ** redirected record
 ** leak record
 
-Character string
-ASCII strings are stored in extended ASCII with a codepage.
-Unicode strings are stored in UTF-16 little-endian without the byte order mark (BOM).
-
 [cols="1,5",options="header"]
 |===
 | Characteristics | Description
