@@ -449,9 +449,571 @@ records in the file.
 |===
 
 === Hash algorithm
-[yellow-background]*TODO: add text.**
+[yellow-background]*TODO: add text.*
 
 == URL record
+The URL record represents a cached entry. `[JONES03]` refers to this record as 
+the URL activity record.
+
+=== URL record format version 4.7
+The URL record version 4.7 ([yellow-background]*URL_FILEMAP_ENTRY*) is variable 
+of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+4+| _WININET FILEMAP_ENTRY_
+| 0 | 4 | "URL\x20" | The signature
+| 4 | 4 | | The number of blocks in URL record +
+The block size is 128 bytes
+4+| 
+| 8 | 8 | | The secondary time value +
+Contains a FILETIME or 0 if not set +
+See section: <<use_of_filetime_values,Use of the FILETIME values>>
+| 16 | 8 | | The primary time value +
+Contains a FILETIME or 0 if not set +
+[yellow-background]*Can contain 0x7fffffff 0xffffffff*
+See section: <<use_of_filetime_values,Use of the FILETIME values>>
+| 24 | 8 | | [yellow-background]*Expiration date and time* +
+Contains a FILETIME or 0 if not set
+| 32 | 4 | | Cached file size +
+Contains the number of bytes
+| 36 | 12 | | [yellow-background]*Unknown (Empty values)*
+| 48 | 4 | | [yellow-background]*Unknown (Empty values)*
+| 52 | 4 | | [yellow-background]*Unknown*
+| 56 | 4 | 104 (0x0068) | The location offset +
+The value is relative to the start of the URL record or 0 if not set
+| 60 | 1 | | Cache directory index +
+A value of 0 represents the first cache directory
+| 61 | 3 | | [yellow-background]*Unknown*
+| 64 | 4 | | The filename offset +
+The value is relative to the start of the URL record or 0 if not set
+| 68 | 4 | | Cache entry flags
+| 72 | 4 | | The data offset +
+The value is relative to the start of the URL record or 0 if not set
+| 76 | 4 | | The data size
+| 80 | 4 | | [yellow-background]*Unknown (Empty values)*
+| 84 | 4 | | Last checked date and time (Last synchronization date and time) +
+Contains a FAT date time or 0 if not set +
+See section: <<fat_date_time,FAT date time>>
+| 88 | 4 | | Number of hits
+| 92 | 4 | | [yellow-background]*Unknown (Empty values)* +
+[yellow-background]*Use count used in memory?*
+| 96 | 4 | | [yellow-background]*Unknown (Last cache synchronization date and time)* +
+Contains a FAT date time or 0 if not set +
+See section: <<fat_date_time,FAT date time>>
+| 100 | 4 | | [yellow-background]*Unknown (Empty values)*
+4+| _URL record data variable of size_
+| 104 +
+(location offset) | ... | | The location +
+ASCII string with an end-of-string character +
+[yellow-background]*Special characters are URL encoded* +
+(4 byte aligned)
+| (filename offset) | ... | | The filename in cache directory +
+ASCII string with an end-of-string character
+| (data offset) | (data size) | | Data
+| ... | ... | | [yellow-background]*Unknown (Uninitialized)*
+|===
+
+=== URL record format version 5.2
+The URL record version 5.2 (IE5_URL_FILEMAP_ENTRY or IE6_URL_FILEMAP_ENTRY) is 
+variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+4+| _WININET FILEMAP_ENTRY_
+| 0 | 4 | "URL\x20" | The signature
+| 4 | 4 | | The number of blocks in URL record +
+The block size is 128 bytes
+4+| 
+| 8 | 8 | | The secondary time value
+Contains a FILETIME or 0 if not set +
+See section: <<use_of_filetime_values,Use of the FILETIME values>>
+| 16 | 8 | | The primary time value +
+Contains a FILETIME or 0 if not set +
+See section: <<use_of_filetime_values,Use of the FILETIME values>>
+| 24 | 4 | | Expiration date and time +
+Contains a FAT date time or 0 if not set +
+[yellow-background]*Can contain 0xffff 0xffff (seen in a Visited URL record with an about: URI)* +
+[yellow-background]*-1 => never* +
+See section: <<fat_date_time,FAT date time>>
+| 28 | 4 | | [yellow-background]*Unknown (Empty values)*
+| 32 | 4 | | Cached file size +
+Contains the number of bytes
+| 36 | 4 | | Upper part of a 64-bit cached file size +
+Contains the number of bytes
+| 40 | 4 | | Group or group list offset
+| 44 | 4 | | The non-releasable time delta (exempt time delta) +
+Contains the number of seconds +
+Contains the number of seconds before the cached item may be released. The time delta is relative to the [yellow-background]*last access time*. Often it contains the value 86400 (0x00015180) seconds or 24 hours.
+| 48 | 4 | 96 (0x0060) | [yellow-background]*Unknown offset* +
+The value is relative to the start of the URL record
+| 52 | 4 | 104 (0x0068) | The location offset +
+The value is relative to the start of the URL record or 0 if not set
+| 56 | 1 | | Cache directory index +
+A value of 0 represents the first cache directory +
+[yellow-background]*0xfe => special type (cookie/iecompat/iedownload)?* +
+[yellow-background]*0xff => ?* +
+[yellow-background]*Note: A value of 0xFF could be a special flag. There is no associated file in the cache and the URL has the a *.cdf extension. Could be Channel Definition Files.*
+| 57 | 1 | | [yellow-background]*Unknown (synchronization count)* +
+[yellow-background]*0x00 => +
+[yellow-background]*0x01 => +
+[yellow-background]*0x02 => +
+[yellow-background]*0x03 =>
+| 58 | 1 | | [yellow-background]*Format version* +
+[yellow-background]*0x00 => IE5_URL_FILEMAP_ENTRY* +
+[yellow-background]*0x10 => IE6_URL_FILEMAP_ENTRY*
+| 59 | 1 | | [yellow-background]*Copy of format version* +
+[yellow-background]*0x00 => IE5_URL_FILEMAP_ENTRY* +
+[yellow-background]*0x10 => IE6_URL_FILEMAP_ENTRY*
+| 60 | 4 | | The filename offset +
+The value is relative to the start of the URL record or 0 if not set
+| 64 | 4 | | Cache entry flags
+| 68 | 4 | | The data offset +
+The value is relative to the start of the URL record or 0 if not set
+| 72 | 4 | | The data size
+| 76 | 4 | | [yellow-background]*Unknown (file extension offset or empty values)*
+| 80 | 4 | | Last checked date and time (Last synchronization date and time) +
+Contains a FAT date time or 0 if not set +
+See section: <<fat_date_time,FAT date time>>
+| 84 | 4 | | Number of hits [yellow-background]*(number of times the entry has been locked)*
+| 88 | 4 | | [yellow-background]*Unknown (Empty values)* +
+[yellow-background]*Use count used in memory?* +
+[yellow-background]*(level of lock nesting of the entry)*
+| 92 | 4 | | [yellow-background]*Unknown* +
+[yellow-background]*Last cache synchronization date and time (entry creation time?)* +
+Contains a FAT date time or 0 if not set +
+See section: <<fat_date_time,FAT date time>>
+4+| _URL record data variable of size_
+| 96 +
+(unknown offset) | 4 | | [yellow-background]*Unknown value* +
+(8 byte aligned)
+| 100 | 4 | | [yellow-background]*Unknown (Uninitialized)
+| 104 +
+(location offset) | ... | | The location +
+ASCII string with an end-of-string character +
+[yellow-background]*Special characters are URL encoded* +
+[yellow-background]*(8 byte aligned)*
+| (filename offset) | ... | | The filename in cache directory +
+ASCII string with an end-of-string character
+| (data offset) | (data size) | | Data
+| ... | ... | | [yellow-background]*Unknown (Uninitialized)*
+|===
+
+=== Cache entry flags
+The cache entry flags consist of the following values:
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x00000001 | NORMAL_CACHE_ENTRY | Normal cache entry; can be deleted to recover space for new entries.
+| 0x00000002 | STABLE_CACHE_ENTRY | 
+| 0x00000004 | STICKY_CACHE_ENTRY | Sticky cache entry that is exempt from scavenging for the amount of time specified by release  (exempt) delta. The default value set by the function CommitUrlCacheEntry is one day. +
+[yellow-background]*Has extended flags (unknown value at offset 40): 0x00004008?*
+| 0x00000008 | EDITED_CACHE_ENTRY | Cache entry file that has been edited externally. This cache entry type is exempt from scavenging. +
+[yellow-background]*Set for iecompat: and TLD Cache entries*
+| 0x00000010 | TRACK_OFFLINE_CACHE_ENTRY | Not currently implemented.
+| 0x00000020 | TRACK_ONLINE_CACHE_ENTRY | Not currently implemented.
+| 0x00000040 | | [yellow-background]*Is cached/cache-able?* +
+[yellow-background]*Not set if header contains "Pragma: no-cache" or other cache related headers are present*
+3+| 
+| 0x00001000 | | [yellow-background]*HTTP request method* +
+[yellow-background]*0 => GET* +
+[yellow-background]*| 1 => POST*
+3+| 
+| 0x00010000 | SPARSE_CACHE_ENTRY | Partial response cache entry.
+| 0x00020000 | OCX_CACHE_ENTRY | OLE Control Extension (OCX) cache entry. +
+OCX is a predecessor of ActiveX +
+[yellow-background]*Set for PrivacIE:*+
+3+| 
+| 0x00100000 | COOKIE_CACHE_ENTRY | Cookie cache entry.
+| 0x00200000 | URLHISTORY_CACHE_ENTRY | Visited link cache entry.
+| 0x00400000 | PENDING_DELETE_CACHE_ENTRY | Cache entry is pending deletion.
+3+| 
+| 0x10000000 | INSTALLED_CACHE_ENTRY | [yellow-background]*Unknown*
+3+| 
+| 0x80000000 | IDENTITY_CACHE_ENTRY | [yellow-background]*Unknown*
+|===
+
+=== URL record types
+The URL record values have different meanings for different types of MSIECF files.
+
+[cols="1,3",options="header"]
+|===
+| Type of MSIECF file | Location
+| Temporary Internet Files (Cache) | <URI>
+| History (global) | Visited: <username>@<URI>
+| History (periodic) | :<date range>: <username>@<URI> +
+Where date range is formatted as: yyyymmddyyyymmdd +
+[yellow-background]*What about Host: in the visited URI e.g.* +
+[yellow-background]*:2013011020130111: test@:Host: My Computer* +
+[yellow-background]*:2013010920130110: test@file:///C:/test.txt*
+| Cookies | Cookie:<username>@<URI>
+| InPrivate Filtering | PrivacIE:<URI filter expression>
+| [yellow-background]*Compatibility Cache* | iecompat:<filename>
+| TLD Cache | ietld:<filename>
+| Feeds Cache | feedplat:<URI>
+| User data | userdata:<username>@<protocol>@<URI>
+| DOM store | DOMStore:<URI>
+| Download history | iedownload:<GUID>
+|===
+
+[NOTE]
+[yellow-background]*Both History (global) and History (periodic) set URLHISTORY_CACHE_ENTRY but global sets STICKY_CACHE_ENTRY and periodic sets STICKY_CACHE_ENTRY.*
+
+According to [BUNTING] the History (global) URL record type contains:
+....
+<username>@<URL>
+....
+
+This has not been seen in MSIE 4 - 9 cache files.
+
+==== Cache URL record data
+The cache URL record contains a string with headers of the HTTP response.
+
+....
+flags: 0x00000001
+HTTP/1.0 200 OK^M
+Content-Type: image/gif^M
+Pragma: no-cache^M
+Content-Length: 43^M
+^M
+~U:username^M
+
+flags: 0x00000005
+HTTP/1.0 200 OK^M
+ETag: "13e-411e677a07f80"^M
+Content-Length: 318^M
+Content-Type: image/x-icon^M
+X-Cache: MISS from sq25.wikimedia.org^M
+X-Cache-Lookup: HIT from sq25.wikimedia.org:3128^M
+X-Cache: MISS from knsq26.knams.wikimedia.org^M
+X-Cache-Lookup: HIT from knsq26.knams.wikimedia.org:3128^M
+X-Cache: HIT from knsq3.knams.wikimedia.org^M
+X-Cache-Lookup: HIT from knsq3.knams.wikimedia.org:80^M
+^M
+~U:username^M
+
+flags: 0x00000041
+HTTP/1.1 200 OK^M
+Content-Length: 1445^M
+Content-Type: image/gif^M
+ETag: "096398e49cc81:bd5"^M
+X-Powered-By: ASP.NET^M
+^M
+~U:username^M
+
+flags: 0x00000045
+HTTP/1.1 200 OK^M
+Content-Length: 25214^M
+Content-Type: image/x-icon^M
+ETag: "931c9030e226c61:284"^M
+X-UA-Compatible: IE=EmulateIE7^M
+X-Powered-By: ASP.NET^M
+^M
+~U:username^M
+
+flags: 0x00001001
+HTTP/1.0 200 OK^M
+P3P: CP="NOI DEVo TAIa OUR BUS"^M
+X-Function: 101^M
+Pragma: no-cache^M
+Content-Type: application/x-javascript^M
+Content-Length: 209^M
+^M
+~U:username^M
+
+HTTP/1.0 200 OK^M
+P3P: CP="NON NID PSAa PSDa OUR IND UNI COM NAV STA",policyref="/w3c/p3p.xml"^M
+P3P: CP="NON NID PSAa PSDa OUR IND UNI COM NAV STA",policyref="/w3c/p3p.xml"^M
+ETag: "c9e504-2b-428a378f"^M
+Content-Length: 43^M
+Content-Type: image/gif^M
+^M
+~U:username^M
+
+flags: 0x00001041
+HTTP/1.1 200 OK^M
+Content-Type: text/html; charset=UTF-8^M
+Transfer-Encoding: chunked^M
+^M
+~U:username^M
+
+HTTP/1.1 200 OK^M
+Content-Type: text/html; charset=utf-8^M
+P3P: CP="ALL IND DSP COR ADM CONo CUR CUSo IVAo IVDo PSA PSD TAI TELo OUR SAMo CNT COM INT NAV ONL PHY PRE PUR UNI"^M
+X-Powered-By: ASP.NET^M
+X-UA-Compatible: IE=EmulateIE7^M
+X-AspNet-Version: 2.0.50727^M
+Transfer-Encoding: chunked^M
+^M
+~U:username^M
+....
+
+==== Visited URL record data
+The visited URL record contains information which user visited what URI.
+
+The URL record location consists of the following string
+....
+Visited: <username>@<URI>
+....
+
+If set the URL record data contains multiple entries in the following format:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 2 | | The entry size
+| 2 | 1 | | The entry type
+| 3 | 1 | | The value type
+| 4 | (entry size - 4) | | Value data
+|===
+
+The last entry is an empty entry consisting of 4 zero-bytes.
+
+[cols="1,1,1,5",options="header"]
+|===
+| Entry type | Value type | Identifier | Description
+| 0x02 | 0x00 | | [yellow-background]*Unknown*
+4+| 
+| 0x0e | 0x1e | | [yellow-background]*Unknown* +
+A GUID formatted as a string {000000-0000-0000-0000-00000000} with end-of-string character +
+[yellow-background]*(5 trailing empty bytes)*
+4+| 
+| 0x10 | 0x1f | | Page title +
+Unicode string (UTF-16 little-endian) without byte-order-mark and with end-of-string character +
+[yellow-background]*(4 trailing empty bytes)*
+| 0x11 | 0x01 | | [yellow-background]*Filenames* +
+[yellow-background]*Special characters are URL encoded* +
+[yellow-background]*(4 trailing empty bytes)*
+4+| 
+| 0x14 | 0x03 | | [yellow-background]*Unknown* +
+[yellow-background]*(4 trailing empty bytes)*
+| 0x15 | 0x1e | | HTTP URI of favicon +
+Extended ASCII string with end-of-string character +
+[yellow-background]*(4 trailing empty bytes)*
+| 0x16 | 0x1f | | File URI +
+Unicode string (UTF-16 little-endian) without byte-order-mark and with end-of-string character +
+Special characters are URL encoded +
+[yellow-background]*(4 trailing empty bytes)*
+| 0x17 | 0x13 | | [yellow-background]*Unknown* +
+[yellow-background]*(4 trailing empty bytes)*
+| 0x18 | 0x40 | | [yellow-background]*Unknown* +
+Contains a FILETIME +
+[yellow-background]*(4 trailing empty bytes)*
+4+| 
+| 0x1c | 0x03 | | [yellow-background]*Unknown* +
+[yellow-background]*(4 trailing empty bytes)*
+4+| 
+| 0x1e | 0x40 | | [yellow-background]*Unknown* +
+Contains a FILETIME +
+[yellow-background]*(4 trailing empty bytes)*
+Contains a FILETIME
+4+| 
+| 0x20 | 0x03 | | [yellow-background]*Unknown* +
+[yellow-background]*(4 trailing empty bytes)*
+|===
+
+The value types are similar to the values used by the OLE variant types (VT) and MAPI data (property) types (PT):
+
+[cols="1,1,5",options="header"]
+|===
+| Value type | Identifier | Description
+| 0x00 | VT_EMPTY | Empty
+| 0x01 | | [yellow-background]*Multi value UTF-16 string?*
+3+| 
+| 0x03 | VT_I4 | Integer 32-bit signed
+3+| 
+| 0x1e | VT_LPSTR | Extended ASCII string with end-of-string character
+| 0x1f | VT_LPWSTR | Unicode string (UTF-16 little-endian) without byte-order-mark and with end-of-string character
+|===
+
+[yellow-background]*What about the first entry it has an empty value type but contains values.*
+[yellow-background]*Perhaps it's some kind of header? It is present in every validation data.*
+[yellow-background]*first 32-bit value contains:*
+....
+00 00 00 00 00 00 00 00  00 00 00 00 (0 or 1 entries)
+00 00 00 10 00 00 00 00  00 00 00 00 (0 or 1 entries)
+00 00 00 10 00 00 00 00  01 00 00 00 (multiple entries)
+00 00 00 10 00 00 00 00  03 00 00 00 (multiple entries)
+....
+
+==== InPrivate Filtering URL record data
+[yellow-background]*data does not change between items*
+....
+00000000: f1 ff 00 00 01 00 00 00  04 00 00 00 81 41 33 21   ........ .....A3!
+00000010: 00 00 00 00
+....
+
+==== Compatibility URL record data
+[yellow-background]*data does not change between items*
+....
+00000000: 58 49 71 17 00 00 08 00  00 00 00 00               XIq..... ....
+....
+
+==== TLD URL record data
+[yellow-background]*data does not change between items*
+....
+00000000: 01 00 00 00 01 00 00 00  00 00 00 00               ........ ....
+....
+
+==== Download URL record data
+If set the URL record data contains data in the following format:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | 0x00000085 | [yellow-background]*Unknown* +
+[yellow-background]*Value does not change, maybe version indicator*
+| 4 | 4 | | [yellow-background]*Download status* +
+[yellow-background]*0x00000001 => in progress?* +
+[yellow-background]*0x00000003 => paused* +
+[yellow-background]*0x00000006 => interrupted* +
+[yellow-background]*0x0000000b => completed*
+| 8 | 8 | | [yellow-background]*Unknown (Empty values)*
+| 16 | 4 | | [yellow-background]*Unknown* +
+[yellow-background]*sometimes 0*
+| 20 | 16 | | [yellow-background]*GUID* +
+[yellow-background]*Should match the GUID in the location string or 0 if not set e.g. in canceled download*
+| 36 | 8 | | [yellow-background]*Download start time* +
+Contains a FILETIME
+| 44 | 4 | | [yellow-background]*Unknown (Empty values)*
+| 48 | 8 | | [yellow-background]*Unknown*
+| 56 | 4 | | [yellow-background]*Unknown*
+| 60 | 4 | | [yellow-background]*Unknown*
+| 64 | 4 | | [yellow-background]*Unknown*
+| 68 | 4 | | [yellow-background]*Unknown*
+| 72 | 8 | | Total download size +
+Value in bytes
+| 80 | 8 | | [yellow-background]*If status is in progress* +
+[yellow-background]*Number of bytes downloaded?*
+| 88 | 8 | | [yellow-background]*Unknown*
+| 96 | 8 | | [yellow-background]*Unknown (Empty values)*
+| 104 | 8 | | [yellow-background]*Unknown* +
+[yellow-background]*Set to 1 if string array contains a company/organization name?*
+| 112 | 8 | | [yellow-background]*Unknown*
+| 0x06 | 120 | 4 | | Flags +
+0x01 => complete download (otherwise partial) +
+[yellow-background]*0x02 => unknown (related to signing info)* +
+[yellow-background]*0x04 => unknown (related to signing info)* +
+0x08 => string array contains a company/organization name +
+0x10 => string array contains originating website URL +
+[yellow-background]*0x40 => unknown (related to signing info)*
+| 124 | 16 | | [yellow-background]*Unknown (Empty values)*
+| 140 | 4 | | [yellow-background]*Unknown* +
+[yellow-background]*Set to 1 if string array contains a company/organization name?*
+| 144 | 2 | | [yellow-background]*Unknown* +
+[yellow-background]*2 => HTTP/HTTPS*
+| 146 | 2 | | [yellow-background]*Unknown* +
+[yellow-background]*0x5000 HTTP*
+| 148 | 4 | | [yellow-background]*Unknown (hash or checksum?)* +
+[yellow-background]*not set for FTP*
+| 152 | 152 | | [yellow-background]*Unknown (Empty values)*
+| 304 | 8 | | [yellow-background]*Unknown* +
+[yellow-background]*0 most of the time also seen 1*
+| 312 | ...  | | [yellow-background]*Array of strings*
+|===
+
+[yellow-background]*Does the Last cache synchronization date and time of the URL contain the download time or is this just a common side effect of original purpose of the date and time value?*
+
+....
+iedownload:{7EAE5A0A-00F9-11E2-8E4F-705AB642E02F}
+
+GUID related to GUID in URL location?
+FILETIME (same as primary time? Sep 17, 2012 18:57:26.719662000)
+downloaded file size
+00000000: 85 00 00 00 0b 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+00000010: e9 fd 00 00 45 88 5d 33  f9 00 e2 11 8e 4f 70 5a   ....E.]3 .....OpZ 
+00000020: b6 42 e0 2f cc 7e 99 47  06 95 cd 01 00 00 00 00   .B./.~.G ........ 
+
+00000030: 91 01 00 00 00 00 00 00  01 00 00 00 01 00 00 00   ........ ........ 
+00000040: 00 00 00 00 01 00 00 00  28 cc 04 01 00 00 00 00   ........ (....... 
+
+00000050: 59 b5 00 00 00 00 00 00  01 00 00 00 00 00 00 00   Y....... ........ 
+00000060: 00 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00   ........ ........ 
+00000070: 06 00 00 00 00 00 00 00  19 00 00 00 00 00 00 00   ........ ........ 
+00000080: 00 00 00 00 00 00 00 00  00 00 00 00 01 00 00 00   ........ ........ 
+00000090: 02 00 00 50 17 40 0f 1a                            ...P.@.. ........ 
+
+00000090:                          00 00 00 00 00 00 00 00   ...P.@.. ........ 
+000000a0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+000000b0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+000000c0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+000000d0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+000000e0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+000000f0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+00000100: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+00000110: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+00000120: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........ 
+00000130: 00 00 00 00 00 00 00 00                            ........         
+
+Company/Organization name
+00000130:                          4d 00 69 00 63 00 72 00            M.i.c.r. 
+00000140: 6f 00 73 00 6f 00 66 00  74 00 20 00 43 00 6f 00   o.s.o.f. t. .C.o. 
+00000150: 72 00 70 00 6f 00 72 00  61 00 74 00 69 00 6f 00   r.p.o.r. a.t.i.o. 
+00000160: 6e 00 00 00                                        n...              
+
+URL download originating webpage
+00000160:             68 00 74 00  74 00 70 00 3a 00 2f 00       h.t. t.p.:./. 
+00000170: 2f 00 77 00 77 00 77 00  2e 00 6d 00 69 00 63 00   /.w.w.w. ..m.i.c. 
+00000180: 72 00 6f 00 73 00 6f 00  66 00 74 00 2e 00 63 00   r.o.s.o. f.t...c. 
+...
+000001c0: 77 00 6e 00 6c 00 6f 00  61 00 64 00 2e 00 61 00   w.n.l.o. a.d...a. 
+000001d0: 73 00 70 00 78 00 00 00                            s.p.x...         
+
+URL download
+000001d0:                          68 00 74 00 74 00 70 00            h.t.t.p. 
+000001e0: 3a 00 2f 00 2f 00 64 00  6f 00 77 00 6e 00 6c 00   :././.d. o.w.n.l.
+...
+000002c0: 2e 00 6d 00 73 00 75 00  00 00                     ..m.s.u. ..       
+
+Destination filename
+000002c0:                                43 00 3a 00 5c 00              C.:.\. 
+..
+00000340: 68 00 50 00 6b 00 67 00  2e 00 6d 00 73 00 75 00   h.P.k.g. ..m.s.u. 
+00000350: 00 00                                              .. 
+....
+
+=== [use_of_filetime_values]Use of the FILETIME values
+The FILETIME values in the URL record have different meanings for different 
+types of MSIECF files.
+
+[cols="1,1,1",options="header"]
+|===
+| Type of MSIECF file | Primary time value | Secondary time value
+| Temporary Internet Files (Cache) | Client last accessed date and time in UTC | Server modification date and time in UTC
+| History (global) | Last visited date and time in UTC | Last visited date and time in UTC
+| History (weekly) | History creation date and time in UTC +
+Contains the creation date and time of the MSIECF index.dat file | Last visited date and time in local timezone
+| History (daily) | Last visited date and time in UTC | Last visited date and time in local timezone
+| Cookies | Cookie last accessed date and time in UTC | Cookie modification date and time in UTC
+| InPrivate Filtering | [yellow-background]*UTC* | [yellow-background]*Emtpy*
+| [yellow-background]*Compatibility Cache* | [yellow-background]*UTC* | [yellow-background]*Emtpy*
+| TLD Cache | [yellow-background]*UTC* | [yellow-background]*Emtpy*
+| Feeds Cache | [yellow-background]*UTC* | [yellow-background]*Emtpy*
+| User data | [yellow-background]*UTC* | [yellow-background]*Emtpy*
+| DOM Store | [yellow-background]*UTC* | [yellow-background]*Emtpy*
+| Download history | [yellow-background]*Downloaded file creation time in UTC* +
+[yellow-background]*(download start time)* | [yellow-background]*Emtpy*
+|===
+
+[NOTE]
+[yellow-background]*On Windows 7 the MA.B times of the downloaded file are the same as the downloaded file creation time.*
+
+== Redirected record
+
+**TODO: migrate rest of documentation**
+
+== Leak record
+
+**TODO: migrate rest of documentation**
+
+== [fat_date_time]FAT date time
+
+**TODO: migrate rest of documentation**
+
+== Notes
 
 **TODO: migrate rest of documentation**
 
@@ -467,6 +1029,61 @@ records in the file.
 | Author(s): | 
 | Date: | 
 | URL: | 
+|===
+
+`[JONES03]`
+
+[cols="1,5",options="header"]
+|===
+| Title: | Forensic Analysis of Internet Explorer Activity Files
+| Author(s): | Keith J. Jones
+| URL: | http://sourceforge.net/projects/odessa/
+|===
+
+[cols="1,5",options="header"]
+|===
+| Title: | Microsoft Windows Browser Cache system info
+| URL: | http://www.conknet.com/~w_kranz/mswinbrz.txt
+|===
+
+[cols="1,5",options="header"]
+|===
+| Title: | Reverse Engineering Index.dat
+| URL: | http://www.latenighthacking.com/projects/2003/reIndexDat/
+|===
+
+`[CHAPPELL10]`
+
+[cols="1,5",options="header"]
+|===
+| Title: | The INDEX.DAT File Format
+| Author(s): | Geoff Chappell
+| URL: | http://www.geoffchappell.com/studies/windows/ie/wininet/api/urlcache/hashkey.htm?tx=20,78,83,84,88
+|===
+
+[cols="1,5",options="header"]
+|===
+| Title: | The Hash Algorithm for URL Caching
+| Author(s): | Geoff Chappell
+| URL: | http://www.geoffchappell.com/studies/windows/ie/wininet/api/urlcache/hashkey.htm?tx=20,78,83,84,88
+|===
+
+`[BUNTING]`
+
+[cols="1,5",options="header"]
+|===
+| Title: | Understanding index.dat Files
+| Author(s): | Captain Stephen M. Bunting
+| URL: | http://web.archive.org/web/20090605202325/http://128.175.24.251/forensics/index_dat1.htm +
+http://web.archive.org/web/20090605200839/http://128.175.24.251/forensics/index_dat2.htm 
+|===
+
+`[MSDN]`
+
+[cols="1,5",options="header"]
+|===
+| Title: | Microsoft Developer Network
+| URL: | http://msdn.microsoft.com/
 |===
 
 [appendix]
