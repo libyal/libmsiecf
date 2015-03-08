@@ -1022,16 +1022,6 @@ Contains the creation date and time of the MSIECF index.dat file | Last visited 
 [appendix]
 == References
 
-`[REFERENCE]`
-
-[cols="1,5",options="header"]
-|===
-| Title: | 
-| Author(s): | 
-| Date: | 
-| URL: | 
-|===
-
 `[JONES03]`
 
 [cols="1,5",options="header"]
