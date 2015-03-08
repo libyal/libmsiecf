@@ -472,7 +472,7 @@ Contains a FILETIME or 0 if not set +
 See section: <<use_of_filetime_values,Use of the FILETIME values>>
 | 16 | 8 | | The primary time value +
 Contains a FILETIME or 0 if not set +
-[yellow-background]*Can contain 0x7fffffff 0xffffffff*
+[yellow-background]*Can contain 0x7fffffff 0xffffffff* +
 See section: <<use_of_filetime_values,Use of the FILETIME values>>
 | 24 | 8 | | [yellow-background]*Expiration date and time* +
 Contains a FILETIME or 0 if not set
@@ -662,7 +662,7 @@ Where date range is formatted as: yyyymmddyyyymmdd +
 [NOTE]
 [yellow-background]*Both History (global) and History (periodic) set URLHISTORY_CACHE_ENTRY but global sets STICKY_CACHE_ENTRY and periodic sets STICKY_CACHE_ENTRY.*
 
-According to [BUNTING] the History (global) URL record type contains:
+According to `[BUNTING]` the History (global) URL record type contains:
 ....
 <username>@<URL>
 ....
@@ -892,8 +892,9 @@ Value in bytes
 | 96 | 8 | | [yellow-background]*Unknown (Empty values)*
 | 104 | 8 | | [yellow-background]*Unknown* +
 [yellow-background]*Set to 1 if string array contains a company/organization name?*
-| 112 | 8 | | [yellow-background]*Unknown*
-| 0x06 | 120 | 4 | | Flags +
+| 112 | 8 | | [yellow-background]*Unknown* +
+[yellow-background]*0x06*
+| 120 | 4 | | Flags +
 0x01 => complete download (otherwise partial) +
 [yellow-background]*0x02 => unknown (related to signing info)* +
 [yellow-background]*0x04 => unknown (related to signing info)* +
