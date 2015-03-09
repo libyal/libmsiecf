@@ -16,6 +16,7 @@ pyexec_LTLIBRARIES = pymsiecf.la
 
 pymsiecf_la_SOURCES = \
 	pymsiecf.c pymsiecf.h \
+	pymsiecf_cache_directories.c pymsiecf_cache_directories.h \
 	pymsiecf_codepage.c pymsiecf_codepage.h \
 	pymsiecf_datetime.c pymsiecf_datetime.h \
 	pymsiecf_error.c pymsiecf_error.h \

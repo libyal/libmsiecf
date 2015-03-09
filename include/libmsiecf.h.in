@@ -324,7 +324,7 @@ int libmsiecf_file_get_number_of_cache_directories(
      int *number_of_cache_directories,
      libmsiecf_error_t **error );
 
-/* Retrieves the UTF-8 encoded name of a certain cache directory
+/* Retrieves the extended ASCII encoded name of a certain cache directory
  * The size should include the end of string character
  * The cache directory name consists of 8 characters + end of string character
  * Returns 1 if successful or -1 on error

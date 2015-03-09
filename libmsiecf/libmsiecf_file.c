@@ -1416,7 +1416,7 @@ int libmsiecf_file_get_number_of_cache_directories(
 	return( 1 );
 }
 
-/* Retrieves the UTF-8 encoded name of a certain cache directory
+/* Retrieves the extended ASCII encoded name of a certain cache directory
  * The size should include the end of string character
  * The cache directory name consists of 8 characters + end of string character
  * Returns 1 if successful or -1 on error
@@ -1506,7 +1506,6 @@ int libmsiecf_file_get_cache_directory_name(
 		return( -1 );
 	}
 	/* Assumed that the directory name contains only basic ASCII characters
-	 * which are the same in UTF-8
 	 */
 	if( memory_copy(
 	     cache_directory_name,

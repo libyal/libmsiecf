@@ -610,6 +610,8 @@ int export_handle_export_item_leak(
 
 			goto on_error;
 		}
+		/* Assumed that the directory name contains only basic ASCII characters
+		 */
 		fprintf(
 		 export_handle->notify_stream,
 		 " (%s)",

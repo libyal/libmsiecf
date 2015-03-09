@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #endif
 
+#include "pymsiecf_cache_directories.h"
 #include "pymsiecf_codepage.h"
 #include "pymsiecf_error.h"
 #include "pymsiecf_file.h"
@@ -99,7 +100,7 @@ PyMethodDef pymsiecf_file_object_methods[] = {
 	  "Set the codepage used for ASCII strings in the file\n"
 	  "Expects the codepage to be a String containing a Python codec definition" },
 
-	/* Functions to access the items */
+	/* Functions to access the cache directories */
 
 	{ "format_version",
 	  (PyCFunction) pymsiecf_file_get_format_version,
@@ -107,6 +108,22 @@ PyMethodDef pymsiecf_file_object_methods[] = {
 	  "get_format_version() -> Unicode string or None\n"
 	  "\n"
 	  "Retrieves the format version" },
+
+	{ "get_number_of_cache_directories",
+	  (PyCFunction) pymsiecf_file_get_number_of_cache_directories,
+	  METH_NOARGS,
+	  "get_number_of_cache_directories() -> Integer\n"
+	  "\n"
+	  "Retrieves the number of cache directories" },
+
+	{ "get_cache_directory",
+	  (PyCFunction) pymsiecf_file_get_cache_directory,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "get_cache_directory(cache_directory_index) -> Object or None\n"
+	  "\n"
+	  "Retrieves a specific cache directory" },
+
+	/* Functions to access the items */
 
 	{ "get_number_of_items",
 	  (PyCFunction) pymsiecf_file_get_number_of_items,
@@ -152,6 +169,18 @@ PyGetSetDef pymsiecf_file_object_get_set_definitions[] = {
 	  (getter) pymsiecf_file_get_format_version,
 	  (setter) 0,
 	  "The format version",
+	  NULL },
+
+	{ "number_of_cache_directories",
+	  (getter) pymsiecf_file_get_number_of_cache_directories,
+	  (setter) 0,
+	  "The number of cache directories",
+	  NULL },
+
+	{ "cache_directories",
+	  (getter) pymsiecf_file_get_cache_directories,
+	  (setter) 0,
+	  "The cache directories",
 	  NULL },
 
 	{ "number_of_items",
@@ -1260,6 +1289,222 @@ PyObject *pymsiecf_file_get_format_version(
 	         version_string,
 	         (Py_ssize_t) 3,
 	         errors ) );
+}
+
+/* Retrieves the number of cache directories
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_file_get_number_of_cache_directories(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error        = NULL;
+	PyObject *integer_object        = NULL;
+	static char *function           = "pymsiecf_file_get_number_of_cache_directories";
+	int number_of_cache_directories = 0;
+	int result                      = 0;
+
+	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
+
+	if( pymsiecf_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_file_get_number_of_cache_directories(
+	          pymsiecf_file->file,
+	          &number_of_cache_directories,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of cache directories.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_cache_directories );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_cache_directories );
+#endif
+	return( integer_object );
+}
+
+/* Retrieves a specific cache directory by index
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_file_get_cache_directory_by_index(
+           pymsiecf_file_t *pymsiecf_file,
+           int cache_directory_index )
+{
+	char cache_directory_name[ 9 ];
+
+	libcerror_error_t *error = NULL;
+	PyObject *string_object  = NULL;
+	static char *function    = "pymsiecf_file_get_cache_directory_by_index";
+	int result               = 0;
+
+	if( pymsiecf_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_file_get_cache_directory_name(
+	          pymsiecf_file->file,
+	          cache_directory_index,
+	          cache_directory_name,
+	          9,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve cache directory name: %d.",
+		 function,
+		 cache_directory_index );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	/* Assumed that the directory name contains only basic ASCII characters
+	 */
+#if PY_MAJOR_VERSION >= 3
+	string_object = PyBytes_FromString(
+	                 cache_directory_name );
+#else
+	string_object = PyString_FromString(
+	                 cache_directory_name );
+#endif
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to convert cache directory name string into string object.",
+		 function );
+
+		return( NULL );
+	}
+	return( string_object );
+}
+
+/* Retrieves a specific cache directory
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_file_get_cache_directory(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *string_object     = NULL;
+	static char *keyword_list[] = { "cache_directory_index", NULL };
+	int cache_directory_index   = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "i",
+	     keyword_list,
+	     &cache_directory_index ) == 0 )
+	{
+		return( NULL );
+	}
+	string_object = pymsiecf_file_get_cache_directory_by_index(
+	                 pymsiecf_file,
+	                 cache_directory_index );
+
+	return( string_object );
+}
+
+/* Retrieves a cache directories sequence and iterator object for the cache directories
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_file_get_cache_directories(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error           = NULL;
+	PyObject *cache_directories_object = NULL;
+	static char *function              = "pymsiecf_file_get_cache_directories";
+	int number_of_cache_directories    = 0;
+	int result                         = 0;
+
+	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
+
+	if( pymsiecf_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_file_get_number_of_cache_directories(
+	          pymsiecf_file->file,
+	          &number_of_cache_directories,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of cache directories.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	cache_directories_object = pymsiecf_cache_directories_new(
+	                            pymsiecf_file,
+	                            &pymsiecf_file_get_cache_directory_by_index,
+	                            number_of_cache_directories );
+
+	if( cache_directories_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create cache directories object.",
+		 function );
+
+		return( NULL );
+	}
+	return( cache_directories_object );
 }
 
 /* Retrieves the number of items

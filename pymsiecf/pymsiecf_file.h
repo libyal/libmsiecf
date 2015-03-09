@@ -122,6 +122,23 @@ PyObject *pymsiecf_file_get_format_version(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments );
 
+PyObject *pymsiecf_file_get_number_of_cache_directories(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments );
+
+PyObject *pymsiecf_file_get_cache_directory_by_index(
+           pymsiecf_file_t *pymsiecf_file,
+           int cache_directory_index );
+
+PyObject *pymsiecf_file_get_cache_directory(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pymsiecf_file_get_cache_directories(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments );
+
 PyObject *pymsiecf_file_get_number_of_items(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments );
