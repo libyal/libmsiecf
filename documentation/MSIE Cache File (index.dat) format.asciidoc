@@ -1258,19 +1258,57 @@ iedownload:
 | 524 | | | 
 |===
 
+....
 0x15	CACHE_HEADER_DATA_NOTIFICATION_FILTER	bit flags to filter cache notifications
 0x16	CACHE_HEADER_DATA_ROOT_LEAK_OFFSET	file offset of first leak entry
 0x1B	CACHE_HEADER_DATA_ROOT_GROUPLIST_OFFSET	file offset of first GROUP_LIST_ENTRY, else zero
+....
 
 === Groups and group list
+[yellow-background]*URL record group list or group offset*
+[yellow-background]*set for http:// with flags 0x00000004 set. The value does not change for different items (0x00004008)*
+[yellow-background]*Although the flag is set in some host/file it contains 0x00000000*
 
-**TODO: migrate rest of documentation**
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 8 | | Group identifier +
+0 if group entry is not used, -1 if group entry is an index entry
+4+| _If group identifier == -1_
+| 8 | 4 | | Group entry offset +
+The offset is relative to the start of the file or 0 if not available
+4+| _Else if group identifier != 0_
+| 8 | 4 | | Group flags
+4+| _Common_
+| 12 | 4 | | Group type
+| 16 | 8 | | Disk usage +
+Value in bytes
+| 24 | 8 | | Disk quota +
+Value in 1024 bytes (KiB)
+4+| _If group identifier == -1_
+| 8 | 4 | | First available (free) group entry offset +
+| The offset is relative to the start of the file or 0 if not available
+4+| _Else if group identifier != 0_
+| 8 | 4 | | Group data offset +
+The offset is relative to the start of the file or 0 if not available
+4+| _Common_
+| 32 | 8 | | [yellow-background]*Unknown (Empty values)*
+|===
 
+[cols="1,1,5",options="header"]
+|===
+| Value type | Identifier | Description
+| 0x01 | CACHEGROUP_FLAG_NONPURGEABLE | 
+| 0x02 | CACHEGROUP_FLAG_FLUSHURL_ONDELETE |
+|===
+
+....
 Offset	Size	Description
 0x00	GROUPNAME_MAX_LENGTH bytes	group name
 0x78	GROUP_OWNER_STORAGE_SIZE dwords	owner storage
 0x88	dword	in allocated entry:	zero
 in free entry:	file offset of next free GROUP_DATA_ENTRY, else zero
+....
 
 === Hash algorithm
 Define the hash pad table as:
