@@ -312,7 +312,7 @@ The cache directory entry is 12 bytes of size and consists of:
 | Offset | Size | Value | Description
 | 0 | 4 | | The number of cached files in the directory
 | 4 | 8 | | Cache directory name +
-ASCII string without an end-of_string character
+ASCII string without an end-of-string character
 |===
 
 [NOTE]
@@ -621,7 +621,7 @@ The cache entry flags consist of the following values:
 | 0x00010000 | SPARSE_CACHE_ENTRY | Partial response cache entry.
 | 0x00020000 | OCX_CACHE_ENTRY | OLE Control Extension (OCX) cache entry. +
 OCX is a predecessor of ActiveX +
-[yellow-background]*Set for PrivacIE:*+
+[yellow-background]*Set for PrivacIE:*
 3+| 
 | 0x00100000 | COOKIE_CACHE_ENTRY | Cookie cache entry.
 | 0x00200000 | URLHISTORY_CACHE_ENTRY | Visited link cache entry.
@@ -909,7 +909,7 @@ Value in bytes
 | 152 | 152 | | [yellow-background]*Unknown (Empty values)*
 | 304 | 8 | | [yellow-background]*Unknown* +
 [yellow-background]*0 most of the time also seen 1*
-| 312 | ...  | | [yellow-background]*Array of strings*
+| 312 | ... | | [yellow-background]*Array of strings*
 |===
 
 [yellow-background]*Does the Last cache synchronization date and time of the URL contain the download time or is this just a common side effect of original purpose of the date and time value?*
@@ -999,20 +999,361 @@ Contains the creation date and time of the MSIECF index.dat file | Last visited 
 [yellow-background]*On Windows 7 the MA.B times of the downloaded file are the same as the downloaded file creation time.*
 
 == Redirected record
+The redirected record represents a redirected entry. `[JONES03]` refers to this 
+record as the REDR activity record.
 
-**TODO: migrate rest of documentation**
+The redirected record is variable of size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+4+| _WININET FILEMAP_ENTRY_
+| 0 | 4 | "REDR" | The signature
+| 4 | 4 | | The number of blocks in redirected record +
+The block size is 128 bytes
+4+| 
+| 8 | 4 | | [yellow-background]*Target hash table entry offset* +
+[yellow-background]*The offset is relative from the start of the file* +
+[yellow-background]*(However it does not seem to be the corresponding URL record, perhaps run-time remnant data)*
+| 12 | 4 | | [yellow-background]*Target URL hash value*
+| 16 | ... | | The location +
+ASCII string with an end-of-string character
+|===
 
 == Leak record
+The leak record represents a cached URL record that is not longer consider as a 
+valid part of the cache but that was not removed. See [CHAPPELL10] for a more 
+detailed description.
 
-**TODO: migrate rest of documentation**
+The leak record is variable of size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+4+| _WININET FILEMAP_ENTRY_
+| 0 | 4 | "LEAK" | The signature
+| 4 | 4 | | The number of blocks in URL record +
+The block size is 128 bytes
+4+| 
+| 8 | 24 | | [yellow-background]*Unknown (Uninitialized)*
+| 32 | 4 | | Cached file size in bytes
+| 36 | 8 | | [yellow-background]*Unknown (Uninitialized)*
+| 44 | 4 | | [yellow-background]*Next leak record offset* +
+[yellow-background]*The offset is relative from the start of the file*
+| 48 | 8 | | [yellow-background]*Unknown (Uninitialized)*
+| 56 | 1 | | Cache directory index +
+A value of 0 represents the first cache directory
+| 57 | 3 | | [yellow-background]*Unknown (Uninitialized)*
+| 60 | 4 | | The filename offset +
+The value is relative to the start of the URL record or 0 if not set
+| 64 | 24 | | [yellow-background]*Unknown (Uninitialized)*
+| 88 | 4 | | [yellow-background]*Unknown (Empty values)*
+| 92 | 4 | | [yellow-background]*Unknown (Last cache synchronization date and time)* +
+Contains a FAT date time or 0 if not set +
+See section: <<fat_date_time,FAT date time>>
+4+| _LEAK record data variable of size_
+| 96 | 8 | | [yellow-background]*Unknown (Uninitialized)*
+| 104 +
+(filename offset) | ... | | The filename in cache directory +
+ASCII string with an end-of-string character +
+[yellow-background]*(8 byte aligned)*
+| ... | ... | | [yellow-background]*Unknown (Uninitialized)*
+|===
 
 == [[fat_date_time]]FAT date time
+The FAT date time consists of 4 bytes:
 
-**TODO: migrate rest of documentation**
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 2 | | date
+| 2 | 2 | | time
+|===
+
+In little-endian the 16-bit date value corresponds to:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| Bit 0 (LSB) | 5 bits | | Day of the month
+| Bit 5 | 4 bits | | Month +
+0x01 => January
+| Bit 9 | 7 bits | | Year +
+0x00 => 1980
+|===
+
+In little-endian the 16-bit time value corresponds to:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| Bit 0 (LSB) | 5 bits | | Seconds +
+in 2 second intervals
+| Bit 5 | 6 bits | | Minutes
+| Bit 11 | 5 bits | | Hours
+|===
 
 == Notes
+....
+INTERNET_CACHE_ENTRY_INFO Structure defines 4 time stamps
+  FILETIME LastModifiedTime;
+  FILETIME ExpireTime;
+  FILETIME LastAccessTime;
+  FILETIME LastSyncTime;
+
+typedef struct _INTERNET_CACHE_TIMESTAMPS {
+  FILETIME ftExpires;
+  FILETIME ftLastModified;
+}INTERNET_CACHE_TIMESTAMPS, *LPINTERNET_CACHE_TIMESTAMPS;
+....
+
+=== Cache entry control flags
+
+[cols="1,1,5",options="header"]
+|===
+| Value type | Identifier | Description
+| 0x00000004 | CACHE_ENTRY_ATTRIBUTE_FC | Sets the cache entry type.
+3+| 
+| 0x00000010 | CACHE_ENTRY_HITRATE_FC | Sets the hit rate.
+3+| 
+| 0x00000040 | CACHE_ENTRY_MODTIME_FC | Sets the last modified time.
+| 0x00000080 | CACHE_ENTRY_EXPTIME_FC | Sets the expire time.
+| 0x00000100 | CACHE_ENTRY_ACCTIME_FC | Sets the last access time.
+| 0x00000200 | CACHE_ENTRY_SYNCTIME_FC | Sets the last sync time.
+| 0x00000400 | CACHE_ENTRY_HEADERINFO_FC | Not currently implemented.
+| 0x00000800 | CACHE_ENTRY_EXEMPT_DELTA_FC | Sets the exempt delta.
+|===
+
+=== Cookie state flags
+The InternetCookieState enumeration defines the state of the cookie.
+....
+Syntax
+
+typedef enum  {
+  COOKIE_STATE_UNKNOWN     = 0x0,
+  COOKIE_STATE_ACCEPT      = 0x1,
+  COOKIE_STATE_PROMPT      = 0x2,
+  COOKIE_STATE_LEASH       = 0x3,
+  COOKIE_STATE_DOWNGRADE   = 0x4,
+  COOKIE_STATE_REJECT      = 0x5,
+  COOKIE_STATE_MAX         = COOKIE_STATE_REJECT
+} InternetCookieState;
+
+Constants
+
+COOKIE_STATE_UNKNOWN
+
+    Reserved.
+COOKIE_STATE_ACCEPT
+
+    The cookies are accepted.
+COOKIE_STATE_PROMPT
+
+    The user is prompted to accept or deny the cookie.
+COOKIE_STATE_LEASH
+
+    Cookies are accepted only in the first-party context.
+COOKIE_STATE_DOWNGRADE
+
+    Cookies are accepted and become session cookies.
+COOKIE_STATE_REJECT
+
+    The cookies are rejected.
+COOKIE_STATE_MAX
+
+    Same as COOKIE_STATE_REJECT.
+....
+
+=== Cache entry flags
+res://
+
+* location
+* filename
+* flags: 0x00000001
+
+http://
+
+* location
+* filename
+* data (string)
+* flags: 0x00000001
+* flags: 0x00000005 (Has unknown value at offset 40)
+* flags: 0x00000041
+* flags: 0x00000045 (Has unknown value at offset 40)
+* flags: 0x00001001
+* flags: 0x00001041
+
+Cookie:
+
+* location
+* filename
+* flags: 0x00100001
+
+Visited:
+
+* location
+* data (binary)
+* flags: 0x00200000
+* flags: 0x00200001
+
+PrivacIE:
+
+* location
+* data (binary)
+* flags: 0x00020004 (Has unknown value at offset 40)
+
+iecompat:
+
+* location
+* data (binary)
+* flags: 0x00000009
+
+ietld:
+
+* location
+* data (binary)
+* flags: 0x00000009
+
+feedplat:
+
+* location
+* filename
+* data (string)
+* flags: 0x00000001
+
+userdata:
+
+* location
+* filename
+* flags: 0x00000001
+
+iedownload:
+
+* location
+* filename
+* data (binary)
+* flags: 0x00000009
+
+=== Header data
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 460 | 4 | | number of changes to any of many WININET settings (CACHE_HEADER_DATA_CURRENT_SETTINGS_VERSION)
+| 464 | 4 | | number of changes to container list for same registry set (CACHE_HEADER_DATA_CONLIST_CHANGE_COUNT)
+| 468 | 4 | | number of changes to Cookies container (CACHE_HEADER_DATA_COOKIE_CHANGE_COUNT)
+| 472 | 4 | | window handle for cache notifications (CACHE_HEADER_DATA_NOTIFICATION_HWND)
+| 476 | 4 | | window message for cache notifications (CACHE_HEADER_DATA_NOTIFICATION_MESG)
+| 480 | 4 | | file offset of first GROUP_ENTRY, else zero (CACHE_HEADER_DATA_ROOTGROUP_OFFSET)
+| 484 | 4 | | low 32 bits for generation of most recently allocated GROUPID, else zero (CACHE_HEADER_DATA_GID_LOW)
+| 488 | 4 | | high 32 bits for generation of most recently allocated GROUPID, else zero (CACHE_HEADER_DATA_GID_HIGH)
+| 492 | 4 | | 
+| 496 | 4 | | 
+| 500 | 4 | | 
+| 504 | 4 | | 
+| 508 | 4 | | 
+| 512 | 4 | | 
+| 516 | 4 | | CACHE_HEADER_DATA_SSL_STATE_COUNT
+| 520 | 4 | | 
+| 524 | | | 
+|===
+
+0x15	CACHE_HEADER_DATA_NOTIFICATION_FILTER	bit flags to filter cache notifications
+0x16	CACHE_HEADER_DATA_ROOT_LEAK_OFFSET	file offset of first leak entry
+0x1B	CACHE_HEADER_DATA_ROOT_GROUPLIST_OFFSET	file offset of first GROUP_LIST_ENTRY, else zero
+
+=== Groups and group list
 
 **TODO: migrate rest of documentation**
+
+Offset	Size	Description
+0x00	GROUPNAME_MAX_LENGTH bytes	group name
+0x78	GROUP_OWNER_STORAGE_SIZE dwords	owner storage
+0x88	dword	in allocated entry:	zero
+in free entry:	file offset of next free GROUP_DATA_ENTRY, else zero
+
+=== Hash algorithm
+Define the hash pad table as:
+....
+uint8_t hash_pad_table[ 256 ] = {
+        0x01, 0x0e, 0x6e, 0x19, 0x61, 0xae, 0x84, 0x77, 
+        0x8a, 0xaa, 0x7d, 0x76, 0x1b, 0xe9, 0x8c, 0x33, 
+        0x57, 0xc5, 0xb1, 0x6b, 0xea, 0xa9, 0x38, 0x44, 
+        0x1e, 0x07, 0xad, 0x49, 0xbc, 0x28, 0x24, 0x41, 
+        0x31, 0xd5, 0x68, 0xbe, 0x39, 0xd3, 0x94, 0xdf, 
+        0x30, 0x73, 0x0f, 0x02, 0x43, 0xba, 0xd2, 0x1c, 
+        0x0c, 0xb5, 0x67, 0x46, 0x16, 0x3a, 0x4b, 0x4e, 
+        0xb7, 0xa7, 0xee, 0x9d, 0x7c, 0x93, 0xac, 0x90, 
+        0xb0, 0xa1, 0x8d, 0x56, 0x3c, 0x42, 0x80, 0x53, 
+        0x9c, 0xf1, 0x4f, 0x2e, 0xa8, 0xc6, 0x29, 0xfe, 
+        0xb2, 0x55, 0xfd, 0xed, 0xfa, 0x9a, 0x85, 0x58, 
+        0x23, 0xce, 0x5f, 0x74, 0xfc, 0xc0, 0x36, 0xdd, 
+        0x66, 0xda, 0xff, 0xf0, 0x52, 0x6a, 0x9e, 0xc9, 
+        0x3d, 0x03, 0x59, 0x09, 0x2a, 0x9b, 0x9f, 0x5d, 
+        0xa6, 0x50, 0x32, 0x22, 0xaf, 0xc3, 0x64, 0x63, 
+        0x1a, 0x96, 0x10, 0x91, 0x04, 0x21, 0x08, 0xbd, 
+        0x79, 0x40, 0x4d, 0x48, 0xd0, 0xf5, 0x82, 0x7a, 
+        0x8f, 0x37, 0x69, 0x86, 0x1d, 0xa4, 0xb9, 0xc2, 
+        0xc1, 0xef, 0x65, 0xf2, 0x05, 0xab, 0x7e, 0x0b, 
+        0x4a, 0x3b, 0x89, 0xe4, 0x6c, 0xbf, 0xe8, 0x8b, 
+        0x06, 0x18, 0x51, 0x14, 0x7f, 0x11, 0x5b, 0x5c, 
+        0xfb, 0x97, 0xe1, 0xcf, 0x15, 0x62, 0x71, 0x70, 
+        0x54, 0xe2, 0x12, 0xd6, 0xc7, 0xbb, 0x0d, 0x20, 
+        0x5e, 0xdc, 0xe0, 0xd4, 0xf7, 0xcc, 0xc4, 0x2b, 
+        0xf9, 0xec, 0x2d, 0xf4, 0x6f, 0xb6, 0x99, 0x88, 
+        0x81, 0x5a, 0xd9, 0xca, 0x13, 0xa5, 0xe7, 0x47, 
+        0xe6, 0x8e, 0x60, 0xe3, 0x3e, 0xb3, 0xf6, 0x72, 
+        0xa2, 0x35, 0xa0, 0xd7, 0xcd, 0xb4, 0x2f, 0x6d, 
+        0x2c, 0x26, 0x1f, 0x95, 0x87, 0x00, 0xd8, 0x34, 
+        0x3f, 0x17, 0x25, 0x45, 0x27, 0x75, 0x92, 0xb8, 
+        0xa3, 0xc8, 0xde, 0xeb, 0xf8, 0xf3, 0xdb, 0x0a, 
+        0x98, 0x83, 0x7b, 0xe5, 0xcb, 0x4c, 0x78, 0xd1 
+}
+....
+
+What do the first 4 bytes contain?
+
+....
+uint8_t hash_data[ 4 ];
+
+hash_data[ 0 ] = hash_pad_table[ url_string[ 0 ] ];
+hash_data[ 1 ] = hash_pad_table[ url_string[ 1 ] ];
+hash_data[ 2 ] = hash_pad_table[ url_string[ 2 ] ];
+hash_data[ 3 ] = hash_pad_table[ url_string[ 3 ] ];
+
+for( string_index = 1;
+     string_index < string_lenght;
+     string_index++ )
+{
+	if( url_string[ string_index ] == 0 )
+	{
+		break;
+	}
+	if( ( url_string[ string_index ] == (uint8_t) '/' )
+	 && ( url_string[ string_index + 1 ] == 0 ) )
+	{
+		break;
+	}
+	hash_data[ 0 ] ^= url_string[ 0 ];
+	hash_data[ 1 ] ^= url_string[ 1 ];
+	hash_data[ 2 ] ^= url_string[ 2 ];
+	hash_data[ 3 ] ^= url_string[ 3 ];
+
+
+	hash_data[ 0 ] = hash_pad_table[ hash_data[ 0 ] ];
+	hash_data[ 1 ] = hash_pad_table[ hash_data[ 1 ] ];
+	hash_data[ 2 ] = hash_pad_table[ hash_data[ 2 ] ];
+	hash_data[ 3 ] = hash_pad_table[ hash_data[ 3 ] ];
+}
+
+hash_value   = hash_data[ 3 ];
+hash_value <<= 8;
+hash_value  |= hash_data[ 2 ];
+hash_value <<= 8;
+hash_value  |= hash_data[ 1 ];
+hash_value <<= 8;
+hash_value  |= hash_data[ 0 ];
+....
 
 :numbered!:
 [appendix]
