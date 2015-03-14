@@ -28,6 +28,12 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20150314
+* updated version
+
+20150313
+* worked on Python bindings cache directory support
+
 20150308
 * worked on Python bindings cache directory support
 
