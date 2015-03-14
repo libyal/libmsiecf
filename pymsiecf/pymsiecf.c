@@ -27,6 +27,7 @@
 #endif
 
 #include "pymsiecf.h"
+#include "pymsiecf_cache_directories.h"
 #include "pymsiecf_error.h"
 #include "pymsiecf_file.h"
 #include "pymsiecf_file_object_io_handle.h"
@@ -457,17 +458,18 @@ PyMODINIT_FUNC initpymsiecf(
                 void )
 #endif
 {
-	PyObject *module                     = NULL;
-	PyTypeObject *file_type_object       = NULL;
-	PyTypeObject *item_type_object       = NULL;
-	PyTypeObject *item_flags_type_object = NULL;
-	PyTypeObject *item_types_type_object = NULL;
-	PyTypeObject *items_type_object      = NULL;
-	PyTypeObject *leak_type_object       = NULL;
-	PyTypeObject *redirected_type_object = NULL;
-	PyTypeObject *url_type_object        = NULL;
-	PyTypeObject *url_types_type_object  = NULL;
-	PyGILState_STATE gil_state           = 0;
+	PyObject *module                            = NULL;
+	PyTypeObject *cache_directories_type_object = NULL;
+	PyTypeObject *file_type_object              = NULL;
+	PyTypeObject *item_type_object              = NULL;
+	PyTypeObject *item_flags_type_object        = NULL;
+	PyTypeObject *item_types_type_object        = NULL;
+	PyTypeObject *items_type_object             = NULL;
+	PyTypeObject *leak_type_object              = NULL;
+	PyTypeObject *redirected_type_object        = NULL;
+	PyTypeObject *url_type_object               = NULL;
+	PyTypeObject *url_types_type_object         = NULL;
+	PyGILState_STATE gil_state                  = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libmsiecf_notify_set_stream(
@@ -520,6 +522,25 @@ PyMODINIT_FUNC initpymsiecf(
 	 module,
 	 "file",
 	 (PyObject *) file_type_object );
+
+	/* Setup the cache directories type object
+	 */
+	pymsiecf_cache_directories_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pymsiecf_cache_directories_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pymsiecf_cache_directories_type_object );
+
+	cache_directories_type_object = &pymsiecf_cache_directories_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "_cache_directories",
+	 (PyObject *) cache_directories_type_object );
 
 	/* Setup the item type object
 	 */
