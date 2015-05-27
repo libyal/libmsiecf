@@ -1,4 +1,6 @@
 TODO
+* pymsiecf
+  - add support for leak: Last cache synchronization date and time
 * hash calculation: check what the preceding bytes could be
 * use libfdata ?
 * msiecfexport:
@@ -7,6 +9,9 @@ TODO
   - add initialize functions
   - rename item values to item value
   - change read values to match libwrc
+
+Tests:
+* add cache directory tests
 
 File format
 * implement MSIE 3 cache file formats ?
