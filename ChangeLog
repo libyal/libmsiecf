@@ -33,6 +33,9 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20150708
+* worked on check signature
+
 20150314
 * updated version
 
