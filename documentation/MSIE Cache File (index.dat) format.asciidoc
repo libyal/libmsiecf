@@ -2,8 +2,6 @@
 Analysis of the index.dat file format
 
 :toc:
-:toc-placement: manual
-:toc-title: 
 :toclevels: 4
 
 :numbered!:
@@ -17,7 +15,6 @@ the file format.
 This document is intended as a working document for the MSIE Cache File 
 (MSIECF) specification. Which should allow existing Open Source forensic 
 tooling to be able to process this file type.
-
 
 [preface]
 == Document information
@@ -39,10 +36,6 @@ published by the Free Software Foundation; with no Invariant Sections, no
 Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included 
 in the section entitled "GNU Free Documentation License".
 ....
-
-[preface]
-== Table of contents
-toc::[]
 
 [preface]
 == Revision history
