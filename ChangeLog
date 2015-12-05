@@ -33,6 +33,9 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20151205
+* worked on Python bindings
+
 20150726
 * worked on tests
 
