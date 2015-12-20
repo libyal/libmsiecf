@@ -33,6 +33,10 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20151220
+* changes for deployment
+* updated dependencies
+
 20151205
 * worked on Python bindings
 

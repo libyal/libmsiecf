@@ -749,6 +749,11 @@ Transfer-Encoding: chunked^M
 ~U:username^M
 ....
 
+[NOTE]
+The HTTP headers can be encoded e.g. `HTTP/1.1 302 D\xe9plac\xe9 Temporairement`
+It is currently unknown if this encoding is ISO-8859-1 or the Windows narrow
+string codepage specific to the system.
+
 ==== Visited URL record data
 The visited URL record contains information which user visited what URI.
 
