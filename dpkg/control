@@ -2,7 +2,7 @@ Source: libmsiecf
 Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
-Build-Depends: debhelper (>= 7), autotools-dev, python-dev
+Build-Depends: debhelper (>= 7), autotools-dev, python-dev, python3-dev
 Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libmsiecf/
 
@@ -39,8 +39,8 @@ Section: python
 Architecture: any
 Depends: libmsiecf (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Suggests: libmsiecf-python-dbg
-Description: Python bindings for libmsiecf
- Python bindings for libmsiecf.
+Description: Python 2 bindings for libmsiecf
+ Python 2 bindings for libmsiecf.
 
 Package: libmsiecf-python-dbg
 Section: debug
@@ -48,4 +48,19 @@ Architecture: any
 Depends: libmsiecf-python (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libmsiecf-python
  Debugging symbols for libmsiecf-python.
+
+Package: libmsiecf-python3
+Section: python
+Architecture: any
+Depends: libmsiecf (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Suggests: libmsiecf-python3-dbg
+Description: Python bindings for libmsiecf
+ Python bindings for libmsiecf.
+
+Package: libmsiecf-python3-dbg
+Section: debug
+Architecture: any
+Depends: libmsiecf-python3 (= ${binary:Version}), ${misc:Depends}
+Description: Debugging symbols for libmsiecf-python3
+ Debugging symbols for libmsiecf-python3.
 

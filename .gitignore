@@ -113,6 +113,7 @@ stamp-h[1-9]
 /include/libmsiecf/types.h
 /libmsiecf/libmsiecf.rc
 /libmsiecf/libmsiecf_definitions.h
+/pymsiecf[23]/*.[ch]
 /LICENSE.pymsiecf
 /msiecftools/msiecfexport
 /msiecftools/msiecfinfo

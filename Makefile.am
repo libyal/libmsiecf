@@ -22,6 +22,8 @@ SUBDIRS = \
 	libcsystem \
 	msiecftools \
 	pymsiecf \
+	pymsiecf2 \
+	pymsiecf3 \
 	po \
 	manuals \
 	tests \
@@ -35,8 +37,10 @@ DPKG_FILES = \
 	dpkg/copyright \
 	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libmsiecf-dev.docs \
 	dpkg/libmsiecf.docs \
+	dpkg/libmsiecf-dev.docs \
+	dpkg/libmsiecf-python.docs \
+	dpkg/libmsiecf-python3.docs \
 	dpkg/libmsiecf-tools.docs \
 	dpkg/source/format
 

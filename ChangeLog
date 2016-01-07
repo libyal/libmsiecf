@@ -34,6 +34,7 @@ In progress:
   - flag entries in hash table as hashed
 
 20160107
+* worked on Python 3 support
 * 2016 update
 
 20151220
