@@ -33,6 +33,9 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20160109
+* fixes for rpmbuild
+
 20160107
 * worked on Python 3 support
 * 2016 update

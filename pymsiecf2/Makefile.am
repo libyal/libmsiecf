@@ -65,15 +65,15 @@ pymsiecf_la_CPPFLAGS = $(PYTHON2_CPPFLAGS)
 pymsiecf_la_LDFLAGS  = -module -avoid-version $(PYTHON2_LDFLAGS)
 
 $(BUILT_SOURCES):
-	/bin/cp -f $(top_srcdir)/pymsiecf/pymsiecf*.[ch] .
-
-clean-local:
-	/bin/rm -f pymsiecf*.[ch]
+	/bin/cp -f $(top_srcdir)/pymsiecf/$@ $@
 
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+clean-local:
+	/bin/rm -f pymsiecf*.[ch]
 
 distclean: clean
 	/bin/rm -f Makefile
