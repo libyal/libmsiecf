@@ -22,8 +22,8 @@ SUBDIRS = \
 	libcsystem \
 	msiecftools \
 	pymsiecf \
-	pymsiecf2 \
-	pymsiecf3 \
+	pymsiecf-python2 \
+	pymsiecf-python3 \
 	po \
 	manuals \
 	tests \
