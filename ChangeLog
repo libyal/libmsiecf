@@ -33,6 +33,10 @@ In progress:
 * record scan
   - flag entries in hash table as hashed
 
+20160126
+* worked on tests
+* applied updates
+
 20160109
 * fixes for rpmbuild
 
