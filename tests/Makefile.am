@@ -11,9 +11,11 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@ \
 	@LIBMSIECF_DLL_IMPORT@
 
-if HAVE_PYTHON
+if HAVE_PYTHON_TESTS
 TESTS_PYMSIECF  = \
 	test_pymsiecf_set_ascii_codepage.sh \
 	test_pymsiecf_open_close.sh
@@ -48,20 +50,16 @@ msiecf_test_open_close_SOURCES = \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_libcstring.h \
+	msiecf_test_libcsystem.h \
 	msiecf_test_open_close.c
 
 msiecf_test_open_close_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
-	@LIBBFIO_LIBADD@ \
-	@LIBCPATH_LIBADD@ \
-	@LIBCFILE_LIBADD@ \
-	@LIBUNA_LIBADD@ \
-	@LIBCSPLIT_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCDATA_LIBADD@ \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 msiecf_test_set_ascii_codepage_SOURCES = \
 	msiecf_test_libcerror.h \
