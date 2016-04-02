@@ -66,7 +66,7 @@ struct export_handle
 	 */
 	uint8_t minor_version;
 
-	/* The nofication output stream
+	/* The notification output stream
 	 */
 	FILE *notify_stream;
 

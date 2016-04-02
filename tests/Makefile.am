@@ -16,7 +16,7 @@ AM_CPPFLAGS = \
 	@LIBMSIECF_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
-TESTS_PYMSIECF  = \
+TESTS_PYMSIECF = \
 	test_pymsiecf_set_ascii_codepage.sh \
 	test_pymsiecf_open_close.sh
 endif
@@ -42,7 +42,7 @@ check_SCRIPTS = \
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
-check_PROGRAMS =  \
+check_PROGRAMS = \
 	msiecf_test_open_close \
 	msiecf_test_set_ascii_codepage
 
