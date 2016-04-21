@@ -28,7 +28,7 @@
 #include "pymsiecf_libcerror.h"
 #include "pymsiecf_python.h"
 
-#define PYMSIECF_ERROR_STRING_SIZE		2048
+#define PYMSIECF_ERROR_STRING_SIZE	2048
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,5 +56,5 @@ void pymsiecf_error_raise(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_ERROR_H ) */
 

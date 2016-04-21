@@ -33,10 +33,17 @@
 
 /* The following type definitions hide internal data structures
  */
+#if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
+typedef struct libmsiecf_file {}	libmsiecf_file_t;
+typedef struct libmsiecf_item {}	libmsiecf_item_t;
+
+#else
 typedef intptr_t libmsiecf_file_t;
 typedef intptr_t libmsiecf_item_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBMSIECF ) */
+
+#endif /* !defined( _LIBMSIECF_INTERNAL_TYPES_H ) */
 

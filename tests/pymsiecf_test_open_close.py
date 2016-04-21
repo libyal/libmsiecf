@@ -20,11 +20,10 @@
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from __future__ import print_function
 import argparse
 import sys
 
-import pyscca
+import pymsiecf
 
 
 def get_mode_string(mode):
@@ -38,169 +37,149 @@ def get_mode_string(mode):
   return mode_string
 
 
-def pyscca_test_single_open_close_file(filename, mode):
+def pymsiecf_test_single_open_close_file(filename, mode):
   if not filename:
     filename_string = "None"
   else:
     filename_string = filename
 
-  print(
-      "Testing single open close of: {0:s} with access: {1:s}\t".format(
-          filename_string, get_mode_string(mode)), end="")
+  print("Testing single open close of: {0:s} with access: {1:s}\t".format(
+      filename_string, get_mode_string(mode)))
 
   result = True
   try:
-    scca_file = pyscca.file()
+    lnk_file = pymsiecf.file()
 
-    scca_file.open(filename, mode)
-    scca_file.close()
+    lnk_file.open(filename, mode)
+    lnk_file.close()
 
   except TypeError as exception:
     expected_message = (
         "{0:s}: unsupported string object type.").format(
-            "pyscca_file_open")
+            "pymsiecf_file_open")
 
     if not filename and str(exception) == expected_message:
       pass
 
     else:
-      error_string = str(exception)
+      print(str(exception))
       result = False
 
   except ValueError as exception:
     expected_message = (
         "{0:s}: unsupported mode: w.").format(
-            "pyscca_file_open")
+            "pymsiecf_file_open")
 
     if mode != "w" or str(exception) != expected_message:
-      error_string = str(exception)
+      print(str(exception))
       result = False
 
   except Exception as exception:
-    error_string = str(exception)
+    print(str(exception))
     result = False
 
   if not result:
     print("(FAIL)")
   else:
     print("(PASS)")
-
-  if error_string:
-    print(error_string)
   return result
 
 
-def pyscca_test_multi_open_close_file(filename, mode):
-  print(
-      "Testing multi open close of: {0:s} with access: {1:s}\t".format(
-          filename, get_mode_string(mode)), end="")
+def pymsiecf_test_multi_open_close_file(filename, mode):
+  print("Testing multi open close of: {0:s} with access: {1:s}\t".format(
+      filename, get_mode_string(mode)))
 
   result = True
   try:
-    scca_file = pyscca.file()
+    lnk_file = pymsiecf.file()
 
-    scca_file.open(filename, mode)
-    scca_file.close()
-    scca_file.open(filename, mode)
-    scca_file.close()
+    lnk_file.open(filename, mode)
+    lnk_file.close()
+    lnk_file.open(filename, mode)
+    lnk_file.close()
 
   except Exception as exception:
-    error_string = str(exception)
+    print(str(exception))
     result = False
 
   if not result:
     print("(FAIL)")
   else:
     print("(PASS)")
-
-  if error_string:
-    print(error_string)
   return result
 
 
-def pyscca_test_single_open_close_file_object(filename, mode):
-  print(
-      ("Testing single open close of file-like object of: {0:s} "
-       "with access: {1:s}\t").format(filename, get_mode_string(mode)), end="")
+def pymsiecf_test_single_open_close_file_object(filename, mode):
+  print(("Testing single open close of file-like object of: {0:s} "
+         "with access: {1:s}\t").format(filename, get_mode_string(mode)))
 
   result = True
   try:
     file_object = open(filename, "rb")
-    scca_file = pyscca.file()
+    lnk_file = pymsiecf.file()
 
-    scca_file.open_file_object(file_object, mode)
-    scca_file.close()
+    lnk_file.open_file_object(file_object, mode)
+    lnk_file.close()
 
   except Exception as exception:
-    error_string = str(exception)
+    print(str(exception))
     result = False
 
   if not result:
     print("(FAIL)")
   else:
     print("(PASS)")
-
-  if error_string:
-    print(error_string)
   return result
 
 
-def pyscca_test_single_open_close_file_object_with_dereference(
+def pymsiecf_test_single_open_close_file_object_with_dereference(
     filename, mode):
-  print(
-      ("Testing single open close of file-like object with dereference "
-       "of: {0:s} with access: {1:s}\t").format(
-          filename, get_mode_string(mode)), end="")
+  print(("Testing single open close of file-like object with dereference "
+         "of: {0:s} with access: {1:s}\t").format(
+      filename, get_mode_string(mode)))
 
   result = True
   try:
     file_object = open(filename, "rb")
-    scca_file = pyscca.file()
+    lnk_file = pymsiecf.file()
 
-    scca_file.open_file_object(file_object, mode)
+    lnk_file.open_file_object(file_object, mode)
     del file_object
-    scca_file.close()
+    lnk_file.close()
 
   except Exception as exception:
-    error_string = str(exception)
+    print(str(exception))
     result = False
 
   if not result:
     print("(FAIL)")
   else:
     print("(PASS)")
-
-  if error_string:
-    print(error_string)
   return result
 
 
-def pyscca_test_multi_open_close_file_object(filename, mode):
-  print(
-      ("Testing multi open close of file-like object of: {0:s} "
-       "with access: {1:s}\t").format(filename, get_mode_string(mode)), end="")
+def pymsiecf_test_multi_open_close_file_object(filename, mode):
+  print(("Testing multi open close of file-like object of: {0:s} "
+         "with access: {1:s}\t").format(filename, get_mode_string(mode)))
 
   result = True
   try:
     file_object = open(filename, "rb")
-    scca_file = pyscca.file()
+    lnk_file = pymsiecf.file()
 
-    scca_file.open_file_object(file_object, mode)
-    scca_file.close()
-    scca_file.open_file_object(file_object, mode)
-    scca_file.close()
+    lnk_file.open_file_object(file_object, mode)
+    lnk_file.close()
+    lnk_file.open_file_object(file_object, mode)
+    lnk_file.close()
 
   except Exception as exception:
-    error_string = str(exception)
+    print(str(exception))
     result = False
 
   if not result:
     print("(FAIL)")
   else:
     print("(PASS)")
-
-  if error_string:
-    print(error_string)
   return result
 
 
@@ -221,26 +200,26 @@ def main():
     print("")
     return False
 
-  if not pyscca_test_single_open_close_file(options.source, "r"):
+  if not pymsiecf_test_single_open_close_file(options.source, "r"):
     return False
 
-  if not pyscca_test_single_open_close_file(None, "r"):
+  if not pymsiecf_test_single_open_close_file(None, "r"):
     return False
 
-  if not pyscca_test_single_open_close_file(options.source, "w"):
+  if not pymsiecf_test_single_open_close_file(options.source, "w"):
     return False
 
-  if not pyscca_test_multi_open_close_file(options.source, "r"):
+  if not pymsiecf_test_multi_open_close_file(options.source, "r"):
     return False
 
-  if not pyscca_test_single_open_close_file_object(options.source, "r"):
+  if not pymsiecf_test_single_open_close_file_object(options.source, "r"):
     return False
 
-  if not pyscca_test_single_open_close_file_object_with_dereference(
+  if not pymsiecf_test_single_open_close_file_object_with_dereference(
       options.source, "r"):
     return False
 
-  if not pyscca_test_multi_open_close_file_object(
+  if not pymsiecf_test_multi_open_close_file_object(
       options.source, "r"):
     return False
 

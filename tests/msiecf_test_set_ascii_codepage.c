@@ -40,7 +40,7 @@ int main( int argc, char * const argv[] )
 #endif
 {
 	libcerror_error_t *error = NULL;
-	libmsiecf_file_t *file   = NULL;
+	libmsiecf_file_t *file      = NULL;
 	size_t string_length     = 0;
 	uint32_t feature_flags   = 0;
 	int ascii_codepage       = 0;
@@ -124,7 +124,7 @@ on_error:
 	{
 		libcerror_error_backtrace_fprint(
 		 error,
-		 stdout );
+		 stderr );
 
 		libcerror_error_free(
 		 &error );

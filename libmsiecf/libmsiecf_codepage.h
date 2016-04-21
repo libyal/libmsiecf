@@ -73,11 +73,11 @@ enum LIBMSIECF_CODEPAGES
 	LIBMSIECF_CODEPAGE_WINDOWS_1258			= 1258
 };
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBMSIECF ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_INTERNAL_CODEPAGE_H ) */
 

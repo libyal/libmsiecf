@@ -1,5 +1,5 @@
 /*
- * Notification function
+ * Library get version test program
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,45 +19,46 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMSIECF_NOTIFY_H )
-#define _LIBMSIECF_NOTIFY_H
-
 #include <common.h>
 #include <file_stream.h>
-#include <types.h>
 
-#include "libmsiecf_extern.h"
-#include "libmsiecf_libcerror.h"
-
-#if defined( __cplusplus )
-extern "C" {
+#if defined( HAVE_STDLIB_H ) || defined( WINAPI )
+#include <stdlib.h>
 #endif
 
-#if !defined( HAVE_LOCAL_LIBMSIECF )
+#include "msiecf_test_libmsiecf.h"
+#include "msiecf_test_libcstring.h"
+#include "msiecf_test_unused.h"
 
-LIBMSIECF_EXTERN \
-void libmsiecf_notify_set_verbose(
-      int verbose );
+/* The main program
+ */
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+int wmain( int argc, wchar_t * const argv[] MSIECF_TEST_ATTRIBUTE_UNUSED )
+#else
+int main( int argc, char * const argv[] MSIECF_TEST_ATTRIBUTE_UNUSED )
+#endif
+{
+	const char *version_string = NULL;
 
-LIBMSIECF_EXTERN \
-int libmsiecf_notify_set_stream(
-     FILE *stream,
-     libcerror_error_t **error );
+	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
-LIBMSIECF_EXTERN \
-int libmsiecf_notify_stream_open(
-     const char *filename,
-     libcerror_error_t **error );
+	if( argc != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unsupported number of arguments.\n" );
 
-LIBMSIECF_EXTERN \
-int libmsiecf_notify_stream_close(
-     libcerror_error_t **error );
+		return( EXIT_FAILURE );
+	}
+	version_string = libmsiecf_get_version();
 
-#endif /* !defined( HAVE_LOCAL_LIBMSIECF ) */
-
-#if defined( __cplusplus )
+	if( libcstring_narrow_string_compare(
+	     version_string,
+	     LIBMSIECF_VERSION_STRING,
+	     9 ) != 0 )
+	{
+		return( EXIT_FAILURE );
+	}
+	return( EXIT_SUCCESS );
 }
-#endif
-
-#endif /* !defined( _LIBMSIECF_NOTIFY_H ) */
 
