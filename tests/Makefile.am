@@ -35,8 +35,8 @@ check_SCRIPTS = \
 	test_api_functions.sh \
 	test_msiecfexport.sh \
 	test_msiecfinfo.sh \
-	test_python_functions.sh \
 	test_pymsiecf_set_ascii_codepage.sh \
+	test_python_functions.sh \
 	test_runner.sh \
 	test_set_ascii_codepage.sh
 

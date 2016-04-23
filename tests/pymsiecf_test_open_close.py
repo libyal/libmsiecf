@@ -48,10 +48,10 @@ def pymsiecf_test_single_open_close_file(filename, mode):
 
   result = True
   try:
-    lnk_file = pymsiecf.file()
+    msiecf_file = pymsiecf.file()
 
-    lnk_file.open(filename, mode)
-    lnk_file.close()
+    msiecf_file.open(filename, mode)
+    msiecf_file.close()
 
   except TypeError as exception:
     expected_message = (
@@ -91,12 +91,12 @@ def pymsiecf_test_multi_open_close_file(filename, mode):
 
   result = True
   try:
-    lnk_file = pymsiecf.file()
+    msiecf_file = pymsiecf.file()
 
-    lnk_file.open(filename, mode)
-    lnk_file.close()
-    lnk_file.open(filename, mode)
-    lnk_file.close()
+    msiecf_file.open(filename, mode)
+    msiecf_file.close()
+    msiecf_file.open(filename, mode)
+    msiecf_file.close()
 
   except Exception as exception:
     print(str(exception))
@@ -116,10 +116,10 @@ def pymsiecf_test_single_open_close_file_object(filename, mode):
   result = True
   try:
     file_object = open(filename, "rb")
-    lnk_file = pymsiecf.file()
+    msiecf_file = pymsiecf.file()
 
-    lnk_file.open_file_object(file_object, mode)
-    lnk_file.close()
+    msiecf_file.open_file_object(file_object, mode)
+    msiecf_file.close()
 
   except Exception as exception:
     print(str(exception))
@@ -141,11 +141,11 @@ def pymsiecf_test_single_open_close_file_object_with_dereference(
   result = True
   try:
     file_object = open(filename, "rb")
-    lnk_file = pymsiecf.file()
+    msiecf_file = pymsiecf.file()
 
-    lnk_file.open_file_object(file_object, mode)
+    msiecf_file.open_file_object(file_object, mode)
     del file_object
-    lnk_file.close()
+    msiecf_file.close()
 
   except Exception as exception:
     print(str(exception))
@@ -165,12 +165,12 @@ def pymsiecf_test_multi_open_close_file_object(filename, mode):
   result = True
   try:
     file_object = open(filename, "rb")
-    lnk_file = pymsiecf.file()
+    msiecf_file = pymsiecf.file()
 
-    lnk_file.open_file_object(file_object, mode)
-    lnk_file.close()
-    lnk_file.open_file_object(file_object, mode)
-    lnk_file.close()
+    msiecf_file.open_file_object(file_object, mode)
+    msiecf_file.close()
+    msiecf_file.open_file_object(file_object, mode)
+    msiecf_file.close()
 
   except Exception as exception:
     print(str(exception))
@@ -184,8 +184,8 @@ def pymsiecf_test_multi_open_close_file_object(filename, mode):
 
 
 def main():
-  args_parser = argparse.ArgumentParser(description=(
-      "Tests open and close."))
+  args_parser = argparse.ArgumentParser(
+      description="Tests open and close.")
 
   args_parser.add_argument(
       "source", nargs="?", action="store", metavar="FILENAME",
