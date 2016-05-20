@@ -2001,7 +2001,7 @@ int libmsiecf_url_get_data_size(
 			return( -1 );
 		}
 	}
-	if( ( (libmsiecf_url_values_t *) internal_item->value )->filename == NULL )
+	if( ( (libmsiecf_url_values_t *) internal_item->value )->data_size == NULL )
 	{
 		return( 0 );
 	}
