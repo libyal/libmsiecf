@@ -1106,7 +1106,7 @@ int export_handle_export_item_url(
 			{
 				if( libfdatetime_fat_date_time_copy_from_32bit(
 				     fat_date_time,
-				     value_32bit,
+				     (uint32_t) value_64bit,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
