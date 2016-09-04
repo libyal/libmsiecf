@@ -16,6 +16,7 @@ MSVSCPP_FILES = \
 	libfvalue/libfvalue.vcproj \
 	libmsiecf/libmsiecf.vcproj \
 	libuna/libuna.vcproj \
+	msiecf_test_error/msiecf_test_error.vcproj \
 	msiecf_test_get_version/msiecf_test_get_version.vcproj \
 	msiecf_test_open_close/msiecf_test_open_close.vcproj \
 	msiecf_test_set_ascii_codepage/msiecf_test_set_ascii_codepage.vcproj \

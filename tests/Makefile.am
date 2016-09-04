@@ -44,14 +44,27 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	msiecf_test_error \
 	msiecf_test_get_version \
 	msiecf_test_open_close \
 	msiecf_test_set_ascii_codepage
+
+msiecf_test_error_SOURCES = \
+	msiecf_test_error.c \
+	msiecf_test_libcstring.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_unused.h
+
+msiecf_test_error_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCSTRING_LIBADD@
 
 msiecf_test_get_version_SOURCES = \
 	msiecf_test_get_version.c \
 	msiecf_test_libcstring.h \
 	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
 	msiecf_test_unused.h
 
 msiecf_test_get_version_LDADD = \

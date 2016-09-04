@@ -20,7 +20,6 @@
  */
 
 #include <common.h>
-#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -28,6 +27,7 @@
 
 #include "msiecf_test_libcstring.h"
 #include "msiecf_test_libmsiecf.h"
+#include "msiecf_test_macros.h"
 #include "msiecf_test_unused.h"
 
 /* Tests retrieving the library version
@@ -46,11 +46,15 @@ int msiecf_test_get_version(
 	          LIBMSIECF_VERSION_STRING,
 	          9 );
 
-	if( result != 0 )
-	{
-		return( 0 );
-	}
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
 	return( 1 );
+
+on_error:
+	return( 0 );
 }
 
 /* The main program
@@ -68,10 +72,13 @@ int main(
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
-	if( msiecf_test_get_version() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
+	MSIECF_TEST_RUN(
+	 "libmsiecf_get_version",
+	 msiecf_test_get_version() )
+
 	return( EXIT_SUCCESS );
+
+on_error:
+	return( EXIT_FAILURE );
 }
 

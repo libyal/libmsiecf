@@ -123,6 +123,7 @@ stamp-h[1-9]
 /msiecftools/msiecfexport
 /msiecftools/msiecfinfo
 /tests/input
+/tests/msiecf_test_error
 /tests/msiecf_test_get_version
 /tests/msiecf_test_open_close
 /tests/msiecf_test_set_ascii_codepage
