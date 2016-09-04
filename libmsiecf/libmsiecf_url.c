@@ -2001,10 +2001,6 @@ int libmsiecf_url_get_data_size(
 			return( -1 );
 		}
 	}
-	if( ( (libmsiecf_url_values_t *) internal_item->value )->filename == NULL )
-	{
-		return( 0 );
-	}
 	if( data_size == NULL )
 	{
 		libcerror_error_set(
@@ -2016,8 +2012,14 @@ int libmsiecf_url_get_data_size(
 
 		return( -1 );
 	}
-	*data_size = ( (libmsiecf_url_values_t *) internal_item->value )->data_size;
-
+	if( ( (libmsiecf_url_values_t *) internal_item->value )->data == NULL )
+	{
+		*data_size = 0;
+	}
+	else
+	{
+		*data_size = ( (libmsiecf_url_values_t *) internal_item->value )->data_size;
+	}
 	return( 1 );
 }
 
@@ -2095,6 +2097,17 @@ int libmsiecf_url_get_data(
 
 			return( -1 );
 		}
+	}
+	if( ( (libmsiecf_url_values_t *) internal_item->value )->data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item values - missing data.",
+		 function );
+
+		return( -1 );
 	}
 	if( data == NULL )
 	{

@@ -176,5 +176,5 @@ int libmsiecf_url_get_data(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_URL_H ) */
 
