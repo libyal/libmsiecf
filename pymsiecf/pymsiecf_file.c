@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -37,7 +38,6 @@
 #include "pymsiecf_libbfio.h"
 #include "pymsiecf_libcerror.h"
 #include "pymsiecf_libclocale.h"
-#include "pymsiecf_libcstring.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
 #include "pymsiecf_redirected.h"
@@ -568,7 +568,7 @@ PyObject *pymsiecf_file_open(
 	char *mode                   = NULL;
 	int result                   = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *filename_wide = NULL;
 #else
 	PyObject *utf8_string_object = NULL;
@@ -628,7 +628,7 @@ PyObject *pymsiecf_file_open(
 	{
 		PyErr_Clear();
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS
@@ -1034,7 +1034,7 @@ int pymsiecf_file_set_ascii_codepage_from_string(
 
 		return( -1 );
 	}
-	codepage_string_length = libcstring_narrow_string_length(
+	codepage_string_length = narrow_string_length(
 	                          codepage_string );
 
 	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;

@@ -22,6 +22,7 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include "libmsiecf_definitions.h"
@@ -29,7 +30,6 @@
 #include "libmsiecf_libbfio.h"
 #include "libmsiecf_libcerror.h"
 #include "libmsiecf_libcnotify.h"
-#include "libmsiecf_libcstring.h"
 #include "libmsiecf_libfdatetime.h"
 #include "libmsiecf_libfvalue.h"
 #include "libmsiecf_leak_values.h"
@@ -175,7 +175,7 @@ int libmsiecf_leak_values_read(
 	uint32_t filename_offset                    = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t date_time_string[ 32 ];
+	system_character_t date_time_string[ 32 ];
 
 	libfdatetime_fat_date_time_t *fat_date_time = NULL;
 	uint32_t value_32bit                        = 0;
@@ -440,7 +440,7 @@ int libmsiecf_leak_values_read(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_fat_date_time_copy_to_utf16_string(
 		          fat_date_time,
 		          (uint16_t *) date_time_string,
@@ -467,7 +467,7 @@ int libmsiecf_leak_values_read(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: unknown time\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: unknown time\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 date_time_string );
 

@@ -28,7 +28,6 @@
 
 #include "log_handle.h"
 #include "msiecftools_libcerror.h"
-#include "msiecftools_libcstring.h"
 #include "msiecftools_libmsiecf.h"
 
 #if defined( __cplusplus )
@@ -89,17 +88,17 @@ int export_handle_signal_abort(
 
 int export_handle_set_export_mode(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_open(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_close(

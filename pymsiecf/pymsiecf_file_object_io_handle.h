@@ -27,7 +27,6 @@
 
 #include "pymsiecf_libbfio.h"
 #include "pymsiecf_libcerror.h"
-#include "pymsiecf_libcstring.h"
 #include "pymsiecf_python.h"
 
 #if defined( __cplusplus )

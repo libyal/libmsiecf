@@ -28,6 +28,10 @@
 #define LIBMSIECF_HAVE_WIDE_CHARACTER_TYPE	1
 #endif
 
+#if defined( WINAPI ) || @HAVE_MULTI_THREAD_SUPPORT@
+#define LIBMSIECF_HAVE_MULTI_THREAD_SUPPORT	1
+#endif
+
 #if defined( HAVE_LIBBFIO ) || ( !defined( WINAPI ) && @HAVE_LIBBFIO@ )
 #define LIBMSIECF_HAVE_BFIO			1
 #endif
@@ -42,5 +46,5 @@
 #endif
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_FEATURES_H ) */
 

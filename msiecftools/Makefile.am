@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -29,7 +28,6 @@ msiecfexport_SOURCES = \
 	msiecftools_libcerror.h \
 	msiecftools_libclocale.h \
 	msiecftools_libcnotify.h \
-	msiecftools_libcstring.h \
 	msiecftools_libcsystem.h \
 	msiecftools_libfdatetime.h \
 	msiecftools_libmsiecf.h \
@@ -43,7 +41,6 @@ msiecfexport_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 msiecfinfo_SOURCES = \
@@ -54,7 +51,6 @@ msiecfinfo_SOURCES = \
 	msiecftools_libcerror.h \
 	msiecftools_libclocale.h \
 	msiecftools_libcnotify.h \
-	msiecftools_libcstring.h \
 	msiecftools_libcsystem.h \
 	msiecftools_libfdatetime.h \
 	msiecftools_libmsiecf.h \
@@ -67,7 +63,6 @@ msiecfinfo_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

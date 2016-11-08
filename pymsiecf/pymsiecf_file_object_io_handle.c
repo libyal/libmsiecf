@@ -28,7 +28,6 @@
 #include "pymsiecf_integer.h"
 #include "pymsiecf_libbfio.h"
 #include "pymsiecf_libcerror.h"
-#include "pymsiecf_libcstring.h"
 #include "pymsiecf_python.h"
 
 /* Creates a file object IO handle

@@ -8,7 +8,6 @@ if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -37,7 +36,6 @@ BUILT_SOURCES = \
 	pymsiecf_libbfio.h \
 	pymsiecf_libcerror.h \
 	pymsiecf_libclocale.h \
-	pymsiecf_libcstring.h \
 	pymsiecf_libmsiecf.h \
 	pymsiecf_python.h \
 	pymsiecf_redirected.c pymsiecf_redirected.h \
@@ -50,7 +48,6 @@ pyexec_LTLIBRARIES = pymsiecf.la
 nodist_pymsiecf_la_SOURCES = $(BUILT_SOURCES)
 
 pymsiecf_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
 	@LIBCDATA_LIBADD@ \

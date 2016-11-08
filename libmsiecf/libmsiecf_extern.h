@@ -24,6 +24,10 @@
 
 #include <common.h>
 
+/* Define HAVE_LOCAL_LIBMSIECF for local use of libmsiecf
+ */
+#if !defined( HAVE_LOCAL_LIBMSIECF )
+
 /* If libtool DLL support is enabled set LIBMSIECF_DLL_EXPORT
  * before including libmsiecf/extern.h
  */
@@ -33,5 +37,10 @@
 
 #include <libmsiecf/extern.h>
 
+#else
+#define LIBMSIECF_EXTERN	extern
+
 #endif
+
+#endif /* !defined( _LIBMSIECF_INTERNAL_EXTERN_H ) */
 

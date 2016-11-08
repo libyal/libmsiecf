@@ -7,7 +7,6 @@ MSVSCPP_FILES = \
 	libcnotify/libcnotify.vcproj \
 	libcpath/libcpath.vcproj \
 	libcsplit/libcsplit.vcproj \
-	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
 	libcthreads/libcthreads.vcproj \
 	libfdatetime/libfdatetime.vcproj \
@@ -17,9 +16,10 @@ MSVSCPP_FILES = \
 	libmsiecf/libmsiecf.vcproj \
 	libuna/libuna.vcproj \
 	msiecf_test_error/msiecf_test_error.vcproj \
-	msiecf_test_get_version/msiecf_test_get_version.vcproj \
+	msiecf_test_file/msiecf_test_file.vcproj \
+	msiecf_test_item/msiecf_test_item.vcproj \
 	msiecf_test_open_close/msiecf_test_open_close.vcproj \
-	msiecf_test_set_ascii_codepage/msiecf_test_set_ascii_codepage.vcproj \
+	msiecf_test_support/msiecf_test_support.vcproj \
 	msiecfexport/msiecfexport.vcproj \
 	msiecfinfo/msiecfinfo.vcproj \
 	pymsiecf/pymsiecf.vcproj \

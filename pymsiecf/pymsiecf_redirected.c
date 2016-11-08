@@ -29,7 +29,6 @@
 #include "pymsiecf_error.h"
 #include "pymsiecf_item.h"
 #include "pymsiecf_libcerror.h"
-#include "pymsiecf_libcstring.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
 #include "pymsiecf_redirected.h"

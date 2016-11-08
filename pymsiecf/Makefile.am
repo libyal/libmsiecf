@@ -2,7 +2,6 @@ if HAVE_PYTHON
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -31,7 +30,6 @@ pymsiecf_la_SOURCES = \
 	pymsiecf_libbfio.h \
 	pymsiecf_libcerror.h \
 	pymsiecf_libclocale.h \
-	pymsiecf_libcstring.h \
 	pymsiecf_libmsiecf.h \
 	pymsiecf_python.h \
 	pymsiecf_redirected.c pymsiecf_redirected.h \
@@ -40,7 +38,6 @@ pymsiecf_la_SOURCES = \
 	pymsiecf_url_types.c pymsiecf_url_types.h
 
 pymsiecf_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
 	@LIBCDATA_LIBADD@ \

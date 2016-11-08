@@ -39,7 +39,7 @@ enum LIBMSIECF_ERROR_DOMAINS
 	LIBMSIECF_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBMSIECF_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBMSIECF_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBMSIECF_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBMSIECF_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes
@@ -208,6 +208,17 @@ enum LIBMSIECF_MEMORY_ERROR
 	LIBMSIECF_MEMORY_ERROR_SET_FAILED		= 3
 };
 
+/* The output error codes
+ */
+enum LIBMSIECF_OUTPUT_ERROR
+{
+	LIBMSIECF_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBMSIECF_OUTPUT_ERROR_INSUFFICIENT_SPACE	= 1
+};
+
 /* The runtime error codes
  * to signify errors regarding runtime processing
  */
@@ -276,16 +287,5 @@ enum LIBMSIECF_RUNTIME_ERROR
 	LIBMSIECF_RUNTIME_ERROR_ABORT_REQUESTED		= 15
 };
 
-/* The output error codes
- */
-enum LIBMSIECF_OUTPUT_ERROR
-{
-	LIBMSIECF_OUTPUT_ERROR_GENERIC			= 0,
-
-	/* There is insuficient space to write the output
-	 */
-	LIBMSIECF_OUTPUT_ERROR_INSUFFICIENT_SPACE	= 1
-};
-
-#endif
+#endif /* !defined( _LIBMSIECF_ERROR_H ) */
 

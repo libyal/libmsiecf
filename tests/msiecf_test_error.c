@@ -20,6 +20,8 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -108,7 +110,7 @@ int msiecf_test_error_backtrace_sprint(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc MSIECF_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] MSIECF_TEST_ATTRIBUTE_UNUSED )
@@ -123,23 +125,23 @@ int main(
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_error_free",
-	 msiecf_test_error_free() )
+	 msiecf_test_error_free );
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_error_fprint",
-	 msiecf_test_error_fprint() )
+	 msiecf_test_error_fprint );
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_error_sprint",
-	 msiecf_test_error_sprint() )
+	 msiecf_test_error_sprint );
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_error_backtrace_fprint",
-	 msiecf_test_error_backtrace_fprint() )
+	 msiecf_test_error_backtrace_fprint );
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_error_backtrace_sprint",
-	 msiecf_test_error_backtrace_sprint() )
+	 msiecf_test_error_backtrace_sprint );
 
 	return( EXIT_SUCCESS );
 

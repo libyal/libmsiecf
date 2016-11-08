@@ -21,6 +21,7 @@
 
 #include <common.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include <stdio.h>
@@ -39,7 +40,6 @@
 #include "msiecftools_libcerror.h"
 #include "msiecftools_libclocale.h"
 #include "msiecftools_libcnotify.h"
-#include "msiecftools_libcstring.h"
 #include "msiecftools_libcsystem.h"
 #include "msiecftools_libmsiecf.h"
 
@@ -119,22 +119,22 @@ void msiecfexport_signal_handler(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error                             = NULL;
-	log_handle_t *log_handle                             = NULL;
-	libcstring_system_character_t *log_filename          = NULL;
-	libcstring_system_character_t *option_ascii_codepage = NULL;
-	libcstring_system_character_t *option_export_mode    = NULL;
-	libcstring_system_character_t *source                = NULL;
-	char *program                                        = "msiecfexport";
-	libcstring_system_integer_t option                   = 0;
-	int result                                           = 0;
-	int verbose                                          = 0;
+	libcerror_error_t *error                  = NULL;
+	log_handle_t *log_handle                  = NULL;
+	system_character_t *log_filename          = NULL;
+	system_character_t *option_ascii_codepage = NULL;
+	system_character_t *option_export_mode    = NULL;
+	system_character_t *source                = NULL;
+	char *program                             = "msiecfexport";
+	system_integer_t option                   = 0;
+	int result                                = 0;
+	int verbose                               = 0;
 
 	libcnotify_stream_set(
 	 stderr,
@@ -169,15 +169,15 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:m:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _SYSTEM_STRING( "c:hl:m:vV" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
-			case (libcstring_system_integer_t) '?':
+			case (system_integer_t) '?':
 			default:
 				fprintf(
 				 stderr,
-				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
+				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
 				usage_fprint(
@@ -185,33 +185,33 @@ int main( int argc, char * const argv[] )
 
 				return( EXIT_FAILURE );
 
-			case (libcstring_system_integer_t) 'c':
+			case (system_integer_t) 'c':
 				option_ascii_codepage = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'h':
+			case (system_integer_t) 'h':
 				usage_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
 
-			case (libcstring_system_integer_t) 'l':
+			case (system_integer_t) 'l':
 				log_filename = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'm':
+			case (system_integer_t) 'm':
 				option_export_mode = optarg;
 
 				break;
 
-			case (libcstring_system_integer_t) 'v':
+			case (system_integer_t) 'v':
 				verbose = 1;
 
 				break;
 
-			case (libcstring_system_integer_t) 'V':
+			case (system_integer_t) 'V':
 				msiecfoutput_copyright_fprint(
 				 stdout );
 
@@ -310,7 +310,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open log file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Unable to open log file: %" PRIs_SYSTEM ".\n",
 		 log_filename );
 
 		goto on_error;
@@ -322,7 +322,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Unable to open: %" PRIs_SYSTEM ".\n",
 		 source );
 
 		goto on_error;

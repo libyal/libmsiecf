@@ -22,6 +22,7 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include "libmsiecf_debug.h"
@@ -31,7 +32,6 @@
 #include "libmsiecf_libbfio.h"
 #include "libmsiecf_libcerror.h"
 #include "libmsiecf_libcnotify.h"
-#include "libmsiecf_libcstring.h"
 #include "libmsiecf_libfdatetime.h"
 #include "libmsiecf_libfole.h"
 #include "libmsiecf_libfvalue.h"
@@ -212,7 +212,7 @@ int libmsiecf_url_values_read(
 	uint8_t second_month                        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t date_time_string[ 32 ];
+	system_character_t date_time_string[ 32 ];
 
 	libfdatetime_filetime_t *filetime           = NULL;
 	libfdatetime_fat_date_time_t *fat_date_time = NULL;
@@ -548,7 +548,7 @@ int libmsiecf_url_values_read(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 		          filetime,
 		          (uint16_t *) date_time_string,
@@ -575,7 +575,7 @@ int libmsiecf_url_values_read(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: secondary time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: secondary time\t\t\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 date_time_string );
 
@@ -595,7 +595,7 @@ int libmsiecf_url_values_read(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 		          filetime,
 		          (uint16_t *) date_time_string,
@@ -622,7 +622,7 @@ int libmsiecf_url_values_read(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: primary time\t\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: primary time\t\t\t\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 date_time_string );
 
@@ -645,7 +645,7 @@ int libmsiecf_url_values_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libfdatetime_filetime_copy_to_utf16_string(
 				  filetime,
 				  (uint16_t *) date_time_string,
@@ -691,7 +691,7 @@ int libmsiecf_url_values_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libfdatetime_fat_date_time_copy_to_utf16_string(
 				  fat_date_time,
 				  (uint16_t *) date_time_string,
@@ -720,7 +720,7 @@ int libmsiecf_url_values_read(
 			}
 		}
 		libcnotify_printf(
-		 "%s: expiration time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: expiration time\t\t\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 date_time_string );
 
@@ -918,7 +918,7 @@ int libmsiecf_url_values_read(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_fat_date_time_copy_to_utf16_string(
 		          fat_date_time,
 		          (uint16_t *) date_time_string,
@@ -945,7 +945,7 @@ int libmsiecf_url_values_read(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: last checked time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: last checked time\t\t\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 date_time_string );
 
@@ -1004,7 +1004,7 @@ int libmsiecf_url_values_read(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_fat_date_time_copy_to_utf16_string(
 		          fat_date_time,
 		          (uint16_t *) date_time_string,
@@ -1031,7 +1031,7 @@ int libmsiecf_url_values_read(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: unknown time\t\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "%s: unknown time\t\t\t\t\t: %" PRIs_SYSTEM "\n",
 		 function,
 		 date_time_string );
 

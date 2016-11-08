@@ -118,5 +118,5 @@ enum LIBMSIECF_CODEPAGES
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_CODEPAGE_H ) */
 

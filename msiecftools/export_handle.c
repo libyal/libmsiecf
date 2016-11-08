@@ -21,14 +21,16 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "export_handle.h"
 #include "log_handle.h"
 #include "msiecftools_libcerror.h"
 #include "msiecftools_libclocale.h"
 #include "msiecftools_libcnotify.h"
-#include "msiecftools_libcstring.h"
 #include "msiecftools_libfdatetime.h"
 #include "msiecftools_libmsiecf.h"
 
@@ -217,7 +219,7 @@ int export_handle_signal_abort(
  */
 int export_handle_set_export_mode(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function = "export_handle_set_export_mode";
@@ -246,14 +248,14 @@ int export_handle_set_export_mode(
 
 		return( -1 );
 	}
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
 	if( string_length == 3 )
 	{
-		if( libcstring_system_string_compare(
+		if( system_string_compare(
 		     string,
-		     _LIBCSTRING_SYSTEM_STRING( "all" ),
+		     _SYSTEM_STRING( "all" ),
 		     3 ) == 0 )
 		{
 			export_handle->export_mode = EXPORT_MODE_ALL;
@@ -263,9 +265,9 @@ int export_handle_set_export_mode(
 	}
 	else if( string_length == 5 )
 	{
-		if( libcstring_system_string_compare(
+		if( system_string_compare(
 		     string,
-		     _LIBCSTRING_SYSTEM_STRING( "items" ),
+		     _SYSTEM_STRING( "items" ),
 		     5 ) == 0 )
 		{
 			export_handle->export_mode = EXPORT_MODE_ITEMS;
@@ -275,9 +277,9 @@ int export_handle_set_export_mode(
 	}
 	else if( string_length == 9 )
 	{
-		if( libcstring_system_string_compare(
+		if( system_string_compare(
 		     string,
-		     _LIBCSTRING_SYSTEM_STRING( "recovered" ),
+		     _SYSTEM_STRING( "recovered" ),
 		     9 ) == 0 )
 		{
 			export_handle->export_mode = EXPORT_MODE_RECOVERED;
@@ -293,7 +295,7 @@ int export_handle_set_export_mode(
  */
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function  = "export_handle_set_ascii_codepage";
@@ -315,10 +317,10 @@ int export_handle_set_ascii_codepage(
 	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_KOI8
 	              | LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
 
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libclocale_codepage_copy_from_string_wide(
 	          &( export_handle->ascii_codepage ),
 	          string,
@@ -352,7 +354,7 @@ int export_handle_set_ascii_codepage(
  */
 int export_handle_open(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "export_handle_open";
@@ -382,7 +384,7 @@ int export_handle_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libmsiecf_file_open_wide(
 	     export_handle->input_file,
 	     filename,
@@ -470,11 +472,11 @@ int export_handle_export_item_leak(
 {
 	char cache_directory_name[ 9 ];
 
-	libcstring_system_character_t *filename = NULL;
-	static char *function                   = "export_handle_export_item_leak";
-	size_t filename_size                    = 0;
-	uint8_t cache_directory_index           = 0;
-	int result                              = 0;
+	system_character_t *filename  = NULL;
+	static char *function         = "export_handle_export_item_leak";
+	size_t filename_size          = 0;
+	uint8_t cache_directory_index = 0;
+	int result                    = 0;
 
 	if( export_handle == NULL )
 	{
@@ -498,7 +500,7 @@ int export_handle_export_item_leak(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libmsiecf_leak_get_utf16_filename_size(
 	          item,
 	          &filename_size,
@@ -523,7 +525,7 @@ int export_handle_export_item_leak(
 	if( ( result != 0 )
 	 && ( filename_size > 0 ) )
 	{
-		filename = libcstring_system_string_allocate(
+		filename = system_string_allocate(
 		            filename_size );
 
 		if( filename == NULL )
@@ -537,7 +539,7 @@ int export_handle_export_item_leak(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libmsiecf_leak_get_utf16_filename(
 		          item,
 		          (uint16_t *) filename,
@@ -563,7 +565,7 @@ int export_handle_export_item_leak(
 		}
 		fprintf(
 		 export_handle->notify_stream,
-		 "Filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "Filename\t\t: %" PRIs_SYSTEM "\n",
 		 filename );
 
 		memory_free(
@@ -641,10 +643,10 @@ int export_handle_export_item_redirected(
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *location = NULL;
-	static char *function                   = "export_handle_export_item_redirected";
-	size_t location_size                    = 0;
-	int result                              = 0;
+	system_character_t *location = NULL;
+	static char *function        = "export_handle_export_item_redirected";
+	size_t location_size         = 0;
+	int result                   = 0;
 
 	if( export_handle == NULL )
 	{
@@ -668,7 +670,7 @@ int export_handle_export_item_redirected(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libmsiecf_redirected_get_utf16_location_size(
 	          item,
 	          &location_size,
@@ -693,7 +695,7 @@ int export_handle_export_item_redirected(
 	if( ( result != 0 )
 	 && ( location_size > 0 ) )
 	{
-		location = libcstring_system_string_allocate(
+		location = system_string_allocate(
 		            location_size );
 
 		if( location == NULL )
@@ -707,7 +709,7 @@ int export_handle_export_item_redirected(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libmsiecf_redirected_get_utf16_location(
 		          item,
 		          (uint16_t *) location,
@@ -733,7 +735,7 @@ int export_handle_export_item_redirected(
 		}
 		fprintf(
 		 export_handle->notify_stream,
-		 "Location\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "Location\t\t: %" PRIs_SYSTEM "\n",
 		 location );
 
 		memory_free(
@@ -763,12 +765,12 @@ int export_handle_export_item_url(
      libcerror_error_t **error )
 {
 	char cache_directory_name[ 9 ];
-	libcstring_system_character_t date_time_string[ 48 ];
+	system_character_t date_time_string[ 48 ];
 
-	libcstring_system_character_t *filename     = NULL;
-	libcstring_system_character_t *location     = NULL;
 	libfdatetime_fat_date_time_t *fat_date_time = NULL;
 	libfdatetime_filetime_t *filetime           = NULL;
+	system_character_t *filename                = NULL;
+	system_character_t *location                = NULL;
 	static char *function                       = "export_handle_export_item_url";
 	size_t filename_size                        = 0;
 	size_t location_size                        = 0;
@@ -825,7 +827,7 @@ int export_handle_export_item_url(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libmsiecf_url_get_utf16_location_size(
 	          item,
 	          &location_size,
@@ -850,7 +852,7 @@ int export_handle_export_item_url(
 	if( ( result != 0 )
 	 && ( location_size > 0 ) )
 	{
-		location = libcstring_system_string_allocate(
+		location = system_string_allocate(
 		            location_size );
 
 		if( location == NULL )
@@ -864,7 +866,7 @@ int export_handle_export_item_url(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libmsiecf_url_get_utf16_location(
 		          item,
 		          (uint16_t *) location,
@@ -890,7 +892,7 @@ int export_handle_export_item_url(
 		}
 		fprintf(
 		 export_handle->notify_stream,
-		 "Location\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "Location\t\t: %" PRIs_SYSTEM "\n",
 		 location );
 
 		memory_free(
@@ -926,7 +928,7 @@ int export_handle_export_item_url(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libfdatetime_filetime_copy_to_utf16_string(
 		  filetime,
 		  (uint16_t *) date_time_string,
@@ -954,7 +956,7 @@ int export_handle_export_item_url(
 	}
 	fprintf(
 	 export_handle->notify_stream,
-	 "Primary time\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+	 "Primary time\t\t: %" PRIs_SYSTEM "\n",
 	 date_time_string );
 
 	if( libmsiecf_url_get_secondary_time(
@@ -987,7 +989,7 @@ int export_handle_export_item_url(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 			  filetime,
 			  (uint16_t *) date_time_string,
@@ -1015,7 +1017,7 @@ int export_handle_export_item_url(
 		}
 		fprintf(
 		 export_handle->notify_stream,
-		 "Secondary time\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "Secondary time\t\t: %" PRIs_SYSTEM "\n",
 		 date_time_string );
 	}
 	if( libmsiecf_url_get_expiration_time(
@@ -1039,11 +1041,11 @@ int export_handle_export_item_url(
 		{
 			if( value_64bit == 0x7fffffffffffffffULL )
 			{
-				date_time_string[ 0 ] = (libcstring_system_character_t) 'N';
-				date_time_string[ 1 ] = (libcstring_system_character_t) 'e';
-				date_time_string[ 2 ] = (libcstring_system_character_t) 'v';
-				date_time_string[ 3 ] = (libcstring_system_character_t) 'e';
-				date_time_string[ 4 ] = (libcstring_system_character_t) 'r';
+				date_time_string[ 0 ] = (system_character_t) 'N';
+				date_time_string[ 1 ] = (system_character_t) 'e';
+				date_time_string[ 2 ] = (system_character_t) 'v';
+				date_time_string[ 3 ] = (system_character_t) 'e';
+				date_time_string[ 4 ] = (system_character_t) 'r';
 				date_time_string[ 5 ] = 0;
 			}
 			else
@@ -1062,7 +1064,7 @@ int export_handle_export_item_url(
 
 					goto on_error;
 				}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 				result = libfdatetime_filetime_copy_to_utf16_string(
 					  filetime,
 					  (uint16_t *) date_time_string,
@@ -1095,11 +1097,11 @@ int export_handle_export_item_url(
 		{
 			if( value_64bit == 0xffffffffUL )
 			{
-				date_time_string[ 0 ] = (libcstring_system_character_t) 'N';
-				date_time_string[ 1 ] = (libcstring_system_character_t) 'e';
-				date_time_string[ 2 ] = (libcstring_system_character_t) 'v';
-				date_time_string[ 3 ] = (libcstring_system_character_t) 'e';
-				date_time_string[ 4 ] = (libcstring_system_character_t) 'r';
+				date_time_string[ 0 ] = (system_character_t) 'N';
+				date_time_string[ 1 ] = (system_character_t) 'e';
+				date_time_string[ 2 ] = (system_character_t) 'v';
+				date_time_string[ 3 ] = (system_character_t) 'e';
+				date_time_string[ 4 ] = (system_character_t) 'r';
 				date_time_string[ 5 ] = 0;
 			}
 			else
@@ -1118,7 +1120,7 @@ int export_handle_export_item_url(
 
 					goto on_error;
 				}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 				result = libfdatetime_fat_date_time_copy_to_utf16_string(
 					  fat_date_time,
 					  (uint16_t *) date_time_string,
@@ -1148,7 +1150,7 @@ int export_handle_export_item_url(
 		}
 		fprintf(
 		 export_handle->notify_stream,
-		 "Expiration time\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "Expiration time\t\t: %" PRIs_SYSTEM "\n",
 		 date_time_string );
 	}
 	if( libmsiecf_url_get_last_checked_time(
@@ -1181,7 +1183,7 @@ int export_handle_export_item_url(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_fat_date_time_copy_to_utf16_string(
 			  fat_date_time,
 			  (uint16_t *) date_time_string,
@@ -1209,10 +1211,10 @@ int export_handle_export_item_url(
 		}
 		fprintf(
 		 export_handle->notify_stream,
-		 "Last checked time\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "Last checked time\t: %" PRIs_SYSTEM "\n",
 		 date_time_string );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libmsiecf_url_get_utf16_filename_size(
 	          item,
 	          &filename_size,
@@ -1237,7 +1239,7 @@ int export_handle_export_item_url(
 	if( ( result != 0 )
 	 && ( filename_size > 0 ) )
 	{
-		filename = libcstring_system_string_allocate(
+		filename = system_string_allocate(
 		            filename_size );
 
 		if( filename == NULL )
@@ -1251,7 +1253,7 @@ int export_handle_export_item_url(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libmsiecf_url_get_utf16_filename(
 		          item,
 		          (uint16_t *) filename,
@@ -1277,7 +1279,7 @@ int export_handle_export_item_url(
 		}
 		fprintf(
 		 export_handle->notify_stream,
-		 "Filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "Filename\t\t: %" PRIs_SYSTEM "\n",
 		 filename );
 
 		memory_free(

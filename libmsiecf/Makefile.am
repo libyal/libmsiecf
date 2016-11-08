@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -40,7 +39,6 @@ libmsiecf_la_SOURCES = \
 	libmsiecf_libcerror.h \
 	libmsiecf_libclocale.h \
 	libmsiecf_libcnotify.h \
-	libmsiecf_libcstring.h \
 	libmsiecf_libfdatetime.h \
 	libmsiecf_libfole.h \
 	libmsiecf_libfvalue.h \
@@ -62,7 +60,6 @@ libmsiecf_la_SOURCES = \
 	msiecf_url_record.h
 
 libmsiecf_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
