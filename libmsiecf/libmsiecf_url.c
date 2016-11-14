@@ -121,12 +121,12 @@ int libmsiecf_url_get_type(
 }
 
 /* Retrieves the primary time
- * The returned time is a 64-bit version of a filetime value
+ * The returned time is a 64-bit version of a FILETIME value
  * Returns 1 if successful or -1 on error
  */
 int libmsiecf_url_get_primary_time(
      libmsiecf_item_t *url,
-     uint64_t *primary_time,
+     uint64_t *filetime,
      libcerror_error_t **error )
 {
 	libmsiecf_internal_item_t *internal_item = NULL;
@@ -195,29 +195,29 @@ int libmsiecf_url_get_primary_time(
 			return( -1 );
 		}
 	}
-	if( primary_time == NULL )
+	if( filetime == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid primary time.",
+		 "%s: invalid filetime.",
 		 function );
 
 		return( -1 );
 	}
-	*primary_time = ( (libmsiecf_url_values_t *) internal_item->value )->primary_time;
+	*filetime = ( (libmsiecf_url_values_t *) internal_item->value )->primary_time;
 
 	return( 1 );
 }
 
 /* Retrieves the secondary time
- * The returned time is a 64-bit version of a filetime value
+ * The returned time is a 64-bit version of a FILETIME value
  * Returns 1 if successful or -1 on error
  */
 int libmsiecf_url_get_secondary_time(
      libmsiecf_item_t *url,
-     uint64_t *secondary_time,
+     uint64_t *filetime,
      libcerror_error_t **error )
 {
 	libmsiecf_internal_item_t *internal_item = NULL;
@@ -286,24 +286,24 @@ int libmsiecf_url_get_secondary_time(
 			return( -1 );
 		}
 	}
-	if( secondary_time == NULL )
+	if( filetime == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid secondary time.",
+		 "%s: invalid filetime.",
 		 function );
 
 		return( -1 );
 	}
-	*secondary_time = ( (libmsiecf_url_values_t *) internal_item->value )->secondary_time;
+	*filetime = ( (libmsiecf_url_values_t *) internal_item->value )->secondary_time;
 
 	return( 1 );
 }
 
 /* Retrieves the expiration time
- * The returned time is a 64-bit version of a filetime value in format version 4.7
+ * The returned time is a 64-bit version of a FILETIME value in format version 4.7
  * The returned time is a 32-bit version of a FAT date time value in format version 5.2
  * Returns 1 if successful or -1 on error
  */

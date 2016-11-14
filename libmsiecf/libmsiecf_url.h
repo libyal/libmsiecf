@@ -42,13 +42,13 @@ int libmsiecf_url_get_type(
 LIBMSIECF_EXTERN \
 int libmsiecf_url_get_primary_time(
      libmsiecf_item_t *url,
-     uint64_t *primary_time,
+     uint64_t *filetime,
      libcerror_error_t **error );
 
 LIBMSIECF_EXTERN \
 int libmsiecf_url_get_secondary_time(
      libmsiecf_item_t *url,
-     uint64_t *secondary_time,
+     uint64_t *filetime,
      libcerror_error_t **error );
 
 LIBMSIECF_EXTERN \

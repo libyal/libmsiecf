@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMSIECF_INTERNAL_ITEM_H )
-#define _LIBMSIECF_INTERNAL_ITEM_H
+#if !defined( _LIBMSIECF_ITEM_H )
+#define _LIBMSIECF_ITEM_H
 
 #include <common.h>
 #include <types.h>
