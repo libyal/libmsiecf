@@ -124,11 +124,18 @@ stamp-h[1-9]
 /msiecftools/msiecfexport
 /msiecftools/msiecfinfo
 /tests/input
+/tests/msiecf_test_directory_descriptor
 /tests/msiecf_test_error
 /tests/msiecf_test_file
+/tests/msiecf_test_io_handle
 /tests/msiecf_test_item
-/tests/msiecf_test_open_close
+/tests/msiecf_test_item_descriptor
+/tests/msiecf_test_leak_values
+/tests/msiecf_test_notify
+/tests/msiecf_test_property_type
+/tests/msiecf_test_redirected_values
 /tests/msiecf_test_support
+/tests/msiecf_test_url_values
 /tests/tmp*
 
 # Local library dependencies specific files

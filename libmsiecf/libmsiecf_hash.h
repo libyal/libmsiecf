@@ -41,5 +41,5 @@ int libmsiecf_hash_calculate(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_HASH_H ) */
 

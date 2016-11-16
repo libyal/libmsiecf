@@ -48,5 +48,5 @@ int libmsiecf_allocation_table_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_ALLOCATION_TABLE_H ) */
 

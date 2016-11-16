@@ -45,5 +45,5 @@ void msiecfoutput_version_detailed_fprint(
 }
 #endif
 
-#endif
+#endif /* !defined( _MSIECFOUTPUT_H ) */
 

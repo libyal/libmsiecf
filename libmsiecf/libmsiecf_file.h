@@ -205,5 +205,5 @@ int libmsiecf_file_get_recovered_item(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_INTERNAL_FILE_H ) */
 

@@ -64,5 +64,5 @@ int libmsiecf_redirected_values_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_REDIRECTED_VALUES_H ) */
 

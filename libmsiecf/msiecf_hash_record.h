@@ -59,5 +59,5 @@ struct msiecf_hash_record_header
 }
 #endif
 
-#endif
+#endif /* !defined( _MSIECF_HASH_RECORD_H ) */
 

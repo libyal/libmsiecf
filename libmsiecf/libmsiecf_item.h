@@ -107,5 +107,5 @@ int libmsiecf_item_read_values(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_ITEM_H ) */
 

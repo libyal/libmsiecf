@@ -291,5 +291,5 @@ struct msiecf_url_record_header_v52
 }
 #endif
 
-#endif
+#endif /* !defined( _MSIECF_URL_RECORD_H ) */
 

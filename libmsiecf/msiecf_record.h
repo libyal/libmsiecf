@@ -48,5 +48,5 @@ struct msiecf_record_header
 }
 #endif
 
-#endif
+#endif /* !defined( _MSIECF_RECORD_H ) */
 

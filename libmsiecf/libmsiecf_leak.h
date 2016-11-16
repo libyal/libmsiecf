@@ -88,5 +88,5 @@ int libmsiecf_leak_get_utf16_filename(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_LEAK_H ) */
 

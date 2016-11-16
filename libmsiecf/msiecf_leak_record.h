@@ -110,5 +110,5 @@ struct msiecf_leak_record_header
 }
 #endif
 
-#endif
+#endif /* !defined( _MSIECF_LEAK_RECORD_H ) */
 

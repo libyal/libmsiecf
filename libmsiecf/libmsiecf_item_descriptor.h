@@ -64,5 +64,5 @@ int libmsiecf_item_descriptor_free(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_ITEM_DESCRIPTOR_H ) */
 

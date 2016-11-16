@@ -76,5 +76,5 @@ int libmsiecf_redirected_get_utf16_location(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_REDIRECTED_H ) */
 

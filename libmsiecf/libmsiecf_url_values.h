@@ -113,5 +113,5 @@ int libmsiecf_url_values_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_URL_VALUES_H ) */
 

@@ -45,5 +45,5 @@ int libmsiecf_hash_table_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_HASH_TABLE_H ) */
 

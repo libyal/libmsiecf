@@ -33,6 +33,8 @@
 #include "msiecf_test_memory.h"
 #include "msiecf_test_unused.h"
 
+#include "../libmsiecf/libmsiecf_item.h"
+
 /* Tests the libmsiecf_item_free function
  * Returns 1 if successful or 0 if not
  */
@@ -86,9 +88,29 @@ int main(
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
+#if defined( __GNUC__ )
+
+	/* TODO: add tests for libmsiecf_item_initialize */
+
+#endif /* defined( __GNUC__ ) */
+
 	MSIECF_TEST_RUN(
 	 "libmsiecf_item_free",
 	 msiecf_test_item_free );
+
+	/* TODO: add tests for libmsiecf_item_get_type */
+
+	/* TODO: add tests for libmsiecf_item_get_flags */
+
+	/* TODO: add tests for libmsiecf_item_get_offset */
+
+	/* TODO: add tests for libmsiecf_item_get_offset_range */
+
+#if defined( __GNUC__ )
+
+	/* TODO: add tests for libmsiecf_item_read_values */
+
+#endif /* defined( __GNUC__ ) */
 
 	return( EXIT_SUCCESS );
 

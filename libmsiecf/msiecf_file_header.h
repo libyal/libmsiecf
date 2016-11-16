@@ -123,5 +123,5 @@ struct msiecf_cache_directory_entry
 }
 #endif
 
-#endif
+#endif /* !defined( _MSIECF_FILE_HEADER_H ) */
 

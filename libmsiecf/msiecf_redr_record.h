@@ -64,5 +64,5 @@ struct msiecf_redr_record_header
 }
 #endif
 
-#endif
+#endif /* !defined( _MSIECF_REDR_RECORD_H ) */
 

@@ -72,5 +72,5 @@ int libmsiecf_leak_values_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_LEAK_VALUES_H ) */
 

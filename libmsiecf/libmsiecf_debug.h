@@ -47,5 +47,5 @@ int libmsiecf_debug_print_read_offsets(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_DEBUG_H ) */
 

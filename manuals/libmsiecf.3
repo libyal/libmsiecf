@@ -1,4 +1,4 @@
-.Dd April 21, 2016
+.Dd November 16, 2016
 .Dt libmsiecf 3
 .Os libmsiecf
 .Sh NAME
@@ -111,9 +111,9 @@ URL item functions
 .Ft int
 .Fn libmsiecf_url_get_type "libmsiecf_item_t *url, uint8_t *url_item_type, libmsiecf_error_t **error"
 .Ft int
-.Fn libmsiecf_url_get_primary_time "libmsiecf_item_t *url, uint64_t *primary_time, libmsiecf_error_t **error"
+.Fn libmsiecf_url_get_primary_time "libmsiecf_item_t *url, uint64_t *filetime, libmsiecf_error_t **error"
 .Ft int
-.Fn libmsiecf_url_get_secondary_time "libmsiecf_item_t *url, uint64_t *secondary_time, libmsiecf_error_t **error"
+.Fn libmsiecf_url_get_secondary_time "libmsiecf_item_t *url, uint64_t *filetime, libmsiecf_error_t **error"
 .Ft int
 .Fn libmsiecf_url_get_expiration_time "libmsiecf_item_t *url, uint64_t *expiration_time, libmsiecf_error_t **error"
 .Ft int

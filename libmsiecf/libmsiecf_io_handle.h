@@ -104,5 +104,5 @@ int libmsiecf_io_handle_read_record_scan(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_IO_HANDLE_H ) */
 

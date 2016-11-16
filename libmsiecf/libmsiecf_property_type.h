@@ -78,5 +78,5 @@ const char *libmsiecf_property_type_get_description(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_PROPERTY_TYPE_H ) */
 

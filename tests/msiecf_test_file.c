@@ -38,7 +38,7 @@
 #include "msiecf_test_macros.h"
 #include "msiecf_test_memory.h"
 
-#if SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
 #error Unsupported size of wchar_t
 #endif
 
@@ -256,8 +256,8 @@ int msiecf_test_file_get_wide_source(
      libcerror_error_t **error )
 {
 	static char *function   = "msiecf_test_file_get_wide_source";
-	size_t wide_source_size = 0;
 	size_t source_length    = 0;
+	size_t wide_source_size = 0;
 
 #if !defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	int result              = 0;
@@ -584,11 +584,17 @@ int msiecf_test_file_close_source(
 int msiecf_test_file_initialize(
      void )
 {
-	libcerror_error_t *error = NULL;
-	libmsiecf_file_t *file      = NULL;
-	int result               = 0;
+	libcerror_error_t *error        = NULL;
+	libmsiecf_file_t *file          = NULL;
+	int result                      = 0;
 
-	/* Test libmsiecf_file_initialize
+#if defined( HAVE_MSIECF_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
+
+	/* Test regular cases
 	 */
 	result = libmsiecf_file_initialize(
 	          &file,
@@ -664,79 +670,89 @@ int msiecf_test_file_initialize(
 
 #if defined( HAVE_MSIECF_TEST_MEMORY )
 
-	/* Test libmsiecf_file_initialize with malloc failing
-	 */
-	msiecf_test_malloc_attempts_before_fail = 0;
-
-	result = libmsiecf_file_initialize(
-	          &file,
-	          &error );
-
-	if( msiecf_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		msiecf_test_malloc_attempts_before_fail = -1;
+		/* Test libmsiecf_file_initialize with malloc failing
+		 */
+		msiecf_test_malloc_attempts_before_fail = test_number;
 
-		if( file != NULL )
+		result = libmsiecf_file_initialize(
+		          &file,
+		          &error );
+
+		if( msiecf_test_malloc_attempts_before_fail != -1 )
 		{
-			libmsiecf_file_free(
-			 &file,
-			 NULL );
+			msiecf_test_malloc_attempts_before_fail = -1;
+
+			if( file != NULL )
+			{
+				libmsiecf_file_free(
+				 &file,
+				 NULL );
+			}
+		}
+		else
+		{
+			MSIECF_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			MSIECF_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
+
+			MSIECF_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		MSIECF_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libmsiecf_file_initialize with memset failing
+		 */
+		msiecf_test_memset_attempts_before_fail = test_number;
 
-		MSIECF_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
+		result = libmsiecf_file_initialize(
+		          &file,
+		          &error );
 
-		MSIECF_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libmsiecf_file_initialize with memset failing
-	 */
-	msiecf_test_memset_attempts_before_fail = 0;
-
-	result = libmsiecf_file_initialize(
-	          &file,
-	          &error );
-
-	if( msiecf_test_memset_attempts_before_fail != -1 )
-	{
-		msiecf_test_memset_attempts_before_fail = -1;
-
-		if( file != NULL )
+		if( msiecf_test_memset_attempts_before_fail != -1 )
 		{
-			libmsiecf_file_free(
-			 &file,
-			 NULL );
+			msiecf_test_memset_attempts_before_fail = -1;
+
+			if( file != NULL )
+			{
+				libmsiecf_file_free(
+				 &file,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		MSIECF_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			MSIECF_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		MSIECF_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
+			MSIECF_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
 
-		MSIECF_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			MSIECF_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_MSIECF_TEST_MEMORY ) */
 
@@ -795,7 +811,7 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmsiecf_file_open functions
+/* Tests the libmsiecf_file_open function
  * Returns 1 if successful or 0 if not
  */
 int msiecf_test_file_open(
@@ -804,7 +820,7 @@ int msiecf_test_file_open(
 	char narrow_source[ 256 ];
 
 	libcerror_error_t *error = NULL;
-	libmsiecf_file_t *file      = NULL;
+	libmsiecf_file_t *file   = NULL;
 	int result               = 0;
 
 	/* Initialize test
@@ -858,21 +874,28 @@ int msiecf_test_file_open(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libmsiecf_file_close(
+	result = libmsiecf_file_open(
 	          file,
+	          narrow_source,
+	          LIBMSIECF_OPEN_READ,
 	          &error );
 
 	MSIECF_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
+        MSIECF_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libmsiecf_file_free(
 	          &file,
 	          &error );
@@ -909,7 +932,7 @@ on_error:
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Tests the libmsiecf_file_open_wide functions
+/* Tests the libmsiecf_file_open_wide function
  * Returns 1 if successful or 0 if not
  */
 int msiecf_test_file_open_wide(
@@ -918,7 +941,7 @@ int msiecf_test_file_open_wide(
 	wchar_t wide_source[ 256 ];
 
 	libcerror_error_t *error = NULL;
-	libmsiecf_file_t *file      = NULL;
+	libmsiecf_file_t *file   = NULL;
 	int result               = 0;
 
 	/* Initialize test
@@ -972,21 +995,28 @@ int msiecf_test_file_open_wide(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libmsiecf_file_close(
+	result = libmsiecf_file_open_wide(
 	          file,
+	          wide_source,
+	          LIBMSIECF_OPEN_READ,
 	          &error );
 
 	MSIECF_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
+        MSIECF_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libmsiecf_file_free(
 	          &file,
 	          &error );
@@ -1023,51 +1053,18 @@ on_error:
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* Tests the libmsiecf_file_get_ascii_codepage functions
+/* Tests the libmsiecf_file_close function
  * Returns 1 if successful or 0 if not
  */
-int msiecf_test_file_get_ascii_codepage(
-     libmsiecf_file_t *file )
+int msiecf_test_file_close(
+     void )
 {
 	libcerror_error_t *error = NULL;
-	int codepage             = 0;
 	int result               = 0;
-
-	result = libmsiecf_file_get_ascii_codepage(
-	          file,
-	          &codepage,
-	          &error );
-
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
 
 	/* Test error cases
 	 */
-	result = libmsiecf_file_get_ascii_codepage(
-	          NULL,
-	          &codepage,
-	          &error );
-
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmsiecf_file_get_ascii_codepage(
-	          file,
+	result = libmsiecf_file_close(
 	          NULL,
 	          &error );
 
@@ -1094,11 +1091,361 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmsiecf_file_set_ascii_codepage functions
+/* Tests the libmsiecf_file_open and libmsiecf_file_close functions
+ * Returns 1 if successful or 0 if not
+ */
+int msiecf_test_file_open_close(
+     const system_character_t *source )
+{
+	libcerror_error_t *error = NULL;
+	libmsiecf_file_t *file   = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libmsiecf_file_initialize(
+	          &file,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MSIECF_TEST_ASSERT_IS_NOT_NULL(
+         "file",
+         file );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libmsiecf_file_open_wide(
+	          file,
+	          source,
+	          LIBMSIECF_OPEN_READ,
+	          &error );
+#else
+	result = libmsiecf_file_open(
+	          file,
+	          source,
+	          LIBMSIECF_OPEN_READ,
+	          &error );
+#endif
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libmsiecf_file_close(
+	          file,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close a second time to validate clean up on close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libmsiecf_file_open_wide(
+	          file,
+	          source,
+	          LIBMSIECF_OPEN_READ,
+	          &error );
+#else
+	result = libmsiecf_file_open(
+	          file,
+	          source,
+	          LIBMSIECF_OPEN_READ,
+	          &error );
+#endif
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libmsiecf_file_close(
+	          file,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Clean up
+	 */
+	result = libmsiecf_file_free(
+	          &file,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "file",
+         file );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( file != NULL )
+	{
+		libmsiecf_file_free(
+		 &file,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libmsiecf_file_signal_abort function
+ * Returns 1 if successful or 0 if not
+ */
+int msiecf_test_file_signal_abort(
+     libmsiecf_file_t *file )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libmsiecf_file_signal_abort(
+	          file,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MSIECF_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libmsiecf_file_signal_abort(
+	          NULL,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        MSIECF_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libmsiecf_file_get_size function
+ * Returns 1 if successful or 0 if not
+ */
+int msiecf_test_file_get_size(
+     libmsiecf_file_t *file )
+{
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	int result               = 0;
+	int size_is_set          = 0;
+
+	/* Test regular cases
+	 */
+	result = libmsiecf_file_get_size(
+	          file,
+	          &size,
+	          &error );
+
+	MSIECF_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libmsiecf_file_get_size(
+	          NULL,
+	          &size,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( size_is_set != 0 )
+	{
+		result = libmsiecf_file_get_size(
+		          file,
+		          NULL,
+		          &error );
+
+		MSIECF_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		MSIECF_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libmsiecf_file_get_ascii_codepage function
+ * Returns 1 if successful or 0 if not
+ */
+int msiecf_test_file_get_ascii_codepage(
+     libmsiecf_file_t *file )
+{
+	libcerror_error_t *error  = NULL;
+	int ascii_codepage        = 0;
+	int ascii_codepage_is_set = 0;
+	int result                = 0;
+
+	/* Test regular cases
+	 */
+	result = libmsiecf_file_get_ascii_codepage(
+	          file,
+	          &ascii_codepage,
+	          &error );
+
+	MSIECF_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	ascii_codepage_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libmsiecf_file_get_ascii_codepage(
+	          NULL,
+	          &ascii_codepage,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( ascii_codepage_is_set != 0 )
+	{
+		result = libmsiecf_file_get_ascii_codepage(
+		          file,
+		          NULL,
+		          &error );
+
+		MSIECF_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		MSIECF_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libmsiecf_file_set_ascii_codepage function
  * Returns 1 if successful or 0 if not
  */
 int msiecf_test_file_set_ascii_codepage(
-     void )
+     libmsiecf_file_t *file )
 {
 	int supported_codepages[ 15 ] = {
 		LIBMSIECF_CODEPAGE_ASCII,
@@ -1137,29 +1484,9 @@ int msiecf_test_file_set_ascii_codepage(
 		LIBMSIECF_CODEPAGE_KOI8_U };
 
 	libcerror_error_t *error = NULL;
-	libmsiecf_file_t *file      = NULL;
 	int codepage             = 0;
 	int index                = 0;
 	int result               = 0;
-
-	/* Initialize test
-	 */
-	result = libmsiecf_file_initialize(
-	          &file,
-	          &error );
-
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "file",
-         file );
-
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
 
 	/* Test set ASCII codepage
 	 */
@@ -1227,18 +1554,15 @@ int msiecf_test_file_set_ascii_codepage(
 	}
 	/* Clean up
 	 */
-	result = libmsiecf_file_free(
-	          &file,
+	result = libmsiecf_file_set_ascii_codepage(
+	          file,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
 	          &error );
 
 	MSIECF_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
 	 1 );
-
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "file",
-         file );
 
         MSIECF_TEST_ASSERT_IS_NULL(
          "error",
@@ -1252,38 +1576,37 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( file != NULL )
-	{
-		libmsiecf_file_free(
-		 &file,
-		 NULL );
-	}
 	return( 0 );
 }
 
-/* Tests the libmsiecf_file_get_number_of_unallocated_blocks functions
+/* Tests the libmsiecf_file_get_number_of_unallocated_blocks function
  * Returns 1 if successful or 0 if not
  */
 int msiecf_test_file_get_number_of_unallocated_blocks(
      libmsiecf_file_t *file )
 {
-	libcerror_error_t *error = NULL;
-	int number_of_unallocated_blocks    = 0;
-	int result               = 0;
+	libcerror_error_t *error                = NULL;
+	int number_of_unallocated_blocks        = 0;
+	int number_of_unallocated_blocks_is_set = 0;
+	int result                              = 0;
 
+	/* Test regular cases
+	 */
 	result = libmsiecf_file_get_number_of_unallocated_blocks(
 	          file,
 	          &number_of_unallocated_blocks,
 	          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
+	MSIECF_TEST_ASSERT_NOT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_unallocated_blocks_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1297,30 +1620,32 @@ int msiecf_test_file_get_number_of_unallocated_blocks(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libmsiecf_file_get_number_of_unallocated_blocks(
-	          file,
-	          NULL,
-	          &error );
+	if( number_of_unallocated_blocks_is_set != 0 )
+	{
+		result = libmsiecf_file_get_number_of_unallocated_blocks(
+		          file,
+		          NULL,
+		          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		MSIECF_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		MSIECF_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1332,29 +1657,34 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmsiecf_file_get_number_of_cache_directories functions
+/* Tests the libmsiecf_file_get_number_of_cache_directories function
  * Returns 1 if successful or 0 if not
  */
 int msiecf_test_file_get_number_of_cache_directories(
      libmsiecf_file_t *file )
 {
-	libcerror_error_t *error = NULL;
-	int number_of_cache_directories    = 0;
-	int result               = 0;
+	libcerror_error_t *error               = NULL;
+	int number_of_cache_directories        = 0;
+	int number_of_cache_directories_is_set = 0;
+	int result                             = 0;
 
+	/* Test regular cases
+	 */
 	result = libmsiecf_file_get_number_of_cache_directories(
 	          file,
 	          &number_of_cache_directories,
 	          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
+	MSIECF_TEST_ASSERT_NOT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_cache_directories_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1368,30 +1698,32 @@ int msiecf_test_file_get_number_of_cache_directories(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libmsiecf_file_get_number_of_cache_directories(
-	          file,
-	          NULL,
-	          &error );
+	if( number_of_cache_directories_is_set != 0 )
+	{
+		result = libmsiecf_file_get_number_of_cache_directories(
+		          file,
+		          NULL,
+		          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		MSIECF_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		MSIECF_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1403,29 +1735,34 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmsiecf_file_get_number_of_items functions
+/* Tests the libmsiecf_file_get_number_of_items function
  * Returns 1 if successful or 0 if not
  */
 int msiecf_test_file_get_number_of_items(
      libmsiecf_file_t *file )
 {
-	libcerror_error_t *error = NULL;
-	int number_of_items    = 0;
-	int result               = 0;
+	libcerror_error_t *error   = NULL;
+	int number_of_items        = 0;
+	int number_of_items_is_set = 0;
+	int result                 = 0;
 
+	/* Test regular cases
+	 */
 	result = libmsiecf_file_get_number_of_items(
 	          file,
 	          &number_of_items,
 	          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
+	MSIECF_TEST_ASSERT_NOT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_items_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1439,30 +1776,32 @@ int msiecf_test_file_get_number_of_items(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libmsiecf_file_get_number_of_items(
-	          file,
-	          NULL,
-	          &error );
+	if( number_of_items_is_set != 0 )
+	{
+		result = libmsiecf_file_get_number_of_items(
+		          file,
+		          NULL,
+		          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		MSIECF_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		MSIECF_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1474,29 +1813,34 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmsiecf_file_get_number_of_recovered_items functions
+/* Tests the libmsiecf_file_get_number_of_recovered_items function
  * Returns 1 if successful or 0 if not
  */
 int msiecf_test_file_get_number_of_recovered_items(
      libmsiecf_file_t *file )
 {
-	libcerror_error_t *error = NULL;
-	int number_of_recovered_items    = 0;
-	int result               = 0;
+	libcerror_error_t *error             = NULL;
+	int number_of_recovered_items        = 0;
+	int number_of_recovered_items_is_set = 0;
+	int result                           = 0;
 
+	/* Test regular cases
+	 */
 	result = libmsiecf_file_get_number_of_recovered_items(
 	          file,
 	          &number_of_recovered_items,
 	          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
+	MSIECF_TEST_ASSERT_NOT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_recovered_items_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1510,30 +1854,32 @@ int msiecf_test_file_get_number_of_recovered_items(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libmsiecf_file_get_number_of_recovered_items(
-	          file,
-	          NULL,
-	          &error );
+	if( number_of_recovered_items_is_set != 0 )
+	{
+		result = libmsiecf_file_get_number_of_recovered_items(
+		          file,
+		          NULL,
+		          &error );
 
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		MSIECF_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		MSIECF_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1558,8 +1904,8 @@ int main(
 #endif
 {
 	libcerror_error_t *error   = NULL;
+	libmsiecf_file_t *file     = NULL;
 	system_character_t *source = NULL;
-	libmsiecf_file_t *file        = NULL;
 	system_integer_t option    = 0;
 	int result                 = 0;
 
@@ -1600,10 +1946,6 @@ int main(
 	 "libmsiecf_file_free",
 	 msiecf_test_file_free );
 
-	MSIECF_TEST_RUN(
-	 "libmsiecf_file_set_ascii_codepage",
-	 msiecf_test_file_set_ascii_codepage );
-
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
@@ -1627,7 +1969,14 @@ int main(
 
 #endif /* defined( LIBMSIECF_HAVE_BFIO ) */
 
-		/* TODO add test for libmsiecf_file_close */
+		MSIECF_TEST_RUN(
+		 "libmsiecf_file_close",
+		 msiecf_test_file_close );
+
+		MSIECF_TEST_RUN_WITH_ARGS(
+		 "libmsiecf_file_open_close",
+		 msiecf_test_file_open_close,
+		 source );
 
 		/* Initialize test
 		 */
@@ -1650,8 +1999,19 @@ int main(
 	         error );
 
 		MSIECF_TEST_RUN_WITH_ARGS(
-		 "libmsiecf_file_open",
-		 msiecf_test_file_open,
+		 "libmsiecf_file_signal_abort",
+		 msiecf_test_file_signal_abort,
+		 file );
+
+#if defined( __GNUC__ )
+
+		/* TODO: add tests for libmsiecf_file_open_read */
+
+#endif /* defined( __GNUC__ ) */
+
+		MSIECF_TEST_RUN_WITH_ARGS(
+		 "libmsiecf_file_get_size",
+		 msiecf_test_file_get_size,
 		 file );
 
 		MSIECF_TEST_RUN_WITH_ARGS(
@@ -1660,24 +2020,39 @@ int main(
 		 file );
 
 		MSIECF_TEST_RUN_WITH_ARGS(
+		 "libmsiecf_file_set_ascii_codepage",
+		 msiecf_test_file_set_ascii_codepage,
+		 file );
+
+		/* TODO: add tests for libmsiecf_file_get_format_version */
+
+		MSIECF_TEST_RUN_WITH_ARGS(
 		 "libmsiecf_file_get_number_of_unallocated_blocks",
 		 msiecf_test_file_get_number_of_unallocated_blocks,
 		 file );
+
+		/* TODO: add tests for libmsiecf_file_get_unallocated_block */
 
 		MSIECF_TEST_RUN_WITH_ARGS(
 		 "libmsiecf_file_get_number_of_cache_directories",
 		 msiecf_test_file_get_number_of_cache_directories,
 		 file );
 
+		/* TODO: add tests for libmsiecf_file_get_cache_directory_name */
+
 		MSIECF_TEST_RUN_WITH_ARGS(
 		 "libmsiecf_file_get_number_of_items",
 		 msiecf_test_file_get_number_of_items,
 		 file );
 
+		/* TODO: add tests for libmsiecf_file_get_item */
+
 		MSIECF_TEST_RUN_WITH_ARGS(
 		 "libmsiecf_file_get_number_of_recovered_items",
 		 msiecf_test_file_get_number_of_recovered_items,
 		 file );
+
+		/* TODO: add tests for libmsiecf_file_get_recovered_item */
 
 		/* Clean up
 		 */

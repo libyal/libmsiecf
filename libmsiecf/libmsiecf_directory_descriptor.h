@@ -52,5 +52,5 @@ int libmsiecf_directory_descriptor_free(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMSIECF_DIRECTORY_DESCRIPTOR_H ) */
 

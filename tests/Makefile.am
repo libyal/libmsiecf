@@ -10,6 +10,10 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBFDATETIME_CPPFLAGS@ \
+	@LIBFGUID_CPPFLAGS@ \
+	@LIBFOLE_CPPFLAGS@ \
+	@LIBFVALUE_CPPFLAGS@ \
 	@LIBCSYSTEM_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBMSIECF_DLL_IMPORT@
@@ -43,11 +47,30 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	msiecf_test_directory_descriptor \
 	msiecf_test_error \
 	msiecf_test_file \
+	msiecf_test_io_handle \
 	msiecf_test_item \
-	msiecf_test_open_close \
-	msiecf_test_support
+	msiecf_test_item_descriptor \
+	msiecf_test_leak_values \
+	msiecf_test_notify \
+	msiecf_test_property_type \
+	msiecf_test_redirected_values \
+	msiecf_test_support \
+	msiecf_test_url_values
+
+msiecf_test_directory_descriptor_SOURCES = \
+	msiecf_test_directory_descriptor.c \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_directory_descriptor_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
 
 msiecf_test_error_SOURCES = \
 	msiecf_test_error.c \
@@ -65,8 +88,8 @@ msiecf_test_file_SOURCES = \
 	msiecf_test_libcsystem.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_libuna.h \
-	msiecf_test_memory.c msiecf_test_memory.h \
-	msiecf_test_unused.h
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h
 
 msiecf_test_file_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
@@ -74,6 +97,20 @@ msiecf_test_file_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCTHREADS_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@PTHREAD_LIBADD@
+
+msiecf_test_io_handle_SOURCES = \
+	msiecf_test_io_handle.c \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_io_handle_LDADD = \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 
@@ -89,35 +126,94 @@ msiecf_test_item_LDADD = \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 
-msiecf_test_open_close_SOURCES = \
+msiecf_test_item_descriptor_SOURCES = \
+	msiecf_test_item_descriptor.c \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
-	msiecf_test_libcsystem.h \
-	msiecf_test_open_close.c
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
 
-msiecf_test_open_close_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
+msiecf_test_item_descriptor_LDADD = \
 	../libmsiecf/libmsiecf.la \
-	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@
-	@PTHREAD_LIBADD@
+
+msiecf_test_leak_values_SOURCES = \
+	msiecf_test_leak_values.c \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_leak_values_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_notify_SOURCES = \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_notify.c \
+	msiecf_test_unused.h
+
+msiecf_test_notify_LDADD = \
+	../libmsiecf/libmsiecf.la
+
+msiecf_test_property_type_SOURCES = \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_property_type.c \
+	msiecf_test_unused.h
+
+msiecf_test_property_type_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_redirected_values_SOURCES = \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_redirected_values.c \
+	msiecf_test_unused.h
+
+msiecf_test_redirected_values_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
 
 msiecf_test_support_SOURCES = \
+	msiecf_test_libbfio.h \
 	msiecf_test_libcerror.h \
 	msiecf_test_libclocale.h \
 	msiecf_test_libcsystem.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_libuna.h \
 	msiecf_test_macros.h \
-	msiecf_test_support.c \
-	msiecf_test_unused.h
+	msiecf_test_support.c
 
 msiecf_test_support_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_url_values_SOURCES = \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h \
+	msiecf_test_url_values.c
+
+msiecf_test_url_values_LDADD = \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 
