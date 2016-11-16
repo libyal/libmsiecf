@@ -59,5 +59,5 @@ void pymsiecf_url_types_free(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_URL_TYPES_H ) */
 

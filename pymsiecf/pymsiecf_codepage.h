@@ -38,5 +38,5 @@ const char *pymsiecf_codepage_to_string(
 }
 #endif
 
-#endif /* !defined( _PYMSIECF_CODEPAGE_H */
+#endif /* !defined( _PYMSIECF_CODEPAGE_H ) */
 

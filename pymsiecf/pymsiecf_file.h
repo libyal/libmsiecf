@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf file
+ * Python object wrapper of libmsiecf_file_t
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -48,14 +48,6 @@ struct pymsiecf_file
 	/* The libbfio file IO handle
 	 */
 	libbfio_handle_t *file_io_handle;
-
-	/* The major version
-	 */
-	uint8_t major_version;
-
-	/* The minor version
-	 */
-	uint8_t minor_version;
 };
 
 extern PyMethodDef pymsiecf_file_object_methods[];
@@ -98,6 +90,10 @@ PyObject *pymsiecf_file_close(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments );
 
+PyObject *pymsiecf_file_get_size(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments );
+
 PyObject *pymsiecf_file_get_ascii_codepage(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments );
@@ -116,8 +112,6 @@ int pymsiecf_file_set_ascii_codepage_setter(
      PyObject *string_object,
      void *closure );
 
-/* TODO cache directories */
-
 PyObject *pymsiecf_file_get_format_version(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments );
@@ -127,7 +121,7 @@ PyObject *pymsiecf_file_get_number_of_cache_directories(
            PyObject *arguments );
 
 PyObject *pymsiecf_file_get_cache_directory_by_index(
-           pymsiecf_file_t *pymsiecf_file,
+           PyObject *pymsiecf_file,
            int cache_directory_index );
 
 PyObject *pymsiecf_file_get_cache_directory(
@@ -144,7 +138,7 @@ PyObject *pymsiecf_file_get_number_of_items(
            PyObject *arguments );
 
 PyObject *pymsiecf_file_get_item_by_index(
-           pymsiecf_file_t *pymsiecf_file,
+           PyObject *pymsiecf_file,
            int item_index );
 
 PyObject *pymsiecf_file_get_item(
@@ -161,7 +155,7 @@ PyObject *pymsiecf_file_get_number_of_recovered_items(
            PyObject *arguments );
 
 PyObject *pymsiecf_file_get_recovered_item_by_index(
-           pymsiecf_file_t *pymsiecf_file,
+           PyObject *pymsiecf_file,
            int item_index );
 
 PyObject *pymsiecf_file_get_recovered_item(
@@ -177,5 +171,5 @@ PyObject *pymsiecf_file_get_recovered_items(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_FILE_H ) */
 

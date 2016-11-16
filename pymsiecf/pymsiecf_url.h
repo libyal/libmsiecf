@@ -101,5 +101,5 @@ PyObject *pymsiecf_url_get_data(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_URL_H ) */
 

@@ -28,6 +28,7 @@
 
 #include "pymsiecf_datetime.h"
 #include "pymsiecf_error.h"
+#include "pymsiecf_file.h"
 #include "pymsiecf_integer.h"
 #include "pymsiecf_item.h"
 #include "pymsiecf_libcerror.h"
@@ -664,11 +665,14 @@ PyObject *pymsiecf_url_get_expiration_time(
            pymsiecf_item_t *pymsiecf_item,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error   = NULL;
-	PyObject *date_time_object = NULL;
-	static char *function      = "pymsiecf_url_get_expiration_time";
-	uint64_t timestamp         = 0;
-	int result                 = 0;
+	PyObject *date_time_object     = NULL;
+	libcerror_error_t *error       = NULL;
+	pymsiecf_file_t *pymsiecf_file = NULL;
+	static char *function          = "pymsiecf_url_get_expiration_time";
+	uint64_t timestamp             = 0;
+	uint8_t major_version          = 0;
+	uint8_t minor_version          = 0;
+	int result                     = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
 
@@ -681,12 +685,37 @@ PyObject *pymsiecf_url_get_expiration_time(
 
 		return( NULL );
 	}
-	if( pymsiecf_item->file_object == NULL )
+	if( pymsiecf_item->parent_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid URL - missing file object.",
+		 "%s: invalid URL - missing parent object.",
 		 function );
+
+		return( NULL );
+	}
+	pymsiecf_file  = (pymsiecf_file_t *) ( (pymsiecf_item_t *) pymsiecf_item )->parent_object;
+
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_file_get_format_version(
+	          pymsiecf_file->file,
+	          &major_version,
+	          &minor_version,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve format version.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
 
 		return( NULL );
 	}
@@ -712,8 +741,8 @@ PyObject *pymsiecf_url_get_expiration_time(
 
 		return( NULL );
 	}
-	if( ( pymsiecf_item->file_object->major_version == 4 )
-	 && ( pymsiecf_item->file_object->minor_version == 7 ) )
+	if( ( major_version == 4 )
+	 && ( minor_version == 7 ) )
 	{
 		date_time_object = pymsiecf_datetime_new_from_filetime(
 		                    timestamp );
@@ -746,15 +775,6 @@ PyObject *pymsiecf_url_get_expiration_time_as_integer(
 		PyErr_Format(
 		 PyExc_ValueError,
 		 "%s: invalid item.",
-		 function );
-
-		return( NULL );
-	}
-	if( pymsiecf_item->file_object == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid URL - missing file object.",
 		 function );
 
 		return( NULL );

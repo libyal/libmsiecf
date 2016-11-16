@@ -171,8 +171,8 @@ LIBMSIECF_EXTERN \
 int libmsiecf_file_get_cache_directory_name(
      libmsiecf_file_t *file,
      int cache_directory_index,
-     char *cache_directory_name,
-     size_t cache_directory_name_size,
+     char *string,
+     size_t string_size,
      libcerror_error_t **error );
 
 LIBMSIECF_EXTERN \

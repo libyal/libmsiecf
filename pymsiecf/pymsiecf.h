@@ -57,5 +57,5 @@ PyMODINIT_FUNC initpymsiecf(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_H ) */
 

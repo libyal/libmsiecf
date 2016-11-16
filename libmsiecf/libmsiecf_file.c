@@ -1431,8 +1431,8 @@ int libmsiecf_file_get_number_of_cache_directories(
 int libmsiecf_file_get_cache_directory_name(
      libmsiecf_file_t *file,
      int cache_directory_index,
-     char *cache_directory_name,
-     size_t cache_directory_name_size,
+     char *string,
+     size_t string_size,
      libcerror_error_t **error )
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
@@ -1463,24 +1463,24 @@ int libmsiecf_file_get_cache_directory_name(
 
 		return( -1 );
 	}
-	if( cache_directory_name == NULL )
+	if( string == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid cache directory name.",
+		 "%s: invalid string.",
 		 function );
 
 		return( -1 );
 	}
-	if( cache_directory_name_size < 9 )
+	if( string_size < 9 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: cache directory name too small.",
+		 "%s: invalid string size value too small.",
 		 function );
 
 		return( -1 );
@@ -1515,7 +1515,7 @@ int libmsiecf_file_get_cache_directory_name(
 	/* Assumed that the directory name contains only basic ASCII characters
 	 */
 	if( memory_copy(
-	     cache_directory_name,
+	     string,
 	     ( (libmsiecf_directory_descriptor_t *) cache_directory_entry )->name,
 	     9 ) == NULL )
 	{

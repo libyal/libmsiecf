@@ -44,5 +44,5 @@ PyObject *pymsiecf_datetime_new_from_posix_time(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_DATETIME_H ) */
 

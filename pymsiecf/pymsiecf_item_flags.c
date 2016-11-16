@@ -219,56 +219,56 @@ on_error:
 PyObject *pymsiecf_item_flags_new(
            void )
 {
-	pymsiecf_item_flags_t *pymsiecf_item_flags = NULL;
-	static char *function                      = "pymsiecf_item_flags_new";
+	pymsiecf_item_flags_t *definitions_object = NULL;
+	static char *function                     = "pymsiecf_item_flags_new";
 
-	pymsiecf_item_flags = PyObject_New(
-	                       struct pymsiecf_item_flags,
-	                       &pymsiecf_item_flags_type_object );
+	definitions_object = PyObject_New(
+	                      struct pymsiecf_item_flags,
+	                      &pymsiecf_item_flags_type_object );
 
-	if( pymsiecf_item_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize item flags.",
+		 "%s: unable to create new definitions object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pymsiecf_item_flags_init(
-	     pymsiecf_item_flags ) != 0 )
+	     definitions_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize item flags.",
+		 "%s: unable to initialize definitions object.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pymsiecf_item_flags );
+	return( (PyObject *) definitions_object );
 
 on_error:
-	if( pymsiecf_item_flags != NULL )
+	if( definitions_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymsiecf_item_flags );
+		 (PyObject *) definitions_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a item flags object
+/* Intializes an item flags object
  * Returns 0 if successful or -1 on error
  */
 int pymsiecf_item_flags_init(
-     pymsiecf_item_flags_t *pymsiecf_item_flags )
+     pymsiecf_item_flags_t *definitions_object )
 {
 	static char *function = "pymsiecf_item_flags_init";
 
-	if( pymsiecf_item_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid item flags.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return( -1 );
@@ -276,25 +276,25 @@ int pymsiecf_item_flags_init(
 	return( 0 );
 }
 
-/* Frees a item flags object
+/* Frees an item flags object
  */
 void pymsiecf_item_flags_free(
-      pymsiecf_item_flags_t *pymsiecf_item_flags )
+      pymsiecf_item_flags_t *definitions_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pymsiecf_item_flags_free";
 
-	if( pymsiecf_item_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid item flags.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pymsiecf_item_flags );
+	           definitions_object );
 
 	if( ob_type == NULL )
 	{
@@ -315,6 +315,6 @@ void pymsiecf_item_flags_free(
 		return;
 	}
 	ob_type->tp_free(
-	 (PyObject*) pymsiecf_item_flags );
+	 (PyObject*) definitions_object );
 }
 

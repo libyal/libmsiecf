@@ -45,5 +45,5 @@ PyObject *pymsiecf_redirected_get_location(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_REDIRECTED_H ) */
 

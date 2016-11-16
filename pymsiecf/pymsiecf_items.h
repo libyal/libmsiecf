@@ -1,5 +1,5 @@
 /*
- * Python object definition of the items sequence and iterator
+ * Python object definition of the sequence and iterator object of items
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "pymsiecf_file.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
 
@@ -41,14 +40,14 @@ struct pymsiecf_items
 	 */
 	PyObject_HEAD
 
-	/* The file object
+	/* The parent object
 	 */
-	pymsiecf_file_t *file_object;
+	PyObject *parent_object;
 
 	/* The get item by index callback function
 	 */
 	PyObject* (*get_item_by_index)(
-	             pymsiecf_file_t *file_object,
+	             PyObject *parent_object,
 	             int item_index );
 
 	/* The (current) item index
@@ -63,9 +62,9 @@ struct pymsiecf_items
 extern PyTypeObject pymsiecf_items_type_object;
 
 PyObject *pymsiecf_items_new(
-           pymsiecf_file_t *file_object,
+           PyObject *parent_object,
            PyObject* (*get_item_by_index)(
-                        pymsiecf_file_t *file_object,
+                        PyObject *parent_object,
                         int item_index ),
            int number_of_items );
 
@@ -92,5 +91,5 @@ PyObject *pymsiecf_items_iternext(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_ITEMS_H ) */
 

@@ -1,5 +1,5 @@
 /*
- * Python object definition of the cache directory sequence and iterator
+ * Python object definition of the sequence and iterator object of cache directories
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -27,7 +27,6 @@
 #endif
 
 #include "pymsiecf_cache_directories.h"
-#include "pymsiecf_file.h"
 #include "pymsiecf_libcerror.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
@@ -62,7 +61,7 @@ PyTypeObject pymsiecf_cache_directories_type_object = {
 	"pymsiecf._cache_directories",
 	/* tp_basicsize */
 	sizeof( pymsiecf_cache_directories_t ),
-	/* tp_cache_directoriesize */
+	/* tp_itemsize */
 	0,
 	/* tp_dealloc */
 	(destructor) pymsiecf_cache_directories_free,
@@ -97,7 +96,7 @@ PyTypeObject pymsiecf_cache_directories_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"internal pymsiecf cache directories sequence and iterator object",
+	"pymsiecf internal sequence and iterator object of cache directories",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -154,20 +153,20 @@ PyTypeObject pymsiecf_cache_directories_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_cache_directories_new(
-           pymsiecf_file_t *file_object,
+           PyObject *parent_object,
            PyObject* (*get_cache_directory_by_index)(
-                        pymsiecf_file_t *file_object,
+                        PyObject *parent_object,
                         int cache_directory_index ),
            int number_of_cache_directories )
 {
 	pymsiecf_cache_directories_t *pymsiecf_cache_directories = NULL;
 	static char *function                                    = "pymsiecf_cache_directories_new";
 
-	if( file_object == NULL )
+	if( parent_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file object.",
+		 "%s: invalid parent object.",
 		 function );
 
 		return( NULL );
@@ -206,12 +205,12 @@ PyObject *pymsiecf_cache_directories_new(
 
 		goto on_error;
 	}
-	pymsiecf_cache_directories->file_object                  = file_object;
+	pymsiecf_cache_directories->parent_object                = parent_object;
 	pymsiecf_cache_directories->get_cache_directory_by_index = get_cache_directory_by_index;
 	pymsiecf_cache_directories->number_of_cache_directories  = number_of_cache_directories;
 
 	Py_IncRef(
-	 (PyObject *) pymsiecf_cache_directories->file_object );
+	 (PyObject *) pymsiecf_cache_directories->parent_object );
 
 	return( (PyObject *) pymsiecf_cache_directories );
 
@@ -243,7 +242,7 @@ int pymsiecf_cache_directories_init(
 	}
 	/* Make sure the cache directories values are initialized
 	 */
-	pymsiecf_cache_directories->file_object                  = NULL;
+	pymsiecf_cache_directories->parent_object                = NULL;
 	pymsiecf_cache_directories->get_cache_directory_by_index = NULL;
 	pymsiecf_cache_directories->cache_directory_index        = 0;
 	pymsiecf_cache_directories->number_of_cache_directories  = 0;
@@ -251,7 +250,7 @@ int pymsiecf_cache_directories_init(
 	return( 0 );
 }
 
-/* Frees an cache directories object
+/* Frees a cache directories object
  */
 void pymsiecf_cache_directories_free(
       pymsiecf_cache_directories_t *pymsiecf_cache_directories )
@@ -289,10 +288,10 @@ void pymsiecf_cache_directories_free(
 
 		return;
 	}
-	if( pymsiecf_cache_directories->file_object != NULL )
+	if( pymsiecf_cache_directories->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymsiecf_cache_directories->file_object );
+		 (PyObject *) pymsiecf_cache_directories->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pymsiecf_cache_directories );
@@ -321,10 +320,10 @@ Py_ssize_t pymsiecf_cache_directories_len(
  */
 PyObject *pymsiecf_cache_directories_getitem(
            pymsiecf_cache_directories_t *pymsiecf_cache_directories,
-           Py_ssize_t cache_directory_index )
+           Py_ssize_t item_index )
 {
-	PyObject *string_object = NULL;
-	static char *function   = "pymsiecf_cache_directories_getitem";
+	PyObject *cache_directory_object = NULL;
+	static char *function            = "pymsiecf_cache_directories_getitem";
 
 	if( pymsiecf_cache_directories == NULL )
 	{
@@ -353,21 +352,21 @@ PyObject *pymsiecf_cache_directories_getitem(
 
 		return( NULL );
 	}
-	if( ( cache_directory_index < 0 )
-	 || ( cache_directory_index >= (Py_ssize_t) pymsiecf_cache_directories->number_of_cache_directories ) )
+	if( ( item_index < 0 )
+	 || ( item_index >= (Py_ssize_t) pymsiecf_cache_directories->number_of_cache_directories ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid invalid cache directory index value out of bounds.",
+		 "%s: invalid invalid item index value out of bounds.",
 		 function );
 
 		return( NULL );
 	}
-	string_object = pymsiecf_cache_directories->get_cache_directory_by_index(
-	                 pymsiecf_cache_directories->file_object,
-	                 (int) cache_directory_index );
+	cache_directory_object = pymsiecf_cache_directories->get_cache_directory_by_index(
+	                          pymsiecf_cache_directories->parent_object,
+	                          (int) item_index );
 
-	return( string_object );
+	return( cache_directory_object );
 }
 
 /* The cache directories iter() function
@@ -397,8 +396,8 @@ PyObject *pymsiecf_cache_directories_iter(
 PyObject *pymsiecf_cache_directories_iternext(
            pymsiecf_cache_directories_t *pymsiecf_cache_directories )
 {
-	PyObject *string_object = NULL;
-	static char *function   = "pymsiecf_cache_directories_iternext";
+	PyObject *cache_directory_object = NULL;
+	static char *function            = "pymsiecf_cache_directories_iternext";
 
 	if( pymsiecf_cache_directories == NULL )
 	{
@@ -443,14 +442,14 @@ PyObject *pymsiecf_cache_directories_iternext(
 
 		return( NULL );
 	}
-	string_object = pymsiecf_cache_directories->get_cache_directory_by_index(
-	                 pymsiecf_cache_directories->file_object,
-	                 pymsiecf_cache_directories->cache_directory_index );
+	cache_directory_object = pymsiecf_cache_directories->get_cache_directory_by_index(
+	                          pymsiecf_cache_directories->parent_object,
+	                          pymsiecf_cache_directories->cache_directory_index );
 
-	if( string_object != NULL )
+	if( cache_directory_object != NULL )
 	{
 		pymsiecf_cache_directories->cache_directory_index++;
 	}
-	return( string_object );
+	return( cache_directory_object );
 }
 

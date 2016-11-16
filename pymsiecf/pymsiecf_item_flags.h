@@ -50,14 +50,14 @@ PyObject *pymsiecf_item_flags_new(
            void );
 
 int pymsiecf_item_flags_init(
-     pymsiecf_item_flags_t *pymsiecf_item_flags );
+     pymsiecf_item_flags_t *definitions_object );
 
 void pymsiecf_item_flags_free(
-      pymsiecf_item_flags_t *pymsiecf_item_flags );
+      pymsiecf_item_flags_t *definitions_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_ITEM_FLAGS_H ) */
 

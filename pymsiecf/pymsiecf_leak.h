@@ -52,5 +52,5 @@ PyObject *pymsiecf_leak_get_filename(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_LEAK_H ) */
 

@@ -1,5 +1,5 @@
 /*
- * Python object definition of the cache directories sequence and iterator
+ * Python object definition of the sequence and iterator object of cache directories
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "pymsiecf_file.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
 
@@ -41,14 +40,14 @@ struct pymsiecf_cache_directories
 	 */
 	PyObject_HEAD
 
-	/* The file object
+	/* The parent object
 	 */
-	pymsiecf_file_t *file_object;
+	PyObject *parent_object;
 
 	/* The get cache directory by index callback function
 	 */
 	PyObject* (*get_cache_directory_by_index)(
-	             pymsiecf_file_t *file_object,
+	             PyObject *parent_object,
 	             int cache_directory_index );
 
 	/* The (current) cache directory index
@@ -63,9 +62,9 @@ struct pymsiecf_cache_directories
 extern PyTypeObject pymsiecf_cache_directories_type_object;
 
 PyObject *pymsiecf_cache_directories_new(
-           pymsiecf_file_t *file_object,
+           PyObject *parent_object,
            PyObject* (*get_cache_directory_by_index)(
-                        pymsiecf_file_t *file_object,
+                        PyObject *parent_object,
                         int cache_directory_index ),
            int number_of_cache_directories );
 
@@ -80,7 +79,7 @@ Py_ssize_t pymsiecf_cache_directories_len(
 
 PyObject *pymsiecf_cache_directories_getitem(
            pymsiecf_cache_directories_t *pymsiecf_cache_directories,
-           Py_ssize_t cache_directory_index );
+           Py_ssize_t item_index );
 
 PyObject *pymsiecf_cache_directories_iter(
            pymsiecf_cache_directories_t *pymsiecf_cache_directories );
@@ -92,5 +91,5 @@ PyObject *pymsiecf_cache_directories_iternext(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_CACHE_DIRECTORIES_H ) */
 

@@ -1,5 +1,5 @@
 /*
- * Python object definition of the items sequence and iterator
+ * Python object definition of the sequence and iterator object of items
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -26,11 +26,11 @@
 #include <stdlib.h>
 #endif
 
-#include "pymsiecf_file.h"
+#include "pymsiecf_item.h"
+#include "pymsiecf_items.h"
 #include "pymsiecf_libcerror.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
-#include "pymsiecf_items.h"
 
 PySequenceMethods pymsiecf_items_sequence_methods = {
 	/* sq_length */
@@ -97,7 +97,7 @@ PyTypeObject pymsiecf_items_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"internal pymsiecf items sequence and iterator object",
+	"pymsiecf internal sequence and iterator object of items",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -154,20 +154,20 @@ PyTypeObject pymsiecf_items_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_items_new(
-           pymsiecf_file_t *file_object,
+           PyObject *parent_object,
            PyObject* (*get_item_by_index)(
-                        pymsiecf_file_t *file_object,
+                        PyObject *parent_object,
                         int item_index ),
            int number_of_items )
 {
 	pymsiecf_items_t *pymsiecf_items = NULL;
 	static char *function            = "pymsiecf_items_new";
 
-	if( file_object == NULL )
+	if( parent_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file object.",
+		 "%s: invalid parent object.",
 		 function );
 
 		return( NULL );
@@ -206,12 +206,12 @@ PyObject *pymsiecf_items_new(
 
 		goto on_error;
 	}
-	pymsiecf_items->file_object       = file_object;
+	pymsiecf_items->parent_object     = parent_object;
 	pymsiecf_items->get_item_by_index = get_item_by_index;
 	pymsiecf_items->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) pymsiecf_items->file_object );
+	 (PyObject *) pymsiecf_items->parent_object );
 
 	return( (PyObject *) pymsiecf_items );
 
@@ -243,7 +243,7 @@ int pymsiecf_items_init(
 	}
 	/* Make sure the items values are initialized
 	 */
-	pymsiecf_items->file_object       = NULL;
+	pymsiecf_items->parent_object     = NULL;
 	pymsiecf_items->get_item_by_index = NULL;
 	pymsiecf_items->item_index        = 0;
 	pymsiecf_items->number_of_items   = 0;
@@ -289,10 +289,10 @@ void pymsiecf_items_free(
 
 		return;
 	}
-	if( pymsiecf_items->file_object != NULL )
+	if( pymsiecf_items->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymsiecf_items->file_object );
+		 (PyObject *) pymsiecf_items->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pymsiecf_items );
@@ -364,7 +364,7 @@ PyObject *pymsiecf_items_getitem(
 		return( NULL );
 	}
 	item_object = pymsiecf_items->get_item_by_index(
-	               pymsiecf_items->file_object,
+	               pymsiecf_items->parent_object,
 	               (int) item_index );
 
 	return( item_object );
@@ -444,7 +444,7 @@ PyObject *pymsiecf_items_iternext(
 		return( NULL );
 	}
 	item_object = pymsiecf_items->get_item_by_index(
-	               pymsiecf_items->file_object,
+	               pymsiecf_items->parent_object,
 	               pymsiecf_items->item_index );
 
 	if( item_object != NULL )

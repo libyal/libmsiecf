@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf item
+ * Python object wrapper of libmsiecf_item_t
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -36,12 +36,10 @@
 
 PyMethodDef pymsiecf_item_object_methods[] = {
 
-	/* Functions to access the item values */
-
 	{ "get_offset",
 	  (PyCFunction) pymsiecf_item_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Integer\n"
+	  "get_offset() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the offset." },
 
@@ -54,7 +52,7 @@ PyGetSetDef pymsiecf_item_object_get_set_definitions[] = {
 	{ "offset",
 	  (getter) pymsiecf_item_get_offset,
 	  (setter) 0,
-	  "The offset",
+	  "The offset.",
 	  NULL },
 
 	/* Sentinel */
@@ -162,7 +160,7 @@ PyTypeObject pymsiecf_item_type_object = {
 PyObject *pymsiecf_item_new(
            PyTypeObject *type_object,
            libmsiecf_item_t *item,
-           pymsiecf_file_t *file_object )
+           PyObject *parent_object )
 {
 	pymsiecf_item_t *pymsiecf_item = NULL;
 	static char *function          = "pymsiecf_item_new";
@@ -199,11 +197,11 @@ PyObject *pymsiecf_item_new(
 
 		goto on_error;
 	}
-	pymsiecf_item->item        = item;
-	pymsiecf_item->file_object = file_object;
+	pymsiecf_item->item          = item;
+	pymsiecf_item->parent_object = parent_object;
 
 	Py_IncRef(
-	 (PyObject *) pymsiecf_item->file_object );
+	 (PyObject *) pymsiecf_item->parent_object );
 
 	return( (PyObject *) pymsiecf_item );
 
@@ -245,9 +243,10 @@ int pymsiecf_item_init(
 void pymsiecf_item_free(
       pymsiecf_item_t *pymsiecf_item )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pymsiecf_item_free";
+	int result                  = 0;
 
 	if( pymsiecf_item == NULL )
 	{
@@ -288,9 +287,15 @@ void pymsiecf_item_free(
 
 		return;
 	}
-	if( libmsiecf_item_free(
-	     &( pymsiecf_item->item ),
-	     &error ) != 1 )
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_item_free(
+	          &( pymsiecf_item->item ),
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
 	{
 		pymsiecf_error_raise(
 		 error,
@@ -301,10 +306,10 @@ void pymsiecf_item_free(
 		libcerror_error_free(
 		 &error );
 	}
-	if( pymsiecf_item->file_object != NULL )
+	if( pymsiecf_item->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymsiecf_item->file_object );
+		 (PyObject *) pymsiecf_item->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pymsiecf_item );
@@ -317,8 +322,8 @@ PyObject *pymsiecf_item_get_offset(
            pymsiecf_item_t *pymsiecf_item,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pymsiecf_item_get_offset";
 	off64_t offset           = 0;
 	int result               = 0;
@@ -343,7 +348,7 @@ PyObject *pymsiecf_item_get_offset(
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pymsiecf_error_raise(
 		 error,
@@ -355,6 +360,13 @@ PyObject *pymsiecf_item_get_offset(
 		 &error );
 
 		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
 	}
 	integer_object = pymsiecf_integer_signed_new_from_64bit(
 	                  (int64_t) offset );

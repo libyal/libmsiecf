@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf file
+ * Python object wrapper of libmsiecf_file_t
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -32,6 +32,7 @@
 #include "pymsiecf_error.h"
 #include "pymsiecf_file.h"
 #include "pymsiecf_file_object_io_handle.h"
+#include "pymsiecf_integer.h"
 #include "pymsiecf_item.h"
 #include "pymsiecf_items.h"
 #include "pymsiecf_leak.h"
@@ -45,13 +46,15 @@
 #include "pymsiecf_url.h"
 
 #if !defined( LIBMSIECF_HAVE_BFIO )
+
 LIBMSIECF_EXTERN \
 int libmsiecf_file_open_file_io_handle(
      libmsiecf_file_t *file,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libmsiecf_error_t **error );
-#endif
+
+#endif /* !defined( LIBMSIECF_HAVE_BFIO ) */
 
 PyMethodDef pymsiecf_file_object_methods[] = {
 
@@ -60,98 +63,99 @@ PyMethodDef pymsiecf_file_object_methods[] = {
 	  METH_NOARGS,
 	  "signal_abort() -> None\n"
 	  "\n"
-	  "Signals the file to abort the current activity" },
-
-	/* Functions to access the file */
+	  "Signals the file to abort the current activity." },
 
 	{ "open",
 	  (PyCFunction) pymsiecf_file_open,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> None\n"
 	  "\n"
-	  "Opens a file" },
+	  "Opens a file." },
 
 	{ "open_file_object",
 	  (PyCFunction) pymsiecf_file_open_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> None\n"
 	  "\n"
-	  "Opens a file using a file-like object" },
+	  "Opens a file using a file-like object." },
 
 	{ "close",
 	  (PyCFunction) pymsiecf_file_close,
 	  METH_NOARGS,
 	  "close() -> None\n"
 	  "\n"
-	  "Closes a file" },
+	  "Closes a file." },
+
+	{ "get_size",
+	  (PyCFunction) pymsiecf_file_get_size,
+	  METH_NOARGS,
+	  "get_size() -> Integer or None\n"
+	  "\n"
+	  "Retrieves the size." },
 
 	{ "get_ascii_codepage",
 	  (PyCFunction) pymsiecf_file_get_ascii_codepage,
 	  METH_NOARGS,
 	  "get_ascii_codepage() -> String\n"
 	  "\n"
-	  "Returns the codepage used for ASCII strings in the file" },
+	  "Retrieves the codepage for ASCII strings used in the file." },
 
 	{ "set_ascii_codepage",
 	  (PyCFunction) pymsiecf_file_set_ascii_codepage,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "set_ascii_codepage(codepage) -> None\n"
 	  "\n"
-	  "Set the codepage used for ASCII strings in the file\n"
-	  "Expects the codepage to be a String containing a Python codec definition" },
+	  "Sets the codepage for ASCII strings used in the file.\n"
+	  "Expects the codepage to be a string containing a Python codec definition." },
 
-	/* Functions to access the cache directories */
-
-	{ "format_version",
+	{ "get_format_version",
 	  (PyCFunction) pymsiecf_file_get_format_version,
 	  METH_NOARGS,
 	  "get_format_version() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the format version" },
+	  "Retrieves the format version." },
 
 	{ "get_number_of_cache_directories",
 	  (PyCFunction) pymsiecf_file_get_number_of_cache_directories,
 	  METH_NOARGS,
-	  "get_number_of_cache_directories() -> Integer\n"
+	  "get_number_of_cache_directories() -> Integer or None\n"
 	  "\n"
-	  "Retrieves the number of cache directories" },
+	  "Retrieves the number of cache directories." },
 
 	{ "get_cache_directory",
 	  (PyCFunction) pymsiecf_file_get_cache_directory,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_cache_directory(cache_directory_index) -> Object or None\n"
+	  "get_cache_directory(cache_directory_index) -> String or None\n"
 	  "\n"
-	  "Retrieves a specific cache directory" },
-
-	/* Functions to access the items */
+	  "Retrieves the cache directory specified by the index." },
 
 	{ "get_number_of_items",
 	  (PyCFunction) pymsiecf_file_get_number_of_items,
 	  METH_NOARGS,
-	  "get_number_of_items() -> Integer\n"
+	  "get_number_of_items() -> Integer or None\n"
 	  "\n"
-	  "Retrieves the number of items" },
+	  "Retrieves the number of items." },
 
 	{ "get_item",
 	  (PyCFunction) pymsiecf_file_get_item,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_item(item_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves a specific item" },
+	  "Retrieves the item specified by the index." },
 
 	{ "get_number_of_recovered_items",
 	  (PyCFunction) pymsiecf_file_get_number_of_recovered_items,
 	  METH_NOARGS,
-	  "get_number_of_recovered_items() -> Integer\n"
+	  "get_number_of_recovered_items() -> Integer or None\n"
 	  "\n"
-	  "Retrieves the number of recovered items" },
+	  "Retrieves the number of recovered items." },
 
 	{ "get_recovered_item",
 	  (PyCFunction) pymsiecf_file_get_recovered_item,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_recovered_item(item_index) -> Object or None\n"
+	  "get_recovered_item(recovered_item_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves a specific recovered item" },
+	  "Retrieves the recovered item specified by the index." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -159,52 +163,58 @@ PyMethodDef pymsiecf_file_object_methods[] = {
 
 PyGetSetDef pymsiecf_file_object_get_set_definitions[] = {
 
+	{ "size",
+	  (getter) pymsiecf_file_get_size,
+	  (setter) 0,
+	  "The size.",
+	  NULL },
+
 	{ "ascii_codepage",
 	  (getter) pymsiecf_file_get_ascii_codepage,
 	  (setter) pymsiecf_file_set_ascii_codepage_setter,
-	  "The codepage used for ASCII strings in the file",
+	  "The codepage used for ASCII strings in the file.",
 	  NULL },
 
 	{ "format_version",
 	  (getter) pymsiecf_file_get_format_version,
 	  (setter) 0,
-	  "The format version",
+	  "The format version.",
 	  NULL },
 
 	{ "number_of_cache_directories",
 	  (getter) pymsiecf_file_get_number_of_cache_directories,
 	  (setter) 0,
-	  "The number of cache directories",
+	  "The number of cache directories.",
 	  NULL },
 
 	{ "cache_directories",
 	  (getter) pymsiecf_file_get_cache_directories,
 	  (setter) 0,
-	  "The cache directories",
+	  "The cache directories.",
 	  NULL },
 
 	{ "number_of_items",
 	  (getter) pymsiecf_file_get_number_of_items,
 	  (setter) 0,
-	  "The number of items",
+	  "The number of items.",
 	  NULL },
 
 	{ "items",
 	  (getter) pymsiecf_file_get_items,
 	  (setter) 0,
-	  "The items",
+	  "The items.",
 	  NULL },
 
 	{ "number_of_recovered_items",
 	  (getter) pymsiecf_file_get_number_of_recovered_items,
 	  (setter) 0,
-	  "The number of items",
+	  "The number of recovered items.",
 	  NULL },
 
 	{ "recovered_items",
 	  (getter) pymsiecf_file_get_recovered_items,
 	  (setter) 0,
-	  "The recovered items",
+	  "The recovered items.",
 	  NULL },
 
 	/* Sentinel */
@@ -316,8 +326,8 @@ PyObject *pymsiecf_file_new(
 	static char *function          = "pymsiecf_file_new";
 
 	pymsiecf_file = PyObject_New(
-	              struct pymsiecf_file,
-	              &pymsiecf_file_type_object );
+	                 struct pymsiecf_file,
+	                 &pymsiecf_file_type_object );
 
 	if( pymsiecf_file == NULL )
 	{
@@ -371,7 +381,7 @@ PyObject *pymsiecf_file_new_open(
 	return( pymsiecf_file );
 }
 
-/* Creates a new file object and opens it
+/* Creates a new file object and opens it using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_file_new_open_file_object(
@@ -399,8 +409,8 @@ PyObject *pymsiecf_file_new_open_file_object(
 int pymsiecf_file_init(
      pymsiecf_file_t *pymsiecf_file )
 {
-	static char *function    = "pymsiecf_file_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pymsiecf_file_init";
 
 	if( pymsiecf_file == NULL )
 	{
@@ -437,8 +447,8 @@ int pymsiecf_file_init(
 void pymsiecf_file_free(
       pymsiecf_file_t *pymsiecf_file )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pymsiecf_file_free";
 	int result                  = 0;
 
@@ -552,6 +562,7 @@ PyObject *pymsiecf_file_signal_abort(
 
 	return( Py_None );
 }
+
 /* Opens a file
  * Returns a Python object if successful or NULL on error
  */
@@ -562,9 +573,9 @@ PyObject *pymsiecf_file_open(
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
+	const char *filename_narrow  = NULL;
 	static char *function        = "pymsiecf_file_open";
 	static char *keyword_list[]  = { "filename", "mode", NULL };
-	const char *filename_narrow  = NULL;
 	char *mode                   = NULL;
 	int result                   = 0;
 
@@ -618,7 +629,7 @@ PyObject *pymsiecf_file_open(
 	if( result == -1 )
 	{
 		pymsiecf_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type unicode.",
 		 function );
 
@@ -635,7 +646,7 @@ PyObject *pymsiecf_file_open(
 
 		result = libmsiecf_file_open_wide(
 		          pymsiecf_file->file,
-	                  filename_wide,
+		          filename_wide,
 		          LIBMSIECF_OPEN_READ,
 		          &error );
 
@@ -655,16 +666,16 @@ PyObject *pymsiecf_file_open(
 		}
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libmsiecf_file_open(
 		          pymsiecf_file->file,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBMSIECF_OPEN_READ,
 		          &error );
 
@@ -695,17 +706,17 @@ PyObject *pymsiecf_file_open(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pymsiecf_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -717,16 +728,16 @@ PyObject *pymsiecf_file_open(
 
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   string_object );
+		                   string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   string_object );
+		                   string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libmsiecf_file_open(
 		          pymsiecf_file->file,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBMSIECF_OPEN_READ,
 		          &error );
 
@@ -768,9 +779,9 @@ PyObject *pymsiecf_file_open_file_object(
 {
 	PyObject *file_object       = NULL;
 	libcerror_error_t *error    = NULL;
-	char *mode                  = NULL;
-	static char *keyword_list[] = { "file_object", "mode", NULL };
 	static char *function       = "pymsiecf_file_open_file_object";
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	char *mode                  = NULL;
 	int result                  = 0;
 
 	if( pymsiecf_file == NULL )
@@ -930,6 +941,58 @@ PyObject *pymsiecf_file_close(
 	return( Py_None );
 }
 
+/* Retrieves the size
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_file_get_size(
+           pymsiecf_file_t *pymsiecf_file,
+           PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pymsiecf_file_get_size";
+	size64_t size            = 0;
+	int result               = 0;
+
+	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
+
+	if( pymsiecf_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_file_get_size(
+	          pymsiecf_file->file,
+	          &size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: failed to retrieve size.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	integer_object = pymsiecf_integer_unsigned_new_from_64bit(
+	                  (uint64_t) size );
+
+	return( integer_object );
+}
+
 /* Retrieves the codepage used for ASCII strings in the file
  * Returns a Python object if successful or NULL on error
  */
@@ -937,11 +1000,12 @@ PyObject *pymsiecf_file_get_ascii_codepage(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
 	const char *codepage_string = NULL;
 	static char *function       = "pymsiecf_file_get_ascii_codepage";
 	int ascii_codepage          = 0;
+	int result                  = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
 
@@ -954,10 +1018,16 @@ PyObject *pymsiecf_file_get_ascii_codepage(
 
 		return( NULL );
 	}
-	if( libmsiecf_file_get_ascii_codepage(
-	     pymsiecf_file->file,
-	     &ascii_codepage,
-	     &error ) != 1 )
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_file_get_ascii_codepage(
+	          pymsiecf_file->file,
+	          &ascii_codepage,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
 	{
 		pymsiecf_error_raise(
 		 error,
@@ -1090,8 +1160,8 @@ PyObject *pymsiecf_file_set_ascii_codepage(
            PyObject *arguments,
            PyObject *keywords )
 {
-	static char *keyword_list[] = { "codepage", NULL };
 	char *codepage_string       = NULL;
+	static char *keyword_list[] = { "codepage", NULL };
 	int result                  = 0;
 
 	if( PyArg_ParseTupleAndKeywords(
@@ -1126,8 +1196,8 @@ int pymsiecf_file_set_ascii_codepage_setter(
      void *closure PYMSIECF_ATTRIBUTE_UNUSED )
 {
 	PyObject *utf8_string_object = NULL;
-	static char *function        = "pymsiecf_file_set_ascii_codepage_setter";
 	char *codepage_string        = NULL;
+	static char *function        = "pymsiecf_file_set_ascii_codepage_setter";
 	int result                   = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( closure )
@@ -1141,7 +1211,7 @@ int pymsiecf_file_set_ascii_codepage_setter(
 	if( result == -1 )
 	{
 		pymsiecf_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type unicode.",
 		 function );
 
@@ -1165,10 +1235,10 @@ int pymsiecf_file_set_ascii_codepage_setter(
 		}
 #if PY_MAJOR_VERSION >= 3
 		codepage_string = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		codepage_string = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		if( codepage_string == NULL )
 		{
@@ -1188,17 +1258,17 @@ int pymsiecf_file_set_ascii_codepage_setter(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pymsiecf_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -1218,8 +1288,8 @@ int pymsiecf_file_set_ascii_codepage_setter(
 			return( -1 );
 		}
 		result = pymsiecf_file_set_ascii_codepage_from_string(
-			  pymsiecf_file,
-			  codepage_string );
+		          pymsiecf_file,
+		          codepage_string );
 
 		if( result != 1 )
 		{
@@ -1242,10 +1312,15 @@ PyObject *pymsiecf_file_get_format_version(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	char version_string[ 4 ];
+	char utf8_string[ 4 ];
 
-	const char *errors    = NULL;
-	static char *function = "pymsiecf_file_get_format_version";
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	const char *errors       = NULL;
+	static char *function    = "pymsiecf_file_get_format_version";
+	uint8_t major_version    = 0;
+	uint8_t minor_version    = 0;
+	int result               = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
 
@@ -1258,37 +1333,70 @@ PyObject *pymsiecf_file_get_format_version(
 
 		return( NULL );
 	}
-	if( pymsiecf_file->major_version > 9 )
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_file_get_format_version(
+	          pymsiecf_file->file,
+	          &major_version,
+	          &minor_version,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve format version.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	if( major_version > 9 )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid file - major version out of bounds.",
+		 PyExc_ValueError,
+		 "%s: major version out of bounds.",
 		 function );
 
 		return( NULL );
 	}
-	if( pymsiecf_file->minor_version > 9 )
+	if( minor_version > 9 )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid file - minor version out of bounds.",
+		 PyExc_ValueError,
+		 "%s: minor version out of bounds.",
 		 function );
 
 		return( NULL );
 	}
-	version_string[ 0 ] = '0' + pymsiecf_file->major_version;
-	version_string[ 1 ] = '.';
-	version_string[ 2 ] = '0' + pymsiecf_file->minor_version;
-	version_string[ 3 ] = 0;
+	utf8_string[ 0 ] = '0' + (char) major_version;
+	utf8_string[ 1 ] = '.';
+	utf8_string[ 2 ] = '0' + (char) minor_version;
+	utf8_string[ 3 ] = 0;
 
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
-	return( PyUnicode_DecodeUTF8(
-	         version_string,
-	         (Py_ssize_t) 3,
-	         errors ) );
+	string_object = PyUnicode_DecodeUTF8(
+	                 utf8_string,
+	                 (Py_ssize_t) 3,
+	                 errors );
+
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		return( NULL );
+	}
+	return( string_object );
 }
 
 /* Retrieves the number of cache directories
@@ -1298,8 +1406,8 @@ PyObject *pymsiecf_file_get_number_of_cache_directories(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error        = NULL;
 	PyObject *integer_object        = NULL;
+	libcerror_error_t *error        = NULL;
 	static char *function           = "pymsiecf_file_get_number_of_cache_directories";
 	int number_of_cache_directories = 0;
 	int result                      = 0;
@@ -1351,13 +1459,13 @@ PyObject *pymsiecf_file_get_number_of_cache_directories(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_file_get_cache_directory_by_index(
-           pymsiecf_file_t *pymsiecf_file,
+           PyObject *pymsiecf_file,
            int cache_directory_index )
 {
-	char cache_directory_name[ 9 ];
+	char string[ 9 ];
 
-	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pymsiecf_file_get_cache_directory_by_index";
 	int result               = 0;
 
@@ -1373,15 +1481,15 @@ PyObject *pymsiecf_file_get_cache_directory_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libmsiecf_file_get_cache_directory_name(
-	          pymsiecf_file->file,
+	          ( (pymsiecf_file_t *) pymsiecf_file )->file,
 	          cache_directory_index,
-	          cache_directory_name,
+	          string,
 	          9,
 	          &error );
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pymsiecf_error_raise(
 		 error,
@@ -1395,14 +1503,21 @@ PyObject *pymsiecf_file_get_cache_directory_by_index(
 
 		return( NULL );
 	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
 	/* Assumed that the directory name contains only basic ASCII characters
 	 */
 #if PY_MAJOR_VERSION >= 3
 	string_object = PyBytes_FromString(
-	                 cache_directory_name );
+	                 string );
 #else
 	string_object = PyString_FromString(
-	                 cache_directory_name );
+	                 string );
 #endif
 	if( string_object == NULL )
 	{
@@ -1438,24 +1553,24 @@ PyObject *pymsiecf_file_get_cache_directory(
 		return( NULL );
 	}
 	string_object = pymsiecf_file_get_cache_directory_by_index(
-	                 pymsiecf_file,
+	                 (PyObject *) pymsiecf_file,
 	                 cache_directory_index );
 
 	return( string_object );
 }
 
-/* Retrieves a cache directories sequence and iterator object for the cache directories
+/* Retrieves a sequence and iterator object for the cache directories
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_file_get_cache_directories(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error           = NULL;
-	PyObject *cache_directories_object = NULL;
-	static char *function              = "pymsiecf_file_get_cache_directories";
-	int number_of_cache_directories    = 0;
-	int result                         = 0;
+	PyObject *sequence_object       = NULL;
+	libcerror_error_t *error        = NULL;
+	static char *function           = "pymsiecf_file_get_cache_directories";
+	int number_of_cache_directories = 0;
+	int result                      = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
 
@@ -1490,21 +1605,21 @@ PyObject *pymsiecf_file_get_cache_directories(
 
 		return( NULL );
 	}
-	cache_directories_object = pymsiecf_cache_directories_new(
-	                            pymsiecf_file,
-	                            &pymsiecf_file_get_cache_directory_by_index,
-	                            number_of_cache_directories );
+	sequence_object = pymsiecf_cache_directories_new(
+	                   (PyObject *) pymsiecf_file,
+	                   &pymsiecf_file_get_cache_directory_by_index,
+	                   number_of_cache_directories );
 
-	if( cache_directories_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create cache directories object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	return( cache_directories_object );
+	return( sequence_object );
 }
 
 /* Retrieves the number of items
@@ -1514,8 +1629,8 @@ PyObject *pymsiecf_file_get_number_of_items(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pymsiecf_file_get_number_of_items";
 	int number_of_items      = 0;
 	int result               = 0;
@@ -1563,19 +1678,77 @@ PyObject *pymsiecf_file_get_number_of_items(
 	return( integer_object );
 }
 
+/* Retrieves the item type object
+ * Returns a Python type object if successful or NULL on error
+ */
+PyTypeObject *pymsiecf_file_get_item_type_object(
+               libmsiecf_item_t *item )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pymsiecf_file_get_item_by_index";
+	uint8_t item_type        = 0;
+	int result               = 0;
+
+	if( item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid item.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmsiecf_item_get_type(
+	          item,
+	          &item_type,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve item type.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	switch( item_type )
+	{
+		case LIBMSIECF_ITEM_TYPE_LEAK:
+			return( &pymsiecf_leak_type_object );
+
+		case LIBMSIECF_ITEM_TYPE_REDIRECTED:
+			return( &pymsiecf_redirected_type_object );
+
+		case LIBMSIECF_ITEM_TYPE_URL:
+			return( &pymsiecf_url_type_object );
+
+		default:
+			break;
+	}
+	return( &pymsiecf_item_type_object );
+}
+
 /* Retrieves a specific item by index
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_file_get_item_by_index(
-           pymsiecf_file_t *pymsiecf_file,
+           PyObject *pymsiecf_file,
            int item_index )
 {
-	libcerror_error_t *error  = NULL;
-	libmsiecf_item_t *item    = NULL;
 	PyObject *item_object     = NULL;
 	PyTypeObject *type_object = NULL;
+	libcerror_error_t *error  = NULL;
+	libmsiecf_item_t *item    = NULL;
 	static char *function     = "pymsiecf_file_get_item_by_index";
-	uint8_t item_type         = 0;
 	int result                = 0;
 
 	if( pymsiecf_file == NULL )
@@ -1590,7 +1763,7 @@ PyObject *pymsiecf_file_get_item_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libmsiecf_file_get_item(
-	          pymsiecf_file->file,
+	          ( (pymsiecf_file_t *) pymsiecf_file )->file,
 	          item_index,
 	          &item,
 	          &error );
@@ -1611,51 +1784,22 @@ PyObject *pymsiecf_file_get_item_by_index(
 
 		goto on_error;
 	}
-	Py_BEGIN_ALLOW_THREADS
+	type_object = pymsiecf_file_get_item_type_object(
+	               item );
 
-	result = libmsiecf_item_get_type(
-	          item,
-	          &item_type,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( type_object == NULL )
 	{
-		pymsiecf_error_raise(
-		 error,
+		PyErr_Format(
 		 PyExc_IOError,
-		 "%s: unable to retrieve item: %d type.",
-		 function,
-		 item_index );
-
-		libcerror_error_free(
-		 &error );
+		 "%s: unable to retrieve item type object.",
+		 function );
 
 		goto on_error;
-	}
-	switch( item_type )
-	{
-		case LIBMSIECF_ITEM_TYPE_LEAK:
-			type_object = &pymsiecf_leak_type_object;
-			break;
-
-		case LIBMSIECF_ITEM_TYPE_REDIRECTED:
-			type_object = &pymsiecf_redirected_type_object;
-			break;
-
-		case LIBMSIECF_ITEM_TYPE_URL:
-			type_object = &pymsiecf_url_type_object;
-			break;
-
-		default:
-			type_object = &pymsiecf_item_type_object;
-			break;
 	}
 	item_object = pymsiecf_item_new(
 	               type_object,
 	               item,
-	               pymsiecf_file );
+	               (PyObject *) pymsiecf_file );
 
 	if( item_object == NULL )
 	{
@@ -1700,24 +1844,24 @@ PyObject *pymsiecf_file_get_item(
 		return( NULL );
 	}
 	item_object = pymsiecf_file_get_item_by_index(
-	               pymsiecf_file,
+	               (PyObject *) pymsiecf_file,
 	               item_index );
 
 	return( item_object );
 }
 
-/* Retrieves a items sequence and iterator object for the items
+/* Retrieves a sequence and iterator object for the items
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_file_get_items(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
-	PyObject *items_object   = NULL;
-	static char *function    = "pymsiecf_file_get_items";
-	int number_of_items      = 0;
-	int result               = 0;
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pymsiecf_file_get_items";
+	int number_of_items       = 0;
+	int result                = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
 
@@ -1752,21 +1896,22 @@ PyObject *pymsiecf_file_get_items(
 
 		return( NULL );
 	}
-	items_object = pymsiecf_items_new(
-	                pymsiecf_file,
-	                &pymsiecf_file_get_item_by_index,
-	                number_of_items );
+	sequence_object = pymsiecf_items_new(
+	                   (PyObject *) pymsiecf_file,
+	                   &pymsiecf_file_get_item_by_index,
+	                   number_of_items );
 
-	if( items_object == NULL )
+	if( sequence_object == NULL )
 	{
-		PyErr_Format(
+		pymsiecf_error_raise(
+		 error,
 		 PyExc_MemoryError,
-		 "%s: unable to create items object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	return( items_object );
+	return( sequence_object );
 }
 
 /* Retrieves the number of recovered items
@@ -1776,8 +1921,8 @@ PyObject *pymsiecf_file_get_number_of_recovered_items(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pymsiecf_file_get_number_of_recovered_items";
 	int number_of_items      = 0;
 	int result               = 0;
@@ -1829,15 +1974,14 @@ PyObject *pymsiecf_file_get_number_of_recovered_items(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_file_get_recovered_item_by_index(
-           pymsiecf_file_t *pymsiecf_file,
+           PyObject *pymsiecf_file,
            int item_index )
 {
-	libcerror_error_t *error  = NULL;
-	libmsiecf_item_t *item    = NULL;
 	PyObject *item_object     = NULL;
 	PyTypeObject *type_object = NULL;
+	libcerror_error_t *error  = NULL;
+	libmsiecf_item_t *item    = NULL;
 	static char *function     = "pymsiecf_file_get_recovered_item_by_index";
-	uint8_t item_type         = 0;
 	int result                = 0;
 
 	if( pymsiecf_file == NULL )
@@ -1852,7 +1996,7 @@ PyObject *pymsiecf_file_get_recovered_item_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libmsiecf_file_get_recovered_item(
-	          pymsiecf_file->file,
+	          ( (pymsiecf_file_t *) pymsiecf_file )->file,
 	          item_index,
 	          &item,
 	          &error );
@@ -1873,57 +2017,28 @@ PyObject *pymsiecf_file_get_recovered_item_by_index(
 
 		goto on_error;
 	}
-	Py_BEGIN_ALLOW_THREADS
+	type_object = pymsiecf_file_get_item_type_object(
+	               item );
 
-	result = libmsiecf_item_get_type(
-	          item,
-	          &item_type,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( type_object == NULL )
 	{
-		pymsiecf_error_raise(
-		 error,
+		PyErr_Format(
 		 PyExc_IOError,
-		 "%s: unable to retrieve item: %d type.",
-		 function,
-		 item_index );
-
-		libcerror_error_free(
-		 &error );
+		 "%s: unable to retrieve item type object.",
+		 function );
 
 		goto on_error;
-	}
-	switch( item_type )
-	{
-		case LIBMSIECF_ITEM_TYPE_LEAK:
-			type_object = &pymsiecf_leak_type_object;
-			break;
-
-		case LIBMSIECF_ITEM_TYPE_REDIRECTED:
-			type_object = &pymsiecf_redirected_type_object;
-			break;
-
-		case LIBMSIECF_ITEM_TYPE_URL:
-			type_object = &pymsiecf_url_type_object;
-			break;
-
-		default:
-			type_object = &pymsiecf_item_type_object;
-			break;
 	}
 	item_object = pymsiecf_item_new(
 	               type_object,
 	               item,
-	               pymsiecf_file );
+	               (PyObject *) pymsiecf_file );
 
 	if( item_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create recovered item object.",
+		 "%s: unable to create item object.",
 		 function );
 
 		goto on_error;
@@ -1962,24 +2077,24 @@ PyObject *pymsiecf_file_get_recovered_item(
 		return( NULL );
 	}
 	item_object = pymsiecf_file_get_recovered_item_by_index(
-	               pymsiecf_file,
+	               (PyObject *) pymsiecf_file,
 	               item_index );
 
 	return( item_object );
 }
 
-/* Retrieves a items sequence and iterator object for the recoverd items
+/* Retrieves a sequence and iterator object for the recovered items
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_file_get_recovered_items(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
-	PyObject *items_object   = NULL;
-	static char *function    = "pymsiecf_file_get_recovered_items";
-	int number_of_items      = 0;
-	int result               = 0;
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pymsiecf_file_get_recovered_items";
+	int number_of_items       = 0;
+	int result                = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
 
@@ -2014,20 +2129,21 @@ PyObject *pymsiecf_file_get_recovered_items(
 
 		return( NULL );
 	}
-	items_object = pymsiecf_items_new(
-	                pymsiecf_file,
-	                &pymsiecf_file_get_recovered_item_by_index,
-	                number_of_items );
+	sequence_object = pymsiecf_items_new(
+	                   (PyObject *) pymsiecf_file,
+	                   &pymsiecf_file_get_recovered_item_by_index,
+	                   number_of_items );
 
-	if( items_object == NULL )
+	if( sequence_object == NULL )
 	{
-		PyErr_Format(
+		pymsiecf_error_raise(
+		 error,
 		 PyExc_MemoryError,
-		 "%s: unable to create items object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	return( items_object );
+	return( sequence_object );
 }
 

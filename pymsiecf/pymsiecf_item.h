@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf item
+ * Python object wrapper of libmsiecf_item_t
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "pymsiecf_file.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
 
@@ -45,9 +44,9 @@ struct pymsiecf_item
 	 */
 	libmsiecf_item_t *item;
 
-	/* The file object
+	/* The parent object
 	 */
-	pymsiecf_file_t *file_object;
+	PyObject *parent_object;
 };
 
 extern PyMethodDef pymsiecf_item_object_methods[];
@@ -56,7 +55,7 @@ extern PyTypeObject pymsiecf_item_type_object;
 PyObject *pymsiecf_item_new(
            PyTypeObject *type_object,
            libmsiecf_item_t *item,
-           pymsiecf_file_t *file_object );
+           PyObject *parent_object );
 
 int pymsiecf_item_init(
      pymsiecf_item_t *pymsiecf_item );
@@ -72,5 +71,5 @@ PyObject *pymsiecf_item_get_offset(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_ITEM_H ) */
 

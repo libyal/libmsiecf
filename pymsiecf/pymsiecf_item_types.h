@@ -50,14 +50,14 @@ PyObject *pymsiecf_item_types_new(
            void );
 
 int pymsiecf_item_types_init(
-     pymsiecf_item_types_t *pymsiecf_item_types );
+     pymsiecf_item_types_t *definitions_object );
 
 void pymsiecf_item_types_free(
-      pymsiecf_item_types_t *pymsiecf_item_types );
+      pymsiecf_item_types_t *definitions_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMSIECF_ITEM_TYPES_H ) */
 
