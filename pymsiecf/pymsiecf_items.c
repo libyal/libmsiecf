@@ -157,11 +157,11 @@ PyObject *pymsiecf_items_new(
            PyObject *parent_object,
            PyObject* (*get_item_by_index)(
                         PyObject *parent_object,
-                        int item_index ),
+                        int index ),
            int number_of_items )
 {
-	pymsiecf_items_t *pymsiecf_items = NULL;
-	static char *function            = "pymsiecf_items_new";
+	pymsiecf_items_t *items_object = NULL;
+	static char *function          = "pymsiecf_items_new";
 
 	if( parent_object == NULL )
 	{
@@ -183,43 +183,43 @@ PyObject *pymsiecf_items_new(
 	}
 	/* Make sure the items values are initialized
 	 */
-	pymsiecf_items = PyObject_New(
-	                  struct pymsiecf_items,
-	                  &pymsiecf_items_type_object );
+	items_object = PyObject_New(
+	                struct pymsiecf_items,
+	                &pymsiecf_items_type_object );
 
-	if( pymsiecf_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize items.",
+		 "%s: unable to create items object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pymsiecf_items_init(
-	     pymsiecf_items ) != 0 )
+	     items_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize items.",
+		 "%s: unable to initialize items object.",
 		 function );
 
 		goto on_error;
 	}
-	pymsiecf_items->parent_object     = parent_object;
-	pymsiecf_items->get_item_by_index = get_item_by_index;
-	pymsiecf_items->number_of_items   = number_of_items;
+	items_object->parent_object     = parent_object;
+	items_object->get_item_by_index = get_item_by_index;
+	items_object->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) pymsiecf_items->parent_object );
+	 (PyObject *) items_object->parent_object );
 
-	return( (PyObject *) pymsiecf_items );
+	return( (PyObject *) items_object );
 
 on_error:
-	if( pymsiecf_items != NULL )
+	if( items_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymsiecf_items );
+		 (PyObject *) items_object );
 	}
 	return( NULL );
 }
@@ -228,25 +228,25 @@ on_error:
  * Returns 0 if successful or -1 on error
  */
 int pymsiecf_items_init(
-     pymsiecf_items_t *pymsiecf_items )
+     pymsiecf_items_t *items_object )
 {
 	static char *function = "pymsiecf_items_init";
 
-	if( pymsiecf_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( -1 );
 	}
 	/* Make sure the items values are initialized
 	 */
-	pymsiecf_items->parent_object     = NULL;
-	pymsiecf_items->get_item_by_index = NULL;
-	pymsiecf_items->item_index        = 0;
-	pymsiecf_items->number_of_items   = 0;
+	items_object->parent_object     = NULL;
+	items_object->get_item_by_index = NULL;
+	items_object->current_index     = 0;
+	items_object->number_of_items   = 0;
 
 	return( 0 );
 }
@@ -254,22 +254,22 @@ int pymsiecf_items_init(
 /* Frees an items object
  */
 void pymsiecf_items_free(
-      pymsiecf_items_t *pymsiecf_items )
+      pymsiecf_items_t *items_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pymsiecf_items_free";
 
-	if( pymsiecf_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pymsiecf_items );
+	           items_object );
 
 	if( ob_type == NULL )
 	{
@@ -289,72 +289,72 @@ void pymsiecf_items_free(
 
 		return;
 	}
-	if( pymsiecf_items->parent_object != NULL )
+	if( items_object->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymsiecf_items->parent_object );
+		 (PyObject *) items_object->parent_object );
 	}
 	ob_type->tp_free(
-	 (PyObject*) pymsiecf_items );
+	 (PyObject*) items_object );
 }
 
 /* The items len() function
  */
 Py_ssize_t pymsiecf_items_len(
-            pymsiecf_items_t *pymsiecf_items )
+            pymsiecf_items_t *items_object )
 {
 	static char *function = "pymsiecf_items_len";
 
-	if( pymsiecf_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( -1 );
 	}
-	return( (Py_ssize_t) pymsiecf_items->number_of_items );
+	return( (Py_ssize_t) items_object->number_of_items );
 }
 
 /* The items getitem() function
  */
 PyObject *pymsiecf_items_getitem(
-           pymsiecf_items_t *pymsiecf_items,
+           pymsiecf_items_t *items_object,
            Py_ssize_t item_index )
 {
 	PyObject *item_object = NULL;
 	static char *function = "pymsiecf_items_getitem";
 
-	if( pymsiecf_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pymsiecf_items->get_item_by_index == NULL )
+	if( items_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - missing get item by index function.",
+		 "%s: invalid items object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pymsiecf_items->number_of_items < 0 )
+	if( items_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - invalid number of items.",
+		 "%s: invalid items object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
 	if( ( item_index < 0 )
-	 || ( item_index >= (Py_ssize_t) pymsiecf_items->number_of_items ) )
+	 || ( item_index >= (Py_ssize_t) items_object->number_of_items ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -363,8 +363,8 @@ PyObject *pymsiecf_items_getitem(
 
 		return( NULL );
 	}
-	item_object = pymsiecf_items->get_item_by_index(
-	               pymsiecf_items->parent_object,
+	item_object = items_object->get_item_by_index(
+	               items_object->parent_object,
 	               (int) item_index );
 
 	return( item_object );
@@ -373,83 +373,83 @@ PyObject *pymsiecf_items_getitem(
 /* The items iter() function
  */
 PyObject *pymsiecf_items_iter(
-           pymsiecf_items_t *pymsiecf_items )
+           pymsiecf_items_t *items_object )
 {
 	static char *function = "pymsiecf_items_iter";
 
-	if( pymsiecf_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( NULL );
 	}
 	Py_IncRef(
-	 (PyObject *) pymsiecf_items );
+	 (PyObject *) items_object );
 
-	return( (PyObject *) pymsiecf_items );
+	return( (PyObject *) items_object );
 }
 
 /* The items iternext() function
  */
 PyObject *pymsiecf_items_iternext(
-           pymsiecf_items_t *pymsiecf_items )
+           pymsiecf_items_t *items_object )
 {
 	PyObject *item_object = NULL;
 	static char *function = "pymsiecf_items_iternext";
 
-	if( pymsiecf_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pymsiecf_items->get_item_by_index == NULL )
+	if( items_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - missing get item by index function.",
+		 "%s: invalid items object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pymsiecf_items->item_index < 0 )
+	if( items_object->current_index < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - invalid item index.",
+		 "%s: invalid items object - invalid current index.",
 		 function );
 
 		return( NULL );
 	}
-	if( pymsiecf_items->number_of_items < 0 )
+	if( items_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - invalid number of items.",
+		 "%s: invalid items object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
-	if( pymsiecf_items->item_index >= pymsiecf_items->number_of_items )
+	if( items_object->current_index >= items_object->number_of_items )
 	{
 		PyErr_SetNone(
 		 PyExc_StopIteration );
 
 		return( NULL );
 	}
-	item_object = pymsiecf_items->get_item_by_index(
-	               pymsiecf_items->parent_object,
-	               pymsiecf_items->item_index );
+	item_object = items_object->get_item_by_index(
+	               items_object->parent_object,
+	               items_object->current_index );
 
 	if( item_object != NULL )
 	{
-		pymsiecf_items->item_index++;
+		items_object->current_index++;
 	}
 	return( item_object );
 }

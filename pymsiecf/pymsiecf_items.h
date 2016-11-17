@@ -48,11 +48,11 @@ struct pymsiecf_items
 	 */
 	PyObject* (*get_item_by_index)(
 	             PyObject *parent_object,
-	             int item_index );
+	             int index );
 
-	/* The (current) item index
+	/* The current index
 	 */
-	int item_index;
+	int current_index;
 
 	/* The number of items
 	 */
@@ -65,27 +65,27 @@ PyObject *pymsiecf_items_new(
            PyObject *parent_object,
            PyObject* (*get_item_by_index)(
                         PyObject *parent_object,
-                        int item_index ),
+                        int index ),
            int number_of_items );
 
 int pymsiecf_items_init(
-     pymsiecf_items_t *pymsiecf_items );
+     pymsiecf_items_t *items_object );
 
 void pymsiecf_items_free(
-      pymsiecf_items_t *pymsiecf_items );
+      pymsiecf_items_t *items_object );
 
 Py_ssize_t pymsiecf_items_len(
-            pymsiecf_items_t *pymsiecf_items );
+            pymsiecf_items_t *items_object );
 
 PyObject *pymsiecf_items_getitem(
-           pymsiecf_items_t *pymsiecf_items,
+           pymsiecf_items_t *items_object,
            Py_ssize_t item_index );
 
 PyObject *pymsiecf_items_iter(
-           pymsiecf_items_t *pymsiecf_items );
+           pymsiecf_items_t *items_object );
 
 PyObject *pymsiecf_items_iternext(
-           pymsiecf_items_t *pymsiecf_items );
+           pymsiecf_items_t *items_object );
 
 #if defined( __cplusplus )
 }
