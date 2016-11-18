@@ -959,7 +959,7 @@ PyObject *pymsiecf_file_get_size(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1327,7 +1327,7 @@ PyObject *pymsiecf_file_get_format_version(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1417,7 +1417,7 @@ PyObject *pymsiecf_file_get_number_of_cache_directories(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1472,7 +1472,7 @@ PyObject *pymsiecf_file_get_cache_directory_by_index(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1577,7 +1577,7 @@ PyObject *pymsiecf_file_get_cache_directories(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1640,7 +1640,7 @@ PyObject *pymsiecf_file_get_number_of_items(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1754,7 +1754,7 @@ PyObject *pymsiecf_file_get_item_by_index(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1868,7 +1868,7 @@ PyObject *pymsiecf_file_get_items(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1932,7 +1932,7 @@ PyObject *pymsiecf_file_get_number_of_recovered_items(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1987,7 +1987,7 @@ PyObject *pymsiecf_file_get_recovered_item_by_index(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -2101,7 +2101,7 @@ PyObject *pymsiecf_file_get_recovered_items(
 	if( pymsiecf_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 

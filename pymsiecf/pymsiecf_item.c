@@ -168,7 +168,7 @@ PyObject *pymsiecf_item_new(
 	if( item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -225,7 +225,7 @@ int pymsiecf_item_init(
 	if( pymsiecf_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -251,7 +251,7 @@ void pymsiecf_item_free(
 	if( pymsiecf_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -260,7 +260,7 @@ void pymsiecf_item_free(
 	if( pymsiecf_item->item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item - missing libmsiecf item.",
 		 function );
 
@@ -333,7 +333,7 @@ PyObject *pymsiecf_item_get_offset(
 	if( pymsiecf_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
