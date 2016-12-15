@@ -1,5 +1,5 @@
 /*
- * Library item type testing program
+ * Library item type test program
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -98,6 +98,8 @@ int main(
 	 "libmsiecf_item_free",
 	 msiecf_test_item_free );
 
+#if defined( __GNUC__ )
+
 	/* TODO: add tests for libmsiecf_item_get_type */
 
 	/* TODO: add tests for libmsiecf_item_get_flags */
@@ -105,8 +107,6 @@ int main(
 	/* TODO: add tests for libmsiecf_item_get_offset */
 
 	/* TODO: add tests for libmsiecf_item_get_offset_range */
-
-#if defined( __GNUC__ )
 
 	/* TODO: add tests for libmsiecf_item_read_values */
 

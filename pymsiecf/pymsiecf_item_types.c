@@ -146,20 +146,6 @@ int pymsiecf_item_types_init_type(
 	}
 #if PY_MAJOR_VERSION >= 3
 	value_object = PyLong_FromLong(
-	                LIBMSIECF_ITEM_TYPE_UNDEFINED );
-#else
-	value_object = PyInt_FromLong(
-	                LIBMSIECF_ITEM_TYPE_UNDEFINED );
-#endif
-	if( PyDict_SetItemString(
-	     type_object->tp_dict,
-	     "UNDEFINED",
-	     value_object ) != 0 )
-	{
-		goto on_error;
-	}
-#if PY_MAJOR_VERSION >= 3
-	value_object = PyLong_FromLong(
 	                LIBMSIECF_ITEM_TYPE_URL );
 #else
 	value_object = PyInt_FromLong(
@@ -196,20 +182,6 @@ int pymsiecf_item_types_init_type(
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "LEAK",
-	     value_object ) != 0 )
-	{
-		goto on_error;
-	}
-#if PY_MAJOR_VERSION >= 3
-	value_object = PyLong_FromLong(
-	                LIBMSIECF_ITEM_TYPE_UNKNOWN );
-#else
-	value_object = PyInt_FromLong(
-	                LIBMSIECF_ITEM_TYPE_UNKNOWN );
-#endif
-	if( PyDict_SetItemString(
-	     type_object->tp_dict,
-	     "UNKNOWN",
 	     value_object ) != 0 )
 	{
 		goto on_error;

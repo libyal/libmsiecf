@@ -14,14 +14,12 @@ AM_CPPFLAGS = \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFOLE_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBMSIECF_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
 TESTS_PYMSIECF = \
-	test_python_functions.sh \
-	test_pymsiecf_set_ascii_codepage.sh
+	test_python_functions.sh
 endif
 
 TESTS = \
@@ -32,14 +30,11 @@ TESTS = \
 	$(TESTS_PYMSIECF)
 
 check_SCRIPTS = \
-	pymsiecf_test_get_version.py \
-	pymsiecf_test_open_close.py \
-	pymsiecf_test_set_ascii_codepage.py \
+	pymsiecf_test_support.py \
 	test_api_functions.sh \
 	test_api_types.sh \
 	test_msiecfexport.sh \
 	test_msiecfinfo.sh \
-	test_pymsiecf_set_ascii_codepage.sh \
 	test_python_functions.sh \
 	test_runner.sh
 
@@ -83,16 +78,16 @@ msiecf_test_error_LDADD = \
 
 msiecf_test_file_SOURCES = \
 	msiecf_test_file.c \
+	msiecf_test_getopt.c msiecf_test_getopt.h \
 	msiecf_test_libcerror.h \
 	msiecf_test_libclocale.h \
-	msiecf_test_libcsystem.h \
+	msiecf_test_libcnotify.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_libuna.h \
 	msiecf_test_macros.h \
 	msiecf_test_memory.c msiecf_test_memory.h
 
 msiecf_test_file_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
@@ -184,17 +179,17 @@ msiecf_test_redirected_values_LDADD = \
 	@LIBCERROR_LIBADD@
 
 msiecf_test_support_SOURCES = \
+	msiecf_test_getopt.c msiecf_test_getopt.h \
 	msiecf_test_libbfio.h \
 	msiecf_test_libcerror.h \
 	msiecf_test_libclocale.h \
-	msiecf_test_libcsystem.h \
+	msiecf_test_libcnotify.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_libuna.h \
 	msiecf_test_macros.h \
 	msiecf_test_support.c
 
 msiecf_test_support_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \

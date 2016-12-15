@@ -1,5 +1,5 @@
 /*
- * Library file type testing program
+ * Library file type test program
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,9 +30,9 @@
 #include <stdlib.h>
 #endif
 
+#include "msiecf_test_getopt.h"
 #include "msiecf_test_libcerror.h"
 #include "msiecf_test_libclocale.h"
-#include "msiecf_test_libcsystem.h"
 #include "msiecf_test_libmsiecf.h"
 #include "msiecf_test_libuna.h"
 #include "msiecf_test_macros.h"
@@ -1909,7 +1909,7 @@ int main(
 	system_integer_t option    = 0;
 	int result                 = 0;
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = msiecf_test_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )

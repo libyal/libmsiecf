@@ -38,9 +38,9 @@
 #include <libmsiecf/extern.h>
 
 #else
-#define LIBMSIECF_EXTERN	extern
+#define LIBMSIECF_EXTERN	/* extern */
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBMSIECF ) */
 
 #endif /* !defined( _LIBMSIECF_INTERNAL_EXTERN_H ) */
 

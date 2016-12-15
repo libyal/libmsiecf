@@ -1,5 +1,5 @@
 /*
- * Library leak_values type testing program
+ * Library leak_values type test program
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *

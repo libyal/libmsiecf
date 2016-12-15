@@ -1,5 +1,5 @@
 /*
- * Library item_descriptor type testing program
+ * Library item_descriptor type test program
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
