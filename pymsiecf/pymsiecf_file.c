@@ -1,7 +1,7 @@
 /*
  * Python object wrapper of libmsiecf_file_t
  *
- * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -813,6 +813,16 @@ PyObject *pymsiecf_file_open_file_object(
 		 mode );
 
 		return( NULL );
+	}
+	if( pymsiecf_file->file_io_handle != NULL )
+	{
+		pymsiecf_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: invalid file - file IO handle already set.",
+		 function );
+
+		goto on_error;
 	}
 	if( pymsiecf_file_object_initialize(
 	     &( pymsiecf_file->file_io_handle ),
