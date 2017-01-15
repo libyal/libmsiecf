@@ -19,23 +19,22 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON_TESTS
 TESTS_PYMSIECF = \
-	test_python_functions.sh
+	test_python_module.sh
 endif
 
 TESTS = \
-	test_api_functions.sh \
-	test_api_types.sh \
+	test_library.sh \
 	test_msiecfinfo.sh \
 	test_msiecfexport.sh \
 	$(TESTS_PYMSIECF)
 
 check_SCRIPTS = \
+	pymsiecf_test_file.py \
 	pymsiecf_test_support.py \
-	test_api_functions.sh \
-	test_api_types.sh \
+	test_library.sh \
 	test_msiecfexport.sh \
 	test_msiecfinfo.sh \
-	test_python_functions.sh \
+	test_python_module.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
@@ -48,11 +47,14 @@ check_PROGRAMS = \
 	msiecf_test_io_handle \
 	msiecf_test_item \
 	msiecf_test_item_descriptor \
+	msiecf_test_leak \
 	msiecf_test_leak_values \
 	msiecf_test_notify \
 	msiecf_test_property_type \
+	msiecf_test_redirected \
 	msiecf_test_redirected_values \
 	msiecf_test_support \
+	msiecf_test_url \
 	msiecf_test_url_values
 
 msiecf_test_directory_descriptor_SOURCES = \
@@ -133,6 +135,18 @@ msiecf_test_item_descriptor_LDADD = \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 
+msiecf_test_leak_SOURCES = \
+	msiecf_test_leak.c \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_leak_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
 msiecf_test_leak_values_SOURCES = \
 	msiecf_test_leak_values.c \
 	msiecf_test_libcerror.h \
@@ -163,6 +177,18 @@ msiecf_test_property_type_SOURCES = \
 	msiecf_test_unused.h
 
 msiecf_test_property_type_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_redirected_SOURCES = \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_redirected.c \
+	msiecf_test_unused.h
+
+msiecf_test_redirected_LDADD = \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 
@@ -197,6 +223,18 @@ msiecf_test_support_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_url_SOURCES = \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h \
+	msiecf_test_url.c
+
+msiecf_test_url_LDADD = \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 

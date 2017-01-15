@@ -130,11 +130,14 @@ stamp-h[1-9]
 /tests/msiecf_test_io_handle
 /tests/msiecf_test_item
 /tests/msiecf_test_item_descriptor
+/tests/msiecf_test_leak
 /tests/msiecf_test_leak_values
 /tests/msiecf_test_notify
 /tests/msiecf_test_property_type
+/tests/msiecf_test_redirected
 /tests/msiecf_test_redirected_values
 /tests/msiecf_test_support
+/tests/msiecf_test_url
 /tests/msiecf_test_url_values
 /tests/tmp*
 

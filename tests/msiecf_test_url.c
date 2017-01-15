@@ -1,5 +1,5 @@
 /*
- * Library item type test program
+ * Library url type test program
  *
  * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -33,50 +33,6 @@
 #include "msiecf_test_memory.h"
 #include "msiecf_test_unused.h"
 
-#include "../libmsiecf/libmsiecf_item.h"
-
-/* Tests the libmsiecf_item_free function
- * Returns 1 if successful or 0 if not
- */
-int msiecf_test_item_free(
-     void )
-{
-	libcerror_error_t *error = NULL;
-	int result               = 0;
-
-	/* Test error cases
-	 */
-	result = libmsiecf_item_free(
-	          NULL,
-	          &error );
-
-	MSIECF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
-#if defined( __GNUC__ )
-
-#endif /* defined( __GNUC__ ) */
-
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -92,29 +48,49 @@ int main(
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+	/* TODO: add tests for libmsiecf_url_get_type */
 
-	/* TODO: add tests for libmsiecf_item_initialize */
+	/* TODO: add tests for libmsiecf_url_get_primary_time */
 
-#endif /* defined( __GNUC__ ) */
+	/* TODO: add tests for libmsiecf_url_get_secondary_time */
 
-	MSIECF_TEST_RUN(
-	 "libmsiecf_item_free",
-	 msiecf_test_item_free );
+	/* TODO: add tests for libmsiecf_url_get_expiration_time */
 
-#if defined( __GNUC__ )
+	/* TODO: add tests for libmsiecf_url_get_last_checked_time */
 
-	/* TODO: add tests for libmsiecf_item_get_type */
+	/* TODO: add tests for libmsiecf_url_get_cached_file_size */
 
-	/* TODO: add tests for libmsiecf_item_get_flags */
+	/* TODO: add tests for libmsiecf_url_get_cache_directory_index */
 
-	/* TODO: add tests for libmsiecf_item_get_offset */
+	/* TODO: add tests for libmsiecf_url_get_number_of_hits */
 
-	/* TODO: add tests for libmsiecf_item_get_offset_range */
+	/* TODO: add tests for libmsiecf_url_get_location_size */
 
-	/* TODO: add tests for libmsiecf_item_read_values */
+	/* TODO: add tests for libmsiecf_url_get_location */
 
-#endif /* defined( __GNUC__ ) */
+	/* TODO: add tests for libmsiecf_url_get_utf8_location_size */
+
+	/* TODO: add tests for libmsiecf_url_get_utf8_location */
+
+	/* TODO: add tests for libmsiecf_url_get_utf16_location_size */
+
+	/* TODO: add tests for libmsiecf_url_get_utf16_location */
+
+	/* TODO: add tests for libmsiecf_url_get_filename_size */
+
+	/* TODO: add tests for libmsiecf_url_get_filename */
+
+	/* TODO: add tests for libmsiecf_url_get_utf8_filename_size */
+
+	/* TODO: add tests for libmsiecf_url_get_utf8_filename */
+
+	/* TODO: add tests for libmsiecf_url_get_utf16_filename_size */
+
+	/* TODO: add tests for libmsiecf_url_get_utf16_filename */
+
+	/* TODO: add tests for libmsiecf_url_get_data_size */
+
+	/* TODO: add tests for libmsiecf_url_get_data */
 
 	return( EXIT_SUCCESS );
 
