@@ -176,10 +176,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\msiecf_test_memory.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\msiecf_test_url.c"
 				>
 			</File>
@@ -199,10 +195,6 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\msiecf_test_macros.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\msiecf_test_memory.h"
 				>
 			</File>
 			<File

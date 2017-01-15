@@ -140,7 +140,6 @@ msiecf_test_leak_SOURCES = \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_macros.h \
-	msiecf_test_memory.c msiecf_test_memory.h \
 	msiecf_test_unused.h
 
 msiecf_test_leak_LDADD = \
@@ -184,7 +183,6 @@ msiecf_test_redirected_SOURCES = \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_macros.h \
-	msiecf_test_memory.c msiecf_test_memory.h \
 	msiecf_test_redirected.c \
 	msiecf_test_unused.h
 
@@ -230,7 +228,6 @@ msiecf_test_url_SOURCES = \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_macros.h \
-	msiecf_test_memory.c msiecf_test_memory.h \
 	msiecf_test_unused.h \
 	msiecf_test_url.c
 
