@@ -2005,7 +2005,7 @@ PyObject *pymsiecf_file_get_recovered_item_by_index(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libmsiecf_file_get_recovered_item(
+	result = libmsiecf_file_get_recovered_item_by_index(
 	          ( (pymsiecf_file_t *) pymsiecf_file )->file,
 	          item_index,
 	          &item,

@@ -504,7 +504,7 @@ int libmsiecf_url_get_expiration_time(
 LIBMSIECF_EXTERN \
 int libmsiecf_url_get_last_checked_time(
      libmsiecf_item_t *url,
-     uint32_t *last_checked_time,
+     uint32_t *fat_date_time,
      libmsiecf_error_t **error );
 
 /* Retrieves the cached file size

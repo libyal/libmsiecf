@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf URL item
+ * Python object wrapper of libmsiecf_item_t type LIBMSIECF_ITEM_TYPE_URL
  *
  * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -51,42 +51,42 @@ PyMethodDef pymsiecf_url_object_methods[] = {
 	{ "get_primary_time",
 	  (PyCFunction) pymsiecf_url_get_primary_time,
 	  METH_NOARGS,
-	  "get_primary_time() -> Datetime\n"
+	  "get_primary_time() -> Datetime or None\n"
 	  "\n"
-	  "Returns the primary date and time." },
+	  "Retrieves the primary time." },
 
 	{ "get_primary_time_as_integer",
 	  (PyCFunction) pymsiecf_url_get_primary_time_as_integer,
 	  METH_NOARGS,
-	  "get_primary_time_as_integer() -> Integer\n"
+	  "get_primary_time_as_integer() -> Integer or None\n"
 	  "\n"
-	  "Returns the primary date and time as a 64-bit integer containing a FILETIME value." },
+	  "Retrieves the primary time as a 64-bit integer containing a FILETIME value." },
 
 	{ "get_secondary_time",
 	  (PyCFunction) pymsiecf_url_get_secondary_time,
 	  METH_NOARGS,
-	  "get_secondary_time() -> Datetime\n"
+	  "get_secondary_time() -> Datetime or None\n"
 	  "\n"
-	  "Returns the secondary date and time." },
+	  "Retrieves the secondary time." },
 
 	{ "get_secondary_time_as_integer",
 	  (PyCFunction) pymsiecf_url_get_secondary_time_as_integer,
 	  METH_NOARGS,
-	  "get_secondary_time_as_integer() -> Integer\n"
+	  "get_secondary_time_as_integer() -> Integer or None\n"
 	  "\n"
-	  "Returns the secondary date and time as a 64-bit integer containing a FILETIME value." },
+	  "Retrieves the secondary time as a 64-bit integer containing a FILETIME value." },
 
 	{ "get_expiration_time",
 	  (PyCFunction) pymsiecf_url_get_expiration_time,
 	  METH_NOARGS,
-	  "get_expiration_time() -> Datetime\n"
+	  "get_expiration_time() -> Datetime or None\n"
 	  "\n"
 	  "Returns the expiration date and time." },
 
 	{ "get_expiration_time_as_integer",
 	  (PyCFunction) pymsiecf_url_get_expiration_time_as_integer,
 	  METH_NOARGS,
-	  "get_expiration_time_as_integer() -> Integer\n"
+	  "get_expiration_time_as_integer() -> Integer or None\n"
 	  "\n"
 	  "Returns the expiration date and time as:\n"
 	  "\ta 64-bit integer containing a FILETIME value (format version 4.7)\n"
@@ -95,35 +95,35 @@ PyMethodDef pymsiecf_url_object_methods[] = {
 	{ "get_last_checked_time",
 	  (PyCFunction) pymsiecf_url_get_last_checked_time,
 	  METH_NOARGS,
-	  "get_last_checked_time() -> Datetime\n"
+	  "get_last_checked_time() -> Datetime or None\n"
 	  "\n"
 	  "Returns the last checked date and time." },
 
 	{ "get_last_checked_time_as_integer",
 	  (PyCFunction) pymsiecf_url_get_last_checked_time_as_integer,
 	  METH_NOARGS,
-	  "get_last_checked_time_as_integer() -> Integer\n"
+	  "get_last_checked_time_as_integer() -> Integer or None\n"
 	  "\n"
 	  "Returns the last checked date and time as a 32-bit integer containing a FAT date time value." },
 
 	{ "get_cached_file_size",
 	  (PyCFunction) pymsiecf_url_get_cached_file_size,
 	  METH_NOARGS,
-	  "get_cached_file_size() -> Integer\n"
+	  "get_cached_file_size() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the cached file size." },
 
 	{ "get_cache_directory_index",
 	  (PyCFunction) pymsiecf_url_get_cache_directory_index,
 	  METH_NOARGS,
-	  "get_cache_directory_index() -> Integer\n"
+	  "get_cache_directory_index() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the cache directory index." },
 
 	{ "get_number_of_hits",
 	  (PyCFunction) pymsiecf_url_get_number_of_hits,
 	  METH_NOARGS,
-	  "get_number_of_hits() -> Integer\n"
+	  "get_number_of_hits() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the number of hits." },
 
@@ -139,12 +139,12 @@ PyMethodDef pymsiecf_url_object_methods[] = {
 	  METH_NOARGS,
 	  "get_filename() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the location." },
+	  "Retrieves the filename." },
 
 	{ "get_data",
 	  (PyCFunction) pymsiecf_url_get_data,
 	  METH_NOARGS,
-	  "get_data() -> String or None\n"
+	  "get_data() -> Bytes or None\n"
 	  "\n"
 	  "Retrieves the data." },
 
@@ -163,25 +163,25 @@ PyGetSetDef pymsiecf_url_object_get_set_definitions[] = {
 	{ "primary_time",
 	  (getter) pymsiecf_url_get_primary_time,
 	  (setter) 0,
-	  "The primary date and time.",
+	  "The primary time.",
 	  NULL },
 
 	{ "secondary_time",
 	  (getter) pymsiecf_url_get_secondary_time,
 	  (setter) 0,
-	  "The secondary date and time.",
+	  "The secondary time.",
 	  NULL },
 
 	{ "expiration_time",
 	  (getter) pymsiecf_url_get_expiration_time,
 	  (setter) 0,
-	  "The expiration date and time.",
+	  "The expiration time.",
 	  NULL },
 
 	{ "last_checked_time",
 	  (getter) pymsiecf_url_get_last_checked_time,
 	  (setter) 0,
-	  "The last checked date and time.",
+	  "The last checked time.",
 	  NULL },
 
 	{ "cached_file_size",

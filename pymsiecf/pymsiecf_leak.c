@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf leak item
+ * Python object wrapper of libmsiecf_item_t type LIBMSIECF_ITEM_TYPE_LEAK
  *
  * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -37,19 +37,17 @@
 
 PyMethodDef pymsiecf_leak_object_methods[] = {
 
-	/* Functions to access the leak values */
-
 	{ "get_cached_file_size",
 	  (PyCFunction) pymsiecf_leak_get_cached_file_size,
 	  METH_NOARGS,
-	  "get_cached_file_size() -> Integer\n"
+	  "get_cached_file_size() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the cached file size." },
 
 	{ "get_cache_directory_index",
 	  (PyCFunction) pymsiecf_leak_get_cache_directory_index,
 	  METH_NOARGS,
-	  "get_cache_directory_index() -> Integer\n"
+	  "get_cache_directory_index() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the cache directory index." },
 
@@ -58,7 +56,7 @@ PyMethodDef pymsiecf_leak_object_methods[] = {
 	  METH_NOARGS,
 	  "get_filename() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the location." },
+	  "Retrieves the filename." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -190,18 +188,18 @@ PyObject *pymsiecf_leak_get_cached_file_size(
            pymsiecf_item_t *pymsiecf_item,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error  = NULL;
-	PyObject *integer_object  = NULL;
-	static char *function     = "pymsiecf_leak_get_cached_file_size";
-	uint64_t cached_file_size = 0;
-	int result                = 0;
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pymsiecf_leak_get_cached_file_size";
+	uint64_t value_64bit     = 0;
+	int result               = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
 
 	if( pymsiecf_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -211,7 +209,7 @@ PyObject *pymsiecf_leak_get_cached_file_size(
 
 	result = libmsiecf_leak_get_cached_file_size(
 	          pymsiecf_item->item,
-	          &cached_file_size,
+	          &value_64bit,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -230,7 +228,7 @@ PyObject *pymsiecf_leak_get_cached_file_size(
 		return( NULL );
 	}
 	integer_object = pymsiecf_integer_unsigned_new_from_64bit(
-	                  cached_file_size );
+	                  (uint64_t) value_64bit );
 
 	return( integer_object );
 }
@@ -242,8 +240,8 @@ PyObject *pymsiecf_leak_get_cache_directory_index(
            pymsiecf_item_t *pymsiecf_item,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error      = NULL;
 	PyObject *integer_object      = NULL;
+	libcerror_error_t *error      = NULL;
 	static char *function         = "pymsiecf_leak_get_cache_directory_index";
 	uint8_t cache_directory_index = 0;
 	int result                    = 0;
@@ -253,7 +251,7 @@ PyObject *pymsiecf_leak_get_cache_directory_index(
 	if( pymsiecf_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -298,12 +296,12 @@ PyObject *pymsiecf_leak_get_filename(
            pymsiecf_item_t *pymsiecf_item,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
 	const char *errors       = NULL;
-	uint8_t *filename        = NULL;
 	static char *function    = "pymsiecf_leak_get_filename";
-	size_t filename_size     = 0;
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
 	int result               = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
@@ -311,7 +309,7 @@ PyObject *pymsiecf_leak_get_filename(
 	if( pymsiecf_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -321,7 +319,7 @@ PyObject *pymsiecf_leak_get_filename(
 
 	result = libmsiecf_leak_get_utf8_filename_size(
 	          pymsiecf_item->item,
-	          &filename_size,
+	          &utf8_string_size,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -331,7 +329,7 @@ PyObject *pymsiecf_leak_get_filename(
 		pymsiecf_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve filename size.",
+		 "%s: unable to determine size of filename as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -340,21 +338,21 @@ PyObject *pymsiecf_leak_get_filename(
 		goto on_error;
 	}
 	else if( ( result == 0 )
-	      || ( filename_size == 0 ) )
+	      || ( utf8_string_size == 0 ) )
 	{
 		Py_IncRef(
 		 Py_None );
 
 		return( Py_None );
 	}
-	filename = (uint8_t *) PyMem_Malloc(
-	                        sizeof( uint8_t ) * filename_size );
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
 
-	if( filename == NULL )
+	if( utf8_string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to create filename.",
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
 		 function );
 
 		goto on_error;
@@ -362,10 +360,10 @@ PyObject *pymsiecf_leak_get_filename(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libmsiecf_leak_get_utf8_filename(
-		  pymsiecf_item->item,
-		  filename,
-		  filename_size,
-		  &error );
+	          pymsiecf_item->item,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
 
 	Py_END_ALLOW_THREADS
 
@@ -374,7 +372,7 @@ PyObject *pymsiecf_leak_get_filename(
 		pymsiecf_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve filename.",
+		 "%s: unable to retrieve filename as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -382,25 +380,33 @@ PyObject *pymsiecf_leak_get_filename(
 
 		goto on_error;
 	}
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
 	string_object = PyUnicode_DecodeUTF8(
-			 (char *) filename,
-			 (Py_ssize_t) filename_size - 1,
-			 errors );
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
 
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
 	PyMem_Free(
-	 filename );
+	 utf8_string );
 
 	return( string_object );
 
 on_error:
-	if( filename != NULL )
+	if( utf8_string != NULL )
 	{
 		PyMem_Free(
-		 filename );
+		 utf8_string );
 	}
 	return( NULL );
 }

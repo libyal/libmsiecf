@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf redirected item
+ * Python object wrapper of libmsiecf_item_t type LIBMSIECF_ITEM_TYPE_REDIRECTED
  *
  * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -35,8 +35,6 @@
 #include "pymsiecf_unused.h"
 
 PyMethodDef pymsiecf_redirected_object_methods[] = {
-
-	/* Functions to access the redirected values */
 
 	{ "get_location",
 	  (PyCFunction) pymsiecf_redirected_get_location,
@@ -103,7 +101,7 @@ PyTypeObject pymsiecf_redirected_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
-	"pymsiecf redirected object (wraps libmsiecf_item_t type LIBMSIECF_ITEM_TYPE_REDIRECTED)",
+	"pymsiecf redirected object (wraps libmsiecf_item_t type )",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -163,12 +161,12 @@ PyObject *pymsiecf_redirected_get_location(
            pymsiecf_item_t *pymsiecf_item,
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
 	const char *errors       = NULL;
-	uint8_t *location        = NULL;
 	static char *function    = "pymsiecf_redirected_get_location";
-	size_t location_size     = 0;
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
 	int result               = 0;
 
 	PYMSIECF_UNREFERENCED_PARAMETER( arguments )
@@ -176,7 +174,7 @@ PyObject *pymsiecf_redirected_get_location(
 	if( pymsiecf_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -186,7 +184,7 @@ PyObject *pymsiecf_redirected_get_location(
 
 	result = libmsiecf_redirected_get_utf8_location_size(
 	          pymsiecf_item->item,
-	          &location_size,
+	          &utf8_string_size,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -196,7 +194,7 @@ PyObject *pymsiecf_redirected_get_location(
 		pymsiecf_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve location size.",
+		 "%s: unable to determine size of location as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -205,21 +203,21 @@ PyObject *pymsiecf_redirected_get_location(
 		goto on_error;
 	}
 	else if( ( result == 0 )
-	      || ( location_size == 0 ) )
+	      || ( utf8_string_size == 0 ) )
 	{
 		Py_IncRef(
 		 Py_None );
 
 		return( Py_None );
 	}
-	location = (uint8_t *) PyMem_Malloc(
-	                        sizeof( uint8_t ) * location_size );
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
 
-	if( location == NULL )
+	if( utf8_string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to create location.",
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
 		 function );
 
 		goto on_error;
@@ -227,10 +225,10 @@ PyObject *pymsiecf_redirected_get_location(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libmsiecf_redirected_get_utf8_location(
-		  pymsiecf_item->item,
-		  location,
-		  location_size,
-		  &error );
+	          pymsiecf_item->item,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
 
 	Py_END_ALLOW_THREADS
 
@@ -239,7 +237,7 @@ PyObject *pymsiecf_redirected_get_location(
 		pymsiecf_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve location.",
+		 "%s: unable to retrieve location as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -247,25 +245,33 @@ PyObject *pymsiecf_redirected_get_location(
 
 		goto on_error;
 	}
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
 	string_object = PyUnicode_DecodeUTF8(
-			 (char *) location,
-			 (Py_ssize_t) location_size - 1,
-			 errors );
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
 
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
 	PyMem_Free(
-	 location );
+	 utf8_string );
 
 	return( string_object );
 
 on_error:
-	if( location != NULL )
+	if( utf8_string != NULL )
 	{
 		PyMem_Free(
-		 location );
+		 utf8_string );
 	}
 	return( NULL );
 }

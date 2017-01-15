@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmsiecf leak item
+ * Python object wrapper of libmsiecf_item_t type LIBMSIECF_ITEM_TYPE_LEAK
  *
  * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include "pymsiecf_file.h"
+#include "pymsiecf_item.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
 

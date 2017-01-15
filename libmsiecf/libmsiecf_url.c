@@ -400,7 +400,7 @@ int libmsiecf_url_get_expiration_time(
  */
 int libmsiecf_url_get_last_checked_time(
      libmsiecf_item_t *url,
-     uint32_t *last_checked_time,
+     uint32_t *fat_date_time,
      libcerror_error_t **error )
 {
 	libmsiecf_internal_item_t *internal_item = NULL;
@@ -469,18 +469,18 @@ int libmsiecf_url_get_last_checked_time(
 			return( -1 );
 		}
 	}
-	if( last_checked_time == NULL )
+	if( fat_date_time == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid last checked time.",
+		 "%s: invalid FAT date time.",
 		 function );
 
 		return( -1 );
 	}
-	*last_checked_time = ( (libmsiecf_url_values_t *) internal_item->value )->last_checked_time;
+	*fat_date_time = ( (libmsiecf_url_values_t *) internal_item->value )->last_checked_time;
 
 	return( 1 );
 }
