@@ -2045,14 +2045,14 @@ int main(
 		 msiecf_test_file_get_number_of_items,
 		 file );
 
-		/* TODO: add tests for libmsiecf_file_get_item */
+		/* TODO: add tests for libmsiecf_file_get_item_by_index */
 
 		MSIECF_TEST_RUN_WITH_ARGS(
 		 "libmsiecf_file_get_number_of_recovered_items",
 		 msiecf_test_file_get_number_of_recovered_items,
 		 file );
 
-		/* TODO: add tests for libmsiecf_file_get_recovered_item */
+		/* TODO: add tests for libmsiecf_file_get_recovered_item_by_index */
 
 		/* Clean up
 		 */

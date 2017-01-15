@@ -1625,7 +1625,7 @@ int export_handle_export_items(
 	     item_iterator < number_of_items;
 	     item_iterator++ )
 	{
-		if( libmsiecf_file_get_item(
+		if( libmsiecf_file_get_item_by_index(
 		     export_handle->input_file,
 		     item_iterator,
 		     &item,
@@ -1734,7 +1734,7 @@ int export_handle_export_recovered_items(
 	     recovered_item_iterator < number_of_recovered_items;
 	     recovered_item_iterator++ )
 	{
-		if( libmsiecf_file_get_recovered_item(
+		if( libmsiecf_file_get_recovered_item_by_index(
 		     export_handle->input_file,
 		     recovered_item_iterator,
 		     &recovered_item,

@@ -189,6 +189,13 @@ int libmsiecf_file_get_item(
      libcerror_error_t **error );
 
 LIBMSIECF_EXTERN \
+int libmsiecf_file_get_item_by_index(
+     libmsiecf_file_t *file,
+     int item_index,
+     libmsiecf_item_t **item,
+     libcerror_error_t **error );
+
+LIBMSIECF_EXTERN \
 int libmsiecf_file_get_number_of_recovered_items(
      libmsiecf_file_t *file,
      int *number_of_recovered_items,
@@ -196,6 +203,13 @@ int libmsiecf_file_get_number_of_recovered_items(
 
 LIBMSIECF_EXTERN \
 int libmsiecf_file_get_recovered_item(
+     libmsiecf_file_t *file,
+     int recovered_item_index,
+     libmsiecf_item_t **recovered_item,
+     libcerror_error_t **error );
+
+LIBMSIECF_EXTERN \
+int libmsiecf_file_get_recovered_item_by_index(
      libmsiecf_file_t *file,
      int recovered_item_index,
      libmsiecf_item_t **recovered_item,

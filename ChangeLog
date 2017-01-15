@@ -1,4 +1,7 @@
 TODO
+* remove deprecated function:
+  - libmsiecf_file_get_item
+  - libmsiecf_file_get_recovered_item
 * pymsiecf
   - add support for leak: Last cache synchronization date and time
 * hash calculation: check what the preceding bytes could be

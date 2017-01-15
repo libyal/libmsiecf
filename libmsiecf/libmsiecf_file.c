@@ -1665,6 +1665,99 @@ int libmsiecf_file_get_item(
 	return( 1 );
 }
 
+/* Retrieves the item for the specific index
+ * Returns 1 if successful or -1 on error
+ */
+int libmsiecf_file_get_item_by_index(
+     libmsiecf_file_t *file,
+     int item_index,
+     libmsiecf_item_t **item,
+     libcerror_error_t **error )
+{
+	libmsiecf_internal_file_t *internal_file     = NULL;
+	libmsiecf_item_descriptor_t *item_descriptor = NULL;
+	static char *function                        = "libmsiecf_file_get_item_by_index";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libmsiecf_internal_file_t *) file;
+
+	if( internal_file->item_array == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid file - missing item array.",
+		 function );
+
+		return( -1 );
+	}
+	if( item == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	if( *item != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: item already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_file->item_array,
+	     item_index,
+	     (intptr_t **) &item_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve item descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( libmsiecf_item_initialize(
+	     item,
+	     internal_file->file_io_handle,
+	     internal_file->io_handle,
+	     item_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create item.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
 /* Retrieves the number of recovered items
  * Returns 1 if successful or -1 on error
  */
@@ -1718,6 +1811,99 @@ int libmsiecf_file_get_recovered_item(
 	libmsiecf_internal_file_t *internal_file     = NULL;
 	libmsiecf_item_descriptor_t *item_descriptor = NULL;
 	static char *function                        = "libmsiecf_file_get_recovered_item";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libmsiecf_internal_file_t *) file;
+
+	if( internal_file->recovered_item_array == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid file - missing recovered item array.",
+		 function );
+
+		return( -1 );
+	}
+	if( recovered_item == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid recovered item.",
+		 function );
+
+		return( -1 );
+	}
+	if( *recovered_item != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: recovered item already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     internal_file->recovered_item_array,
+	     recovered_item_index,
+	     (intptr_t **) &item_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve recovered item descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( libmsiecf_item_initialize(
+	     recovered_item,
+	     internal_file->file_io_handle,
+	     internal_file->io_handle,
+	     item_descriptor,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create recovered item.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the recovered item for the specific index
+ * Returns 1 if successful or -1 on error
+ */
+int libmsiecf_file_get_recovered_item_by_index(
+     libmsiecf_file_t *file,
+     int recovered_item_index,
+     libmsiecf_item_t **recovered_item,
+     libcerror_error_t **error )
+{
+	libmsiecf_internal_file_t *internal_file     = NULL;
+	libmsiecf_item_descriptor_t *item_descriptor = NULL;
+	static char *function                        = "libmsiecf_file_get_recovered_item_by_index";
 
 	if( file == NULL )
 	{
