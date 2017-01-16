@@ -24,8 +24,7 @@ Header files and libraries for developing applications for libmsiecf.
 %package tools
 Summary: Several tools for reading MSIE Cache File (index.dat).
 Group: Applications/System
-Requires: libmsiecf = %{version}-%{release} @ax_libcsystem_spec_requires@
-@libmsiecf_tools_spec_build_requires@ @ax_libcsystem_spec_build_requires@
+Requires: libmsiecf = %{version}-%{release}
 
 %description tools
 Several tools for reading MSIE Cache File (index.dat).

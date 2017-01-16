@@ -19,16 +19,22 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _MSIECFOUTPUT_H )
-#define _MSIECFOUTPUT_H
+#if !defined( _MSIECFTOOLS_OUTPUT_H )
+#define _MSIECFTOOLS_OUTPUT_H
 
 #include <common.h>
 #include <file_stream.h>
 #include <types.h>
 
+#include "msiecftools_libcerror.h"
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
+
+int msiecftools_output_initialize(
+     int stdio_mode,
+     libcerror_error_t **error );
 
 void msiecfoutput_copyright_fprint(
       FILE *stream );
@@ -45,5 +51,5 @@ void msiecfoutput_version_detailed_fprint(
 }
 #endif
 
-#endif /* !defined( _MSIECFOUTPUT_H ) */
+#endif /* !defined( _MSIECFTOOLS_OUTPUT_H ) */
 

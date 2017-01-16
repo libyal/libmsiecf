@@ -35,12 +35,14 @@
 #endif
 
 #include "info_handle.h"
-#include "msiecfoutput.h"
+#include "msiecftools_getopt.h"
 #include "msiecftools_libcerror.h"
 #include "msiecftools_libclocale.h"
 #include "msiecftools_libcnotify.h"
-#include "msiecftools_libcsystem.h"
 #include "msiecftools_libmsiecf.h"
+#include "msiecftools_output.h"
+#include "msiecftools_signal.h"
+#include "msiecftools_unused.h"
 
 info_handle_t *msiecfinfo_info_handle = NULL;
 int msiecfinfo_abort                  = 0;
@@ -75,12 +77,12 @@ void usage_fprint(
 /* Signal handler for msiecfinfo
  */
 void msiecfinfo_signal_handler(
-      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      msiecftools_signal_t signal MSIECFTOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "msiecfinfo_signal_handler";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+	MSIECFTOOLS_UNREFERENCED_PARAMETER( signal )
 
 	msiecfinfo_abort = 1;
 
@@ -102,8 +104,13 @@ void msiecfinfo_signal_handler(
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libcsystem_file_io_close(
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
 	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
 	{
 		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
@@ -144,13 +151,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libcsystem_initialize(
+	if( msiecftools_output_initialize(
 	     _IONBF,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -158,7 +165,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = msiecftools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "ac:hvV" ) ) ) != (system_integer_t) -1 )

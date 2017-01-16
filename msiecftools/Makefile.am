@@ -10,7 +10,6 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBMSIECF_DLL_IMPORT@
 
 AM_LDFLAGS = @STATIC_LDFLAGS@
@@ -23,18 +22,20 @@ msiecfexport_SOURCES = \
 	export_handle.c export_handle.h \
 	log_handle.c log_handle.h \
 	msiecfexport.c \
-	msiecfoutput.c msiecfoutput.h \
+	msiecftools_getopt.c msiecftools_getopt.h \
+	msiecftools_i18n.h \
 	msiecftools_libbfio.h \
 	msiecftools_libcerror.h \
 	msiecftools_libclocale.h \
 	msiecftools_libcnotify.h \
-	msiecftools_libcsystem.h \
 	msiecftools_libfdatetime.h \
 	msiecftools_libmsiecf.h \
-	msiecftools_libuna.h
+	msiecftools_libuna.h \
+	msiecftools_output.c msiecftools_output.h \
+	msiecftools_signal.c msiecftools_signal.h \
+	msiecftools_unused.h
 
 msiecfexport_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
@@ -46,18 +47,20 @@ msiecfexport_LDADD = \
 msiecfinfo_SOURCES = \
 	info_handle.c info_handle.h \
 	msiecfinfo.c \
-	msiecfoutput.c msiecfoutput.h \
+	msiecftools_getopt.c msiecftools_getopt.h \
+	msiecftools_i18n.h \
 	msiecftools_libbfio.h \
 	msiecftools_libcerror.h \
 	msiecftools_libclocale.h \
 	msiecftools_libcnotify.h \
-	msiecftools_libcsystem.h \
 	msiecftools_libfdatetime.h \
 	msiecftools_libmsiecf.h \
-	msiecftools_libuna.h
+	msiecftools_libuna.h \
+	msiecftools_output.c msiecftools_output.h \
+	msiecftools_signal.c msiecftools_signal.h \
+	msiecftools_unused.h
 
 msiecfinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
 	@LIBCNOTIFY_LIBADD@ \

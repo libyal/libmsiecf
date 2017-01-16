@@ -18,7 +18,6 @@ SUBDIRS = \
 	libfole \
 	libfvalue \
 	libmsiecf \
-	libcsystem \
 	msiecftools \
 	pymsiecf \
 	pymsiecf-python2 \

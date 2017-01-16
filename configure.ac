@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libmsiecf],
- [20170115],
+ [20170116],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -99,17 +99,8 @@ AX_LIBFVALUE_CHECK_ENABLE
 dnl Check for library function support
 AX_LIBMSIECF_CHECK_LOCAL
 
-dnl Check for enabling libcsystem for cross-platform C generic system functions
-AX_LIBCSYSTEM_CHECK_ENABLE
-
-dnl Check if msiecftools should be build as static executables
-AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
-
-dnl Check if libmsiecf should be build with verbose output
-AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
-
-dnl Check if libmsiecf should be build with debug output
-AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
+dnl Check for msiecftools function support
+AX_MSIECFTOOLS_CHECK_LOCAL
 
 dnl Check if libmsiecf python bindings (pymsiecf) should be build
 AX_PYTHON_CHECK_PYPREFIX
@@ -134,29 +125,6 @@ AS_IF(
 dnl Check for test function support
 AX_TESTS_CHECK_LOCAL
 
-dnl Check if DLL support is needed
-AS_IF(
- [test "x$enable_shared" = xyes],
- [AS_CASE(
-  [$host],
-  [*cygwin* | *mingw*],
-  [AC_DEFINE(
-   [HAVE_DLLMAIN],
-   [1],
-   [Define to 1 to enable the DllMain function.])
-  AC_SUBST(
-   [HAVE_DLLMAIN],
-   [1])
-
-  AS_IF(
-   [test "x$ac_cv_enable_static_executables" = xno],
-   [AC_SUBST(
-    [LIBMSIECF_DLL_IMPORT],
-    ["-DLIBMSIECF_DLL_IMPORT"])
-   ])
-  ])
- ])
-
 dnl Set additional compiler flags
 CFLAGS="$CFLAGS -Wall";
 
@@ -168,13 +136,6 @@ AS_IF(
   [Requires:])
  AC_SUBST(
   [libmsiecf_spec_build_requires],
-  [BuildRequires:])
- ])
-
-AS_IF(
- [test "x$ac_cv_libcsystem" = xyes],
- [AC_SUBST(
-  [libmsiecf_tools_spec_build_requires],
   [BuildRequires:])
  ])
 
@@ -212,7 +173,6 @@ AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libfole/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libmsiecf/Makefile])
-AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([msiecftools/Makefile])
 AC_CONFIG_FILES([pymsiecf/Makefile])
 AC_CONFIG_FILES([pymsiecf-python2/Makefile])
@@ -257,7 +217,6 @@ Building:
    libfguid support:                            $ac_cv_libfguid
    libfole support:                             $ac_cv_libfole
    libfvalue support:                           $ac_cv_libfvalue
-   libcsystem support:                          $ac_cv_libcsystem
 
 Features:
    Multi-threading support:                     $ac_cv_libcthreads_multi_threading
