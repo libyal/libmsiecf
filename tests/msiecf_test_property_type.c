@@ -48,13 +48,13 @@ int main(
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 	/* TODO: add tests for libmsiecf_property_type_get_identifier */
 
 	/* TODO: add tests for libmsiecf_property_type_get_description */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

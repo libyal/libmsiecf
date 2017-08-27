@@ -35,7 +35,7 @@
 
 #include "../libmsiecf/libmsiecf_io_handle.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 /* Tests the libmsiecf_io_handle_initialize function
  * Returns 1 if successful or 0 if not
@@ -270,7 +270,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -287,7 +287,7 @@ int main(
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_io_handle_initialize",
@@ -305,7 +305,7 @@ int main(
 
 	/* TODO: add tests for libmsiecf_io_handle_read_record_scan */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

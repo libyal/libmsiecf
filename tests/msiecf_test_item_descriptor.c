@@ -35,7 +35,7 @@
 
 #include "../libmsiecf/libmsiecf_item_descriptor.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 /* Tests the libmsiecf_item_descriptor_initialize function
  * Returns 1 if successful or 0 if not
@@ -270,7 +270,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -287,7 +287,7 @@ int main(
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_item_descriptor_initialize",
@@ -297,7 +297,7 @@ int main(
 	 "libmsiecf_item_descriptor_free",
 	 msiecf_test_item_descriptor_free );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

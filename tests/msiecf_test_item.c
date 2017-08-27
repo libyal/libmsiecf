@@ -73,9 +73,9 @@ on_error:
 	return( 0 );
 }
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -92,17 +92,17 @@ int main(
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 	/* TODO: add tests for libmsiecf_item_initialize */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 	MSIECF_TEST_RUN(
 	 "libmsiecf_item_free",
 	 msiecf_test_item_free );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 	/* TODO: add tests for libmsiecf_item_get_type */
 
@@ -114,7 +114,7 @@ int main(
 
 	/* TODO: add tests for libmsiecf_item_read_values */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
