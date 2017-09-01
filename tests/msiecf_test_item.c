@@ -55,9 +55,9 @@ int msiecf_test_item_free(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

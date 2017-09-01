@@ -64,13 +64,13 @@ int msiecf_test_item_descriptor_initialize(
 	 result,
 	 1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "item_descriptor",
-         item_descriptor );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "item_descriptor",
+	 item_descriptor );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libmsiecf_item_descriptor_free(
 	          &item_descriptor,
@@ -81,13 +81,13 @@ int msiecf_test_item_descriptor_initialize(
 	 result,
 	 1 );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "item_descriptor",
-         item_descriptor );
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "item_descriptor",
+	 item_descriptor );
 
-        MSIECF_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int msiecf_test_item_descriptor_initialize(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int msiecf_test_item_descriptor_initialize(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -252,9 +252,9 @@ int msiecf_test_item_descriptor_free(
 	 result,
 	 -1 );
 
-        MSIECF_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
