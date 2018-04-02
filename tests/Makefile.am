@@ -80,6 +80,7 @@ msiecf_test_error_LDADD = \
 
 msiecf_test_file_SOURCES = \
 	msiecf_test_file.c \
+	msiecf_test_functions.c msiecf_test_functions.h \
 	msiecf_test_getopt.c msiecf_test_getopt.h \
 	msiecf_test_libcerror.h \
 	msiecf_test_libclocale.h \
@@ -90,7 +91,11 @@ msiecf_test_file_SOURCES = \
 	msiecf_test_memory.c msiecf_test_memory.h
 
 msiecf_test_file_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
@@ -159,13 +164,15 @@ msiecf_test_leak_values_LDADD = \
 	@LIBCERROR_LIBADD@
 
 msiecf_test_notify_SOURCES = \
+	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_macros.h \
 	msiecf_test_notify.c \
 	msiecf_test_unused.h
 
 msiecf_test_notify_LDADD = \
-	../libmsiecf/libmsiecf.la
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
 
 msiecf_test_property_type_SOURCES = \
 	msiecf_test_libcerror.h \
@@ -203,6 +210,7 @@ msiecf_test_redirected_values_LDADD = \
 	@LIBCERROR_LIBADD@
 
 msiecf_test_support_SOURCES = \
+	msiecf_test_functions.c msiecf_test_functions.h \
 	msiecf_test_getopt.c msiecf_test_getopt.h \
 	msiecf_test_libbfio.h \
 	msiecf_test_libcerror.h \
@@ -211,7 +219,9 @@ msiecf_test_support_SOURCES = \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_libuna.h \
 	msiecf_test_macros.h \
-	msiecf_test_support.c
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_support.c \
+	msiecf_test_unused.h
 
 msiecf_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \
