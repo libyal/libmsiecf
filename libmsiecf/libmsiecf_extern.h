@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBMSIECF )
 
-/* If libtool DLL support is enabled set LIBMSIECF_DLL_EXPORT
- * before including libmsiecf/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBMSIECF_DLL_EXPORT
-#endif
-
 #include <libmsiecf/extern.h>
 
+#define LIBMSIECF_EXTERN_VARIABLE	LIBMSIECF_EXTERN
+
 #else
-#define LIBMSIECF_EXTERN	/* extern */
+#define LIBMSIECF_EXTERN		/* extern */
+#define LIBMSIECF_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBMSIECF ) */
 

@@ -24,14 +24,7 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBMSIECF_DLL_IMPORT
- * before including libmsiecf.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBMSIECF_DLL_IMPORT
-#endif
-
 #include <libmsiecf.h>
 
-#endif
+#endif /* !defined( _PYMSIECF_LIBMSIECF_H ) */
 
