@@ -1,7 +1,7 @@
 /*
  * Common output functions for the msiecftools
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -36,14 +36,14 @@ int msiecftools_output_initialize(
      int stdio_mode,
      libcerror_error_t **error );
 
-void msiecfoutput_copyright_fprint(
+void msiecftools_output_copyright_fprint(
       FILE *stream );
 
-void msiecfoutput_version_fprint(
+void msiecftools_output_version_fprint(
       FILE *stream,
       const char *program );
 
-void msiecfoutput_version_detailed_fprint(
+void msiecftools_output_version_detailed_fprint(
       FILE *stream,
       const char *program );
 

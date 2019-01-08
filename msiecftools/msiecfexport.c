@@ -1,7 +1,7 @@
 /*
  * Extracts items from from a MSIE Cache File (index.dat)
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -169,7 +169,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	msiecfoutput_version_fprint(
+	msiecftools_output_version_fprint(
 	 stdout,
 	 program );
 
@@ -219,7 +219,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'V':
-				msiecfoutput_copyright_fprint(
+				msiecftools_output_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
