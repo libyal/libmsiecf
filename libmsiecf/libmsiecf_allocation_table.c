@@ -55,6 +55,7 @@ int libmsiecf_allocation_table_read(
 	uint32_t calculated_blocks_allocated = 0;
 	uint8_t bit_iterator                 = 0;
 	uint8_t allocation_table_entry       = 0;
+	int result                           = 0;
 
 	if( unallocated_block_list == NULL )
 	{
@@ -214,14 +215,16 @@ int libmsiecf_allocation_table_read(
 			}
 			else if( unallocated_size > 0 )
 			{
-				if( libcdata_range_list_insert_range(
-				     unallocated_block_list,
-				     (uint64_t) ( base_offset + unallocated_offset ),
-				     (uint64_t) unallocated_size,
-				     NULL,
-				     NULL,
-				     NULL,
-				     error ) != 1 )
+				result = libcdata_range_list_insert_range(
+				          unallocated_block_list,
+				          (uint64_t) ( base_offset + unallocated_offset ),
+				          (uint64_t) unallocated_size,
+				          NULL,
+				          NULL,
+				          NULL,
+				          error );
+
+				if( result == -1 )
 				{
 					libcerror_error_set(
 					 error,
@@ -254,14 +257,16 @@ int libmsiecf_allocation_table_read(
 	}
 	if( unallocated_size > 0 )
 	{
-		if( libcdata_range_list_insert_range(
-		     unallocated_block_list,
-		     (uint64_t) ( base_offset + unallocated_offset ),
-		     (uint64_t) unallocated_size,
-		     NULL,
-		     NULL,
-		     NULL,
-		     error ) != 1 )
+		result = libcdata_range_list_insert_range(
+		          unallocated_block_list,
+		          (uint64_t) ( base_offset + unallocated_offset ),
+		          (uint64_t) unallocated_size,
+		          NULL,
+		          NULL,
+		          NULL,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
