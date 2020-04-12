@@ -69,23 +69,23 @@ PyObject *pymsiecf_items_new(
            int number_of_items );
 
 int pymsiecf_items_init(
-     pymsiecf_items_t *items_object );
+     pymsiecf_items_t *sequence_object );
 
 void pymsiecf_items_free(
-      pymsiecf_items_t *items_object );
+      pymsiecf_items_t *sequence_object );
 
 Py_ssize_t pymsiecf_items_len(
-            pymsiecf_items_t *items_object );
+            pymsiecf_items_t *sequence_object );
 
 PyObject *pymsiecf_items_getitem(
-           pymsiecf_items_t *items_object,
+           pymsiecf_items_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pymsiecf_items_iter(
-           pymsiecf_items_t *items_object );
+           pymsiecf_items_t *sequence_object );
 
 PyObject *pymsiecf_items_iternext(
-           pymsiecf_items_t *items_object );
+           pymsiecf_items_t *sequence_object );
 
 #if defined( __cplusplus )
 }

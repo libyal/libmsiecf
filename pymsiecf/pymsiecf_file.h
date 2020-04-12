@@ -53,19 +53,6 @@ struct pymsiecf_file
 extern PyMethodDef pymsiecf_file_object_methods[];
 extern PyTypeObject pymsiecf_file_type_object;
 
-PyObject *pymsiecf_file_new(
-           void );
-
-PyObject *pymsiecf_file_new_open(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pymsiecf_file_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 int pymsiecf_file_init(
      pymsiecf_file_t *pymsiecf_file );
 

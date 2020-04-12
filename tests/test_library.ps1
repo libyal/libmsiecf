@@ -1,6 +1,6 @@
 # Tests library functions and types.
 #
-# Version: 20200216
+# Version: 20200405
 
 $ExitSuccess = 0
 $ExitFailure = 1
@@ -8,6 +8,7 @@ $ExitIgnore = 77
 
 $LibraryTests = "directory_descriptor error io_handle item item_descriptor leak_values notify property_type redirected_values url_values"
 $LibraryTestsWithInput = "file support"
+$OptionSets = "";
 
 $InputGlob = "*"
 

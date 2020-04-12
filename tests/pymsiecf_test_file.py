@@ -6,18 +6,18 @@
 #
 # Refer to AUTHORS for acknowledgements.
 #
-# This software is free software: you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with this software.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -39,7 +39,7 @@ class FileTypeTests(unittest.TestCase):
   def test_open(self):
     """Tests the open function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
@@ -59,30 +59,33 @@ class FileTypeTests(unittest.TestCase):
   def test_open_file_object(self):
     """Tests the open_file_object function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
-    file_object = open(unittest.source, "rb")
+    if not os.path.isfile(unittest.source):
+      raise unittest.SkipTest("source not a regular file")
 
     msiecf_file = pymsiecf.file()
 
-    msiecf_file.open_file_object(file_object)
+    with open(unittest.source, "rb") as file_object:
 
-    with self.assertRaises(IOError):
       msiecf_file.open_file_object(file_object)
 
-    msiecf_file.close()
+      with self.assertRaises(IOError):
+        msiecf_file.open_file_object(file_object)
 
-    # TODO: change IOError into TypeError
-    with self.assertRaises(IOError):
-      msiecf_file.open_file_object(None)
+      msiecf_file.close()
 
-    with self.assertRaises(ValueError):
-      msiecf_file.open_file_object(file_object, mode="w")
+      # TODO: change IOError into TypeError
+      with self.assertRaises(IOError):
+        msiecf_file.open_file_object(None)
+
+      with self.assertRaises(ValueError):
+        msiecf_file.open_file_object(file_object, mode="w")
 
   def test_close(self):
     """Tests the close function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
@@ -104,20 +107,21 @@ class FileTypeTests(unittest.TestCase):
     msiecf_file.open(unittest.source)
     msiecf_file.close()
 
-    file_object = open(unittest.source, "rb")
+    if os.path.isfile(unittest.source):
+      with open(unittest.source, "rb") as file_object:
 
-    # Test open_file_object and close.
-    msiecf_file.open_file_object(file_object)
-    msiecf_file.close()
+        # Test open_file_object and close.
+        msiecf_file.open_file_object(file_object)
+        msiecf_file.close()
 
-    # Test open_file_object and close a second time to validate clean up on close.
-    msiecf_file.open_file_object(file_object)
-    msiecf_file.close()
+        # Test open_file_object and close a second time to validate clean up on close.
+        msiecf_file.open_file_object(file_object)
+        msiecf_file.close()
 
-    # Test open_file_object and close and dereferencing file_object.
-    msiecf_file.open_file_object(file_object)
-    del file_object
-    msiecf_file.close()
+        # Test open_file_object and close and dereferencing file_object.
+        msiecf_file.open_file_object(file_object)
+        del file_object
+        msiecf_file.close()
 
   def test_set_ascii_codepage(self):
     """Tests the set_ascii_codepage function."""
@@ -141,13 +145,93 @@ class FileTypeTests(unittest.TestCase):
       with self.assertRaises(RuntimeError):
         msiecf_file.set_ascii_codepage(codepage)
 
+  def test_get_size(self):
+    """Tests the get_size function and size property."""
+    if not unittest.source:
+      raise unittest.SkipTest("missing source")
+
+    msiecf_file = pymsiecf.file()
+
+    msiecf_file.open(unittest.source)
+
+    size = msiecf_file.get_size()
+    self.assertIsNotNone(size)
+
+    self.assertIsNotNone(msiecf_file.size)
+
+    msiecf_file.close()
+
+  def test_get_ascii_codepage(self):
+    """Tests the get_ascii_codepage function and ascii_codepage property."""
+    if not unittest.source:
+      raise unittest.SkipTest("missing source")
+
+    msiecf_file = pymsiecf.file()
+
+    msiecf_file.open(unittest.source)
+
+    ascii_codepage = msiecf_file.get_ascii_codepage()
+    self.assertIsNotNone(ascii_codepage)
+
+    self.assertIsNotNone(msiecf_file.ascii_codepage)
+
+    msiecf_file.close()
+
+  def test_get_number_of_cache_directories(self):
+    """Tests the get_number_of_cache_directories function and number_of_cache_directories property."""
+    if not unittest.source:
+      raise unittest.SkipTest("missing source")
+
+    msiecf_file = pymsiecf.file()
+
+    msiecf_file.open(unittest.source)
+
+    number_of_cache_directories = msiecf_file.get_number_of_cache_directories()
+    self.assertIsNotNone(number_of_cache_directories)
+
+    self.assertIsNotNone(msiecf_file.number_of_cache_directories)
+
+    msiecf_file.close()
+
+  def test_get_number_of_items(self):
+    """Tests the get_number_of_items function and number_of_items property."""
+    if not unittest.source:
+      raise unittest.SkipTest("missing source")
+
+    msiecf_file = pymsiecf.file()
+
+    msiecf_file.open(unittest.source)
+
+    number_of_items = msiecf_file.get_number_of_items()
+    self.assertIsNotNone(number_of_items)
+
+    self.assertIsNotNone(msiecf_file.number_of_items)
+
+    msiecf_file.close()
+
+  def test_get_number_of_recovered_items(self):
+    """Tests the get_number_of_recovered_items function and number_of_recovered_items property."""
+    if not unittest.source:
+      raise unittest.SkipTest("missing source")
+
+    msiecf_file = pymsiecf.file()
+
+    msiecf_file.open(unittest.source)
+
+    number_of_recovered_items = msiecf_file.get_number_of_recovered_items()
+    self.assertIsNotNone(number_of_recovered_items)
+
+    self.assertIsNotNone(msiecf_file.number_of_recovered_items)
+
+    msiecf_file.close()
+
 
 if __name__ == "__main__":
   argument_parser = argparse.ArgumentParser()
 
   argument_parser.add_argument(
       "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="The path of the source file.")
+      default=None, help="path of the source file.")
 
   options, unknown_options = argument_parser.parse_known_args()
   unknown_options.insert(0, sys.argv[0])

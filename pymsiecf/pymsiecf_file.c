@@ -316,93 +316,6 @@ PyTypeObject pymsiecf_file_type_object = {
 	0
 };
 
-/* Creates a new file object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pymsiecf_file_new(
-           void )
-{
-	pymsiecf_file_t *pymsiecf_file = NULL;
-	static char *function          = "pymsiecf_file_new";
-
-	pymsiecf_file = PyObject_New(
-	                 struct pymsiecf_file,
-	                 &pymsiecf_file_type_object );
-
-	if( pymsiecf_file == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
-		 function );
-
-		goto on_error;
-	}
-	if( pymsiecf_file_init(
-	     pymsiecf_file ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pymsiecf_file );
-
-on_error:
-	if( pymsiecf_file != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pymsiecf_file );
-	}
-	return( NULL );
-}
-
-/* Creates a new file object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pymsiecf_file_new_open(
-           PyObject *self PYMSIECF_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pymsiecf_file = NULL;
-
-	PYMSIECF_UNREFERENCED_PARAMETER( self )
-
-	pymsiecf_file = pymsiecf_file_new();
-
-	pymsiecf_file_open(
-	 (pymsiecf_file_t *) pymsiecf_file,
-	 arguments,
-	 keywords );
-
-	return( pymsiecf_file );
-}
-
-/* Creates a new file object and opens it using a file-like object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pymsiecf_file_new_open_file_object(
-           PyObject *self PYMSIECF_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pymsiecf_file = NULL;
-
-	PYMSIECF_UNREFERENCED_PARAMETER( self )
-
-	pymsiecf_file = pymsiecf_file_new();
-
-	pymsiecf_file_open_file_object(
-	 (pymsiecf_file_t *) pymsiecf_file,
-	 arguments,
-	 keywords );
-
-	return( pymsiecf_file );
-}
-
 /* Intializes a file object
  * Returns 0 if successful or -1 on error
  */
@@ -421,6 +334,8 @@ int pymsiecf_file_init(
 
 		return( -1 );
 	}
+	/* Make sure libmsiecf file is set to NULL
+	 */
 	pymsiecf_file->file           = NULL;
 	pymsiecf_file->file_io_handle = NULL;
 
@@ -461,15 +376,6 @@ void pymsiecf_file_free(
 
 		return;
 	}
-	if( pymsiecf_file->file == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid file - missing libmsiecf file.",
-		 function );
-
-		return;
-	}
 	ob_type = Py_TYPE(
 	           pymsiecf_file );
 
@@ -491,24 +397,27 @@ void pymsiecf_file_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libmsiecf_file_free(
-	          &( pymsiecf_file->file ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pymsiecf_file->file != NULL )
 	{
-		pymsiecf_error_raise(
-		 error,
-		 PyExc_MemoryError,
-		 "%s: unable to free libmsiecf file.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libmsiecf_file_free(
+		          &( pymsiecf_file->file ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pymsiecf_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libmsiecf file.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	ob_type->tp_free(
 	 (PyObject*) pymsiecf_file );

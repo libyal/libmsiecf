@@ -39,7 +39,7 @@ PyMethodDef pymsiecf_item_object_methods[] = {
 	{ "get_offset",
 	  (PyCFunction) pymsiecf_item_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Integer or None\n"
+	  "get_offset() -> Integer\n"
 	  "\n"
 	  "Retrieves the offset." },
 
@@ -174,6 +174,8 @@ PyObject *pymsiecf_item_new(
 
 		return( NULL );
 	}
+	/* PyObject_New does not invoke tp_init
+	 */
 	pymsiecf_item = PyObject_New(
 	                 struct pymsiecf_item,
 	                 type_object );
@@ -187,22 +189,14 @@ PyObject *pymsiecf_item_new(
 
 		goto on_error;
 	}
-	if( pymsiecf_item_init(
-	     pymsiecf_item ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize item.",
-		 function );
-
-		goto on_error;
-	}
 	pymsiecf_item->item          = item;
 	pymsiecf_item->parent_object = parent_object;
 
-	Py_IncRef(
-	 (PyObject *) pymsiecf_item->parent_object );
-
+	if( pymsiecf_item->parent_object != NULL )
+	{
+		Py_IncRef(
+		 pymsiecf_item->parent_object );
+	}
 	return( (PyObject *) pymsiecf_item );
 
 on_error:
@@ -235,7 +229,12 @@ int pymsiecf_item_init(
 	 */
 	pymsiecf_item->item = NULL;
 
-	return( 0 );
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of item not supported.",
+	 function );
+
+	return( -1 );
 }
 
 /* Frees an item object
@@ -253,15 +252,6 @@ void pymsiecf_item_free(
 		PyErr_Format(
 		 PyExc_ValueError,
 		 "%s: invalid item.",
-		 function );
-
-		return;
-	}
-	if( pymsiecf_item->item == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid item - missing libmsiecf item.",
 		 function );
 
 		return;
@@ -287,29 +277,32 @@ void pymsiecf_item_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libmsiecf_item_free(
-	          &( pymsiecf_item->item ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pymsiecf_item->item != NULL )
 	{
-		pymsiecf_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to free libmsiecf item.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libmsiecf_item_free(
+		          &( pymsiecf_item->item ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pymsiecf_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libmsiecf item.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	if( pymsiecf_item->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymsiecf_item->parent_object );
+		 pymsiecf_item->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pymsiecf_item );

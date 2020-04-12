@@ -37,6 +37,7 @@
 #include "pymsiecf_item_types.h"
 #include "pymsiecf_items.h"
 #include "pymsiecf_leak.h"
+#include "pymsiecf_libbfio.h"
 #include "pymsiecf_libcerror.h"
 #include "pymsiecf_libmsiecf.h"
 #include "pymsiecf_python.h"
@@ -46,11 +47,13 @@
 #include "pymsiecf_url_types.h"
 
 #if !defined( LIBMSIECF_HAVE_BFIO )
+
 LIBMSIECF_EXTERN \
 int libmsiecf_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libmsiecf_error_t **error );
-#endif
+
+#endif /* !defined( LIBMSIECF_HAVE_BFIO ) */
 
 /* The pymsiecf module methods
  */
@@ -67,24 +70,24 @@ PyMethodDef pymsiecf_module_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "check_file_signature(filename) -> Boolean\n"
 	  "\n"
-	  "Checks if a file has a MSIE Cache File (index.dat) file signature." },
+	  "Checks if a file has a Microsoft Internet Explorer (MSIE) Cache File (index.dat) file signature." },
 
 	{ "check_file_signature_file_object",
 	  (PyCFunction) pymsiecf_check_file_signature_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "check_file_signature_file_object(file_object) -> Boolean\n"
 	  "\n"
-	  "Checks if a file has a MSIE Cache File (index.dat) file signature using a file-like object." },
+	  "Checks if a file has a Microsoft Internet Explorer (MSIE) Cache File (index.dat) file signature using a file-like object." },
 
 	{ "open",
-	  (PyCFunction) pymsiecf_file_new_open,
+	  (PyCFunction) pymsiecf_open_new_file,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> Object\n"
 	  "\n"
 	  "Opens a file." },
 
 	{ "open_file_object",
-	  (PyCFunction) pymsiecf_file_new_open_file_object,
+	  (PyCFunction) pymsiecf_open_new_file_with_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> Object\n"
 	  "\n"
@@ -127,7 +130,7 @@ PyObject *pymsiecf_get_version(
 	         errors ) );
 }
 
-/* Checks if the file has a MSIE Cache File (index.dat) file signature
+/* Checks if a file has a Microsoft Internet Explorer (MSIE) Cache File (index.dat) file signature
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_check_file_signature(
@@ -158,7 +161,7 @@ PyObject *pymsiecf_check_file_signature(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "|O",
+	     "O|",
 	     keyword_list,
 	     &string_object ) == 0 )
 	{
@@ -174,7 +177,7 @@ PyObject *pymsiecf_check_file_signature(
 	{
 		pymsiecf_error_fetch_and_raise(
 	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -201,7 +204,7 @@ PyObject *pymsiecf_check_file_signature(
 		{
 			pymsiecf_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
@@ -223,7 +226,9 @@ PyObject *pymsiecf_check_file_signature(
 
 		Py_DecRef(
 		 utf8_string_object );
-#endif
+
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 		if( result == -1 )
 		{
 			pymsiecf_error_raise(
@@ -321,7 +326,7 @@ PyObject *pymsiecf_check_file_signature(
 	return( NULL );
 }
 
-/* Checks if the file has a MSIE Cache File (index.dat) file signature using a file-like object
+/* Checks if a file has a Microsoft Internet Explorer (MSIE) Cache File (index.dat) file signature using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymsiecf_check_file_signature_file_object(
@@ -421,6 +426,52 @@ on_error:
 	return( NULL );
 }
 
+/* Creates a new file object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_open_new_file(
+           PyObject *self PYMSIECF_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pymsiecf_file = NULL;
+
+	PYMSIECF_UNREFERENCED_PARAMETER( self )
+
+	pymsiecf_file_init(
+	 (pymsiecf_file_t *) pymsiecf_file );
+
+	pymsiecf_file_open(
+	 (pymsiecf_file_t *) pymsiecf_file,
+	 arguments,
+	 keywords );
+
+	return( pymsiecf_file );
+}
+
+/* Creates a new file object and opens it using a file-like object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymsiecf_open_new_file_with_file_object(
+           PyObject *self PYMSIECF_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pymsiecf_file = NULL;
+
+	PYMSIECF_UNREFERENCED_PARAMETER( self )
+
+	pymsiecf_file_init(
+	 (pymsiecf_file_t *) pymsiecf_file );
+
+	pymsiecf_file_open_file_object(
+	 (pymsiecf_file_t *) pymsiecf_file,
+	 arguments,
+	 keywords );
+
+	return( pymsiecf_file );
+}
+
 #if PY_MAJOR_VERSION >= 3
 
 /* The pymsiecf module definition
@@ -458,18 +509,8 @@ PyMODINIT_FUNC initpymsiecf(
                 void )
 #endif
 {
-	PyObject *module                            = NULL;
-	PyTypeObject *cache_directories_type_object = NULL;
-	PyTypeObject *file_type_object              = NULL;
-	PyTypeObject *item_type_object              = NULL;
-	PyTypeObject *item_flags_type_object        = NULL;
-	PyTypeObject *item_types_type_object        = NULL;
-	PyTypeObject *items_type_object             = NULL;
-	PyTypeObject *leak_type_object              = NULL;
-	PyTypeObject *redirected_type_object        = NULL;
-	PyTypeObject *url_type_object               = NULL;
-	PyTypeObject *url_types_type_object         = NULL;
-	PyGILState_STATE gil_state                  = 0;
+	PyObject *module           = NULL;
+	PyGILState_STATE gil_state = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libmsiecf_notify_set_stream(
@@ -504,25 +545,6 @@ PyMODINIT_FUNC initpymsiecf(
 
 	gil_state = PyGILState_Ensure();
 
-	/* Setup the file type object
-	 */
-	pymsiecf_file_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pymsiecf_file_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pymsiecf_file_type_object );
-
-	file_type_object = &pymsiecf_file_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "file",
-	 (PyObject *) file_type_object );
-
 	/* Setup the cache directories type object
 	 */
 	pymsiecf_cache_directories_type_object.tp_new = PyType_GenericNew;
@@ -535,12 +557,27 @@ PyMODINIT_FUNC initpymsiecf(
 	Py_IncRef(
 	 (PyObject *) &pymsiecf_cache_directories_type_object );
 
-	cache_directories_type_object = &pymsiecf_cache_directories_type_object;
+	PyModule_AddObject(
+	 module,
+	 "cache_directories",
+	 (PyObject *) &pymsiecf_cache_directories_type_object );
+
+	/* Setup the file type object
+	 */
+	pymsiecf_file_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pymsiecf_file_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pymsiecf_file_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "_cache_directories",
-	 (PyObject *) cache_directories_type_object );
+	 "file",
+	 (PyObject *) &pymsiecf_file_type_object );
 
 	/* Setup the item type object
 	 */
@@ -554,114 +591,12 @@ PyMODINIT_FUNC initpymsiecf(
 	Py_IncRef(
 	 (PyObject *) &pymsiecf_item_type_object );
 
-	item_type_object = &pymsiecf_item_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "item",
-	 (PyObject *) item_type_object );
+	 (PyObject *) &pymsiecf_item_type_object );
 
-	/* Setup the items type object
-	 */
-	pymsiecf_items_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pymsiecf_items_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pymsiecf_items_type_object );
-
-	items_type_object = &pymsiecf_items_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "_items",
-	 (PyObject *) items_type_object );
-
-	/* Setup the leak type object
-	 */
-	pymsiecf_leak_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pymsiecf_leak_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pymsiecf_leak_type_object );
-
-	leak_type_object = &pymsiecf_leak_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "leak",
-	 (PyObject *) leak_type_object );
-
-	/* Setup the redirected type object
-	 */
-	pymsiecf_redirected_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pymsiecf_redirected_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pymsiecf_redirected_type_object );
-
-	redirected_type_object = &pymsiecf_redirected_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "redirected",
-	 (PyObject *) redirected_type_object );
-
-	/* Setup the URL type object
-	 */
-	pymsiecf_url_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pymsiecf_url_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pymsiecf_url_type_object );
-
-	url_type_object = &pymsiecf_url_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "url",
-	 (PyObject *) url_type_object );
-
-	/* Setup the item types type object
-	 */
-	pymsiecf_item_types_type_object.tp_new = PyType_GenericNew;
-
-	if( pymsiecf_item_types_init_type(
-	     &pymsiecf_item_types_type_object ) != 1 )
-	{
-		goto on_error;
-	}
-	if( PyType_Ready(
-	     &pymsiecf_item_types_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pymsiecf_item_types_type_object );
-
-	item_types_type_object = &pymsiecf_item_types_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "item_types",
-	 (PyObject *) item_types_type_object );
-
-	/* Setup the item flags type object
+	/* Setup the item_flags type object
 	 */
 	pymsiecf_item_flags_type_object.tp_new = PyType_GenericNew;
 
@@ -678,14 +613,102 @@ PyMODINIT_FUNC initpymsiecf(
 	Py_IncRef(
 	 (PyObject *) &pymsiecf_item_flags_type_object );
 
-	item_flags_type_object = &pymsiecf_item_flags_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "item_flags",
-	 (PyObject *) item_flags_type_object );
+	 (PyObject *) &pymsiecf_item_flags_type_object );
 
-	/* Setup the URL types type object
+	/* Setup the item_types type object
+	 */
+	pymsiecf_item_types_type_object.tp_new = PyType_GenericNew;
+
+	if( pymsiecf_item_types_init_type(
+	     &pymsiecf_item_types_type_object ) != 1 )
+	{
+		goto on_error;
+	}
+	if( PyType_Ready(
+	     &pymsiecf_item_types_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pymsiecf_item_types_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "item_types",
+	 (PyObject *) &pymsiecf_item_types_type_object );
+
+	/* Setup the items type object
+	 */
+	pymsiecf_items_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pymsiecf_items_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pymsiecf_items_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "items",
+	 (PyObject *) &pymsiecf_items_type_object );
+
+	/* Setup the leak type object
+	 */
+	pymsiecf_leak_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pymsiecf_leak_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pymsiecf_leak_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "leak",
+	 (PyObject *) &pymsiecf_leak_type_object );
+
+	/* Setup the redirected type object
+	 */
+	pymsiecf_redirected_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pymsiecf_redirected_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pymsiecf_redirected_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "redirected",
+	 (PyObject *) &pymsiecf_redirected_type_object );
+
+	/* Setup the url type object
+	 */
+	pymsiecf_url_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pymsiecf_url_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pymsiecf_url_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "url",
+	 (PyObject *) &pymsiecf_url_type_object );
+
+	/* Setup the url_types type object
 	 */
 	pymsiecf_url_types_type_object.tp_new = PyType_GenericNew;
 
@@ -702,12 +725,10 @@ PyMODINIT_FUNC initpymsiecf(
 	Py_IncRef(
 	 (PyObject *) &pymsiecf_url_types_type_object );
 
-	url_types_type_object = &pymsiecf_url_types_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "url_types",
-	 (PyObject *) url_types_type_object );
+	 (PyObject *) &pymsiecf_url_types_type_object );
 
 	PyGILState_Release(
 	 gil_state );
