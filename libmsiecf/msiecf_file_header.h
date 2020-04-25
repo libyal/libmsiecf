@@ -97,7 +97,12 @@ struct msiecf_file_header
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown4[ 4 ];
+};
 
+typedef struct msiecf_cache_directory_table_header msiecf_cache_directory_table_header_t;
+
+struct msiecf_cache_directory_table_header
+{
 	/* The number of cache directory entries
 	 * Consists of 4 bytes
 	 */

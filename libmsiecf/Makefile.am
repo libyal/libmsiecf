@@ -29,6 +29,7 @@ libmsiecf_la_SOURCES = \
 	libmsiecf_error.c libmsiecf_error.h \
 	libmsiecf_extern.h \
 	libmsiecf_file.c libmsiecf_file.h \
+	libmsiecf_file_header.c libmsiecf_file_header.h \
 	libmsiecf_hash.c libmsiecf_hash.h \
 	libmsiecf_hash_table.c libmsiecf_hash_table.h \
 	libmsiecf_io_handle.c libmsiecf_io_handle.h \

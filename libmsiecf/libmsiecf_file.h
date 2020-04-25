@@ -26,6 +26,7 @@
 #include <types.h>
 
 #include "libmsiecf_extern.h"
+#include "libmsiecf_file_header.h"
 #include "libmsiecf_io_handle.h"
 #include "libmsiecf_libbfio.h"
 #include "libmsiecf_libcdata.h"
@@ -39,6 +40,10 @@ typedef struct libmsiecf_internal_file libmsiecf_internal_file_t;
 
 struct libmsiecf_internal_file
 {
+	/* The file header
+	 */
+	libmsiecf_file_header_t *file_header;
+
 	/* The IO handle
 	 */
 	libmsiecf_io_handle_t *io_handle;

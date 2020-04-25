@@ -76,10 +76,11 @@ int libmsiecf_io_handle_clear(
      libmsiecf_io_handle_t *io_handle,
      libcerror_error_t **error );
 
-int libmsiecf_io_handle_read_file_header(
+int libmsiecf_io_handle_read_cache_directory_table(
      libmsiecf_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t *hash_table_offset,
+     uint32_t number_of_blocks,
+     uint32_t blocks_allocated,
      libcdata_array_t *cache_directory_table,
      libcdata_range_list_t *unallocated_block_list,
      libcerror_error_t **error );

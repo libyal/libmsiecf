@@ -191,29 +191,28 @@ int libmsiecf_io_handle_clear(
 	return( 1 );
 }
 
-/* Reads the file header
+/* Reads the cache directory table
  * Returns 1 if successful or -1 on error
  */
-int libmsiecf_io_handle_read_file_header(
+int libmsiecf_io_handle_read_cache_directory_table(
      libmsiecf_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t *hash_table_offset,
+     uint32_t number_of_blocks,
+     uint32_t blocks_allocated,
      libcdata_array_t *cache_directory_table,
      libcdata_range_list_t *unallocated_block_list,
      libcerror_error_t **error )
 {
-	msiecf_file_header_t file_header;
+	uint8_t data[ 4 ];
 
 	libmsiecf_directory_descriptor_t *directory_descriptor = NULL;
 	uint8_t *cache_directories_data                        = NULL;
 	uint8_t *cache_directory_entry                         = NULL;
-	static char *function                                  = "libmsiecf_io_handle_read_file_header";
+	static char *function                                  = "libmsiecf_io_handle_read_cache_directory_table";
 	size_t read_size                                       = 0;
 	ssize_t read_count                                     = 0;
 	uint32_t cache_directory_iterator                      = 0;
 	uint32_t number_of_cache_directories                   = 0;
-	uint32_t number_of_blocks                              = 0;
-	uint32_t blocks_allocated                              = 0;
 	int cached_directory_entry_index                       = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -231,17 +230,6 @@ int libmsiecf_io_handle_read_file_header(
 
 		return( -1 );
 	}
-	if( hash_table_offset == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid hash table offset.",
-		 function );
-
-		return( -1 );
-	}
 	if( cache_directory_table == NULL )
 	{
 		libcerror_error_set(
@@ -253,195 +241,30 @@ int libmsiecf_io_handle_read_file_header(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading file header at offset: 0 (0x00000000)\n",
-		 function );
-	}
-#endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     0,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file header offset: 0.",
-		 function );
-
-		goto on_error;
-	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
-	              (uint8_t *) &file_header,
-	              sizeof( msiecf_file_header_t ),
+	              data,
+	              4,
 	              error );
 
-	if( read_count != (ssize_t) sizeof( msiecf_file_header_t ) )
+	if( read_count != (ssize_t) 4 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file header data.",
+		 "%s: unable to read cache directory table data.",
 		 function );
 
 		goto on_error;
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: file header:\n",
-		 function );
-		libcnotify_print_data(
-		 (uint8_t *) &file_header,
-		 sizeof( msiecf_file_header_t ),
-		 0 );
-	}
-#endif
-	if( ( file_header.signature[ 27 ] != 0 )
-	 || ( file_header.signature[ 26 ] < (uint8_t) '0' )
-	 || ( file_header.signature[ 26 ] > (uint8_t) '9' )
-	 || ( file_header.signature[ 25 ] != (uint8_t) '.' )
-	 || ( file_header.signature[ 24 ] < (uint8_t) '0' )
-	 || ( file_header.signature[ 24 ] > (uint8_t) '9' )
-	 || ( memory_compare(
-	       file_header.signature,
-	       msiecf_file_signature,
-	       24 ) != 0 ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: invalid file signature.",
-		 function );
-
-		goto on_error;
-	}
-	io_handle->major_version = file_header.signature[ 24 ] - (uint8_t) '0';
-	io_handle->minor_version = file_header.signature[ 26 ] - (uint8_t) '0';
-
 	byte_stream_copy_to_uint32_little_endian(
-	 file_header.file_size,
-	 io_handle->file_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 file_header.hash_table_offset,
-	 *hash_table_offset );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 file_header.number_of_blocks,
-	 number_of_blocks );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 file_header.blocks_allocated,
-	 blocks_allocated );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: signature\t\t\t\t: %s\n",
-		 function,
-		 file_header.signature );
-
-		libcnotify_printf(
-		 "%s: file size\t\t\t\t: %" PRIu32 "\n",
-		 function,
-		 io_handle->file_size );
-
-		libcnotify_printf(
-		 "%s: hash table offset\t\t\t: %" PRIu32 " (0x%08" PRIx32 ")\n",
-		 function,
-		 *hash_table_offset,
-		 *hash_table_offset );
-
-		libcnotify_printf(
-		 "%s: number of blocks\t\t\t: %" PRIu32 "\n",
-		 function,
-		 number_of_blocks );
-
-		libcnotify_printf(
-		 "%s: blocks allocated\t\t\t: %" PRIu32 "\n",
-		 function,
-		 blocks_allocated );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header.unknown1,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header.cache_size_limit,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: cache size limit\t\t\t: %" PRIu32 " bytes\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header.unknown2,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown2\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header.cache_size,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: cache size\t\t\t: %" PRIu32 " bytes\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header.unknown3,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown3\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header.non_releasable_cache_size,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: non-releasable cache size\t\t: %" PRIu32 " bytes\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 file_header.unknown4,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	byte_stream_copy_to_uint32_little_endian(
-	 file_header.number_of_cache_directories,
+	 data,
 	 number_of_cache_directories );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		libcnotify_printf(
-		 "Reading cache directory table:\n" );
 		libcnotify_printf(
 		 "%s: number of cache directories\t: %" PRIu32 "\n",
 		 function,
@@ -450,12 +273,24 @@ int libmsiecf_io_handle_read_file_header(
 #endif
 	if( number_of_cache_directories > 0 )
 	{
+		/* Note that 128 MiB is an arbitrary selected upper limit here
+		 */
+		if( (size_t) number_of_cache_directories > ( ( (size_t) 128 * 1024 * 1024 ) / sizeof( msiecf_cache_directory_entry_t ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid number of cache directories value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		read_size = sizeof( msiecf_cache_directory_entry_t )
-		          * number_of_cache_directories;
+		          * (size_t) number_of_cache_directories;
 
 		cache_directories_data = (uint8_t *) memory_allocate(
 						      read_size );
-
 
 		if( cache_directories_data == NULL )
 		{

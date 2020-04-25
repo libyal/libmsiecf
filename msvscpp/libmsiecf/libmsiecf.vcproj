@@ -194,6 +194,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmsiecf\libmsiecf_file_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmsiecf\libmsiecf_hash.c"
 				>
 			</File>
@@ -285,6 +289,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libmsiecf\libmsiecf_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmsiecf\libmsiecf_file_header.h"
 				>
 			</File>
 			<File
