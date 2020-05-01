@@ -1,5 +1,5 @@
 /*
- * Cache directory descriptor functions
+ * The cache directory table definition of a MSIE Cache File
  *
  * Copyright (C) 2009-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,44 +19,44 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMSIECF_DIRECTORY_DESCRIPTOR_H )
-#define _LIBMSIECF_DIRECTORY_DESCRIPTOR_H
+#if !defined( _MSIECF_CACHE_DIRECTORY_TABLE_H )
+#define _MSIECF_CACHE_DIRECTORY_TABLE_H
 
 #include <common.h>
 #include <types.h>
-
-#include "libmsiecf_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct libmsiecf_directory_descriptor libmsiecf_directory_descriptor_t;
+typedef struct msiecf_cache_directory_table_header msiecf_cache_directory_table_header_t;
 
-struct libmsiecf_directory_descriptor
+struct msiecf_cache_directory_table_header
 {
-	/* The directory name
+	/* The number of cache directory entries
+	 * Consists of 4 bytes
 	 */
-	uint8_t *name[ 9 ];
+	uint8_t number_of_cache_directories[ 4 ];
 };
 
-int libmsiecf_directory_descriptor_initialize(
-     libmsiecf_directory_descriptor_t **directory_descriptor,
-     libcerror_error_t **error );
+typedef struct msiecf_cache_directory_entry msiecf_cache_directory_entry_t;
 
-int libmsiecf_directory_descriptor_free(
-     libmsiecf_directory_descriptor_t **directory_descriptor,
-     libcerror_error_t **error );
+struct msiecf_cache_directory_entry
+{
+	/* The number of cached files in the directory
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_cached_files[ 4 ];
 
-int libmsiecf_directory_descriptor_read_data(
-     libmsiecf_directory_descriptor_t *directory_descriptor,
-     const uint8_t *data,
-     size_t data_size,
-     libcerror_error_t **error );
+	/* The directory name
+	 * Consists of 8 bytes
+	 */
+	uint8_t name[ 8 ];
+};
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMSIECF_DIRECTORY_DESCRIPTOR_H ) */
+#endif /* !defined( _MSIECF_CACHE_DIRECTORY_TABLE_H ) */
 

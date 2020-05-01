@@ -357,6 +357,7 @@ int libmsiecf_file_header_read_data(
 int libmsiecf_file_header_read_file_io_handle(
      libmsiecf_file_header_t *file_header,
      libbfio_handle_t *file_io_handle,
+     off64_t file_offset,
      libcerror_error_t **error )
 {
 	uint8_t file_header_data[ sizeof( msiecf_file_header_t ) ];
@@ -379,13 +380,15 @@ int libmsiecf_file_header_read_file_io_handle(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: reading file header at offset: 0 (0x00000000)\n",
-		 function );
+		 "%s: reading file header at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 file_offset,
+		 file_offset );
 	}
 #endif
 	if( libbfio_handle_seek_offset(
 	     file_io_handle,
-	     0,
+	     file_offset,
 	     SEEK_SET,
 	     error ) == -1 )
 	{
@@ -393,8 +396,10 @@ int libmsiecf_file_header_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file header offset: 0.",
-		 function );
+		 "%s: unable to seek file header offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
 
 		return( -1 );
 	}

@@ -79,30 +79,14 @@ int libmsiecf_leak_get_cached_file_size(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( cached_file_size == NULL )
 	{
@@ -169,30 +153,14 @@ int libmsiecf_leak_get_cache_directory_index(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( cache_directory_index == NULL )
 	{
@@ -260,30 +228,14 @@ int libmsiecf_leak_get_filename_size(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( ( (libmsiecf_leak_values_t *) internal_item->value )->filename == NULL )
 	{
@@ -357,30 +309,14 @@ int libmsiecf_leak_get_filename(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( ( (libmsiecf_leak_values_t *) internal_item->value )->filename == NULL )
 	{
@@ -454,30 +390,14 @@ int libmsiecf_leak_get_utf8_filename_size(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( ( (libmsiecf_leak_values_t *) internal_item->value )->filename == NULL )
 	{
@@ -552,30 +472,14 @@ int libmsiecf_leak_get_utf8_filename(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( ( (libmsiecf_leak_values_t *) internal_item->value )->filename == NULL )
 	{
@@ -650,30 +554,14 @@ int libmsiecf_leak_get_utf16_filename_size(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( ( (libmsiecf_leak_values_t *) internal_item->value )->filename == NULL )
 	{
@@ -748,30 +636,14 @@ int libmsiecf_leak_get_utf16_filename(
 	}
 	if( internal_item->value == NULL )
 	{
-		if( libmsiecf_item_read_values(
-		     internal_item,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing item values.",
+		 function );
 
-			return( -1 );
-		}
-		if( internal_item->value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( ( (libmsiecf_leak_values_t *) internal_item->value )->filename == NULL )
 	{

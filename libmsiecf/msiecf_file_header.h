@@ -99,31 +99,6 @@ struct msiecf_file_header
 	uint8_t unknown4[ 4 ];
 };
 
-typedef struct msiecf_cache_directory_table_header msiecf_cache_directory_table_header_t;
-
-struct msiecf_cache_directory_table_header
-{
-	/* The number of cache directory entries
-	 * Consists of 4 bytes
-	 */
-	uint8_t number_of_cache_directories[ 4 ];
-};
-
-typedef struct msiecf_cache_directory_entry msiecf_cache_directory_entry_t;
-
-struct msiecf_cache_directory_entry
-{
-	/* The number of cached files in the directory
-	 * Consists of 4 bytes
-	 */
-	uint8_t number_of_cached_files[ 4 ];
-
-	/* The directory name
-	 * Consists of 8 bytes
-	 */
-	uint8_t name[ 8 ];
-};
-
 #if defined( __cplusplus )
 }
 #endif

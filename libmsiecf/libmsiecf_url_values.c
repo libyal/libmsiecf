@@ -1062,7 +1062,8 @@ int libmsiecf_url_values_read(
 			goto on_error;
 		}
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( unknown_offset > 0 )
 	{
 		if( unknown_offset > record_size )

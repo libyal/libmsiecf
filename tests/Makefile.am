@@ -2,6 +2,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
@@ -41,9 +42,11 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	msiecf_test_cache_directory_table \
 	msiecf_test_directory_descriptor \
 	msiecf_test_error \
 	msiecf_test_file \
+	msiecf_test_file_header \
 	msiecf_test_io_handle \
 	msiecf_test_item \
 	msiecf_test_item_descriptor \
@@ -56,6 +59,28 @@ check_PROGRAMS = \
 	msiecf_test_support \
 	msiecf_test_url \
 	msiecf_test_url_values
+
+msiecf_test_cache_directory_table_SOURCES = \
+	msiecf_test_cache_directory_table.c \
+	msiecf_test_functions.c msiecf_test_functions.h \
+	msiecf_test_libbfio.h \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_cache_directory_table_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
 
 msiecf_test_directory_descriptor_SOURCES = \
 	msiecf_test_directory_descriptor.c \
@@ -103,6 +128,28 @@ msiecf_test_file_LDADD = \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@PTHREAD_LIBADD@
+
+msiecf_test_file_header_SOURCES = \
+	msiecf_test_file_header.c \
+	msiecf_test_functions.c msiecf_test_functions.h \
+	msiecf_test_libbfio.h \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_file_header_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
 
 msiecf_test_io_handle_SOURCES = \
 	msiecf_test_io_handle.c \

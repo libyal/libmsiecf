@@ -25,10 +25,11 @@
 #include <types.h>
 #include <wide_string.h>
 
+#include "libmsiecf_allocation_table.h"
+#include "libmsiecf_cache_directory_table.h"
 #include "libmsiecf_codepage.h"
 #include "libmsiecf_debug.h"
 #include "libmsiecf_definitions.h"
-#include "libmsiecf_directory_descriptor.h"
 #include "libmsiecf_file_header.h"
 #include "libmsiecf_io_handle.h"
 #include "libmsiecf_item.h"
@@ -38,6 +39,9 @@
 #include "libmsiecf_libcdata.h"
 #include "libmsiecf_libcerror.h"
 #include "libmsiecf_libcnotify.h"
+#include "libmsiecf_libcthreads.h"
+
+#include "msiecf_file_header.h"
 
 /* Creates a file
  * Make sure the value file is referencing, is set to NULL
@@ -116,6 +120,21 @@ int libmsiecf_file_initialize(
 
 		goto on_error;
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_initialize(
+	     &( internal_file->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize read/write lock.",
+		 function );
+
+		goto on_error;
+	}
+#endif
 	*file = (libmsiecf_file_t *) internal_file;
 
 	return( 1 );
@@ -123,6 +142,12 @@ int libmsiecf_file_initialize(
 on_error:
 	if( internal_file != NULL )
 	{
+		if( internal_file->io_handle != NULL )
+		{
+			libmsiecf_io_handle_free(
+			 &( internal_file->io_handle ),
+			 NULL );
+		}
 		memory_free(
 		 internal_file );
 	}
@@ -173,6 +198,21 @@ int libmsiecf_file_free(
 		}
 		*file = NULL;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_free(
+		     &( internal_file->read_write_lock ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free read/write lock.",
+			 function );
+
+			result = -1;
+		}
+#endif
 		if( libmsiecf_io_handle_free(
 		     &( internal_file->io_handle ),
 		     error ) != 1 )
@@ -355,8 +395,40 @@ int libmsiecf_file_open(
 
 		goto on_error;
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		goto on_error;
+	}
+#endif
 	internal_file->file_io_handle_created_in_library = 1;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		internal_file->file_io_handle_created_in_library = 0;
+
+		goto on_error;
+	}
+#endif
 	return( 1 );
 
 on_error:
@@ -495,8 +567,40 @@ int libmsiecf_file_open_wide(
 
 		goto on_error;
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		goto on_error;
+	}
+#endif
 	internal_file->file_io_handle_created_in_library = 1;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		internal_file->file_io_handle_created_in_library = 0;
+
+		goto on_error;
+	}
+#endif
 	return( 1 );
 
 on_error:
@@ -522,6 +626,7 @@ int libmsiecf_file_open_file_io_handle(
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
 	static char *function                    = "libmsiecf_file_open_file_io_handle";
+	uint8_t file_io_handle_opened_in_library = 0;
 	int bfio_access_flags                    = 0;
 	int file_io_handle_is_open               = 0;
 
@@ -618,11 +723,9 @@ int libmsiecf_file_open_file_io_handle(
 
 			goto on_error;
 		}
-		internal_file->file_io_handle_opened_in_library = 1;
+		file_io_handle_opened_in_library = 1;
 	}
-	internal_file->file_io_handle = file_io_handle;
-
-	if( libmsiecf_file_open_read(
+	if( libmsiecf_internal_file_open_read(
 	     internal_file,
 	     file_io_handle,
 	     error ) != 1 )
@@ -636,18 +739,51 @@ int libmsiecf_file_open_file_io_handle(
 
 		goto on_error;
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		goto on_error;
+	}
+#endif
+	internal_file->file_io_handle                   = file_io_handle;
+	internal_file->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
+
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		internal_file->file_io_handle                   = NULL;
+		internal_file->file_io_handle_opened_in_library = 0;
+
+		goto on_error;
+	}
+#endif
 	return( 1 );
 
 on_error:
-	if( ( file_io_handle_is_open == 0 )
-	 && ( internal_file->file_io_handle_opened_in_library != 0 ) )
+	if( file_io_handle_opened_in_library != 0 )
 	{
 		libbfio_handle_close(
 		 file_io_handle,
 		 error );
 	}
-	internal_file->file_io_handle = NULL;
-
 	return( -1 );
 }
 
@@ -686,6 +822,21 @@ int libmsiecf_file_close(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -770,18 +921,17 @@ int libmsiecf_file_close(
 			result = -1;
 		}
 	}
-	if( internal_file->directory_array != NULL )
+	if( internal_file->cache_directory_table != NULL )
 	{
-		if( libcdata_array_free(
-		     &( internal_file->directory_array ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libmsiecf_directory_descriptor_free,
+		if( libmsiecf_cache_directory_table_free(
+		     &( internal_file->cache_directory_table ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free directory array.",
+			 "%s: unable to free cache directory table.",
 			 function );
 
 			result = -1;
@@ -838,18 +988,33 @@ int libmsiecf_file_close(
 			result = -1;
 		}
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( result );
 }
 
 /* Opens a file for reading
  * Returns 1 if successful or -1 on error
  */
-int libmsiecf_file_open_read(
+int libmsiecf_internal_file_open_read(
      libmsiecf_internal_file_t *internal_file,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libmsiecf_file_open_read";
+	static char *function = "libmsiecf_internal_file_open_read";
 
 	if( internal_file == NULL )
 	{
@@ -884,13 +1049,13 @@ int libmsiecf_file_open_read(
 
 		return( -1 );
 	}
-	if( internal_file->directory_array != NULL )
+	if( internal_file->cache_directory_table != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid file - directory array already set.",
+		 "%s: invalid file - cache directory table value already set.",
 		 function );
 
 		return( -1 );
@@ -928,61 +1093,6 @@ int libmsiecf_file_open_read(
 
 		return( -1 );
 	}
-	if( libcdata_array_initialize(
-	     &( internal_file->directory_array ),
-	     0,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create directory array.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcdata_array_initialize(
-	     &( internal_file->item_array ),
-	     0,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create item array.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcdata_array_initialize(
-	     &( internal_file->recovered_item_array ),
-	     0,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create recovered item array.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcdata_range_list_initialize(
-	     &( internal_file->unallocated_block_list ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create unallocated data block list.",
-		 function );
-
-		goto on_error;
-	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -1006,6 +1116,7 @@ int libmsiecf_file_open_read(
 	if( libmsiecf_file_header_read_file_io_handle(
 	     internal_file->file_header,
 	     file_io_handle,
+	     0,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1028,13 +1139,23 @@ int libmsiecf_file_open_read(
 		 "Reading cache directory table:\n" );
 	}
 #endif
-	if( libmsiecf_io_handle_read_cache_directory_table(
-	     internal_file->io_handle,
+	if( libmsiecf_cache_directory_table_initialize(
+	     &( internal_file->cache_directory_table ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create cache directory table.",
+		 function );
+
+		goto on_error;
+	}
+	if( libmsiecf_cache_directory_table_read_file_io_handle(
+	     internal_file->cache_directory_table,
 	     file_io_handle,
-	     internal_file->file_header->number_of_blocks,
-	     internal_file->file_header->blocks_allocated,
-	     internal_file->directory_array,
-	     internal_file->unallocated_block_list,
+	     sizeof( msiecf_file_header_t ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1050,9 +1171,79 @@ int libmsiecf_file_open_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
+		 "Reading allocation table:\n" );
+	}
+#endif
+	if( libcdata_range_list_initialize(
+	     &( internal_file->unallocated_block_list ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create unallocated data block list.",
+		 function );
+
+		goto on_error;
+	}
+	if( libmsiecf_allocation_table_read(
+	     internal_file->unallocated_block_list,
+	     file_io_handle,
+	     0x250,
+	     internal_file->file_header->file_size,
+	     0x4000,
+	     internal_file->io_handle->block_size,
+	     internal_file->file_header->number_of_blocks,
+	     internal_file->file_header->blocks_allocated,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read allocation table.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO
+	if( ! ( ( ( io_handle->major_version == 4 )
+	  &&      ( io_handle->minor_version == 7 ) )
+	 ||     ( ( io_handle->major_version == 5 )
+	  &&      ( io_handle->minor_version == 2 ) ) ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported format version.",
+		 function );
+
+		return( -1 );
+	}
+*/
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
 		 "Reading hash table:\n" );
 	}
 #endif
+	if( libcdata_array_initialize(
+	     &( internal_file->item_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create item array.",
+		 function );
+
+		goto on_error;
+	}
 	if( libmsiecf_io_handle_read_hash_table(
 	     internal_file->item_array,
 	     internal_file->io_handle,
@@ -1076,6 +1267,20 @@ int libmsiecf_file_open_read(
 		 "Scanning for records:\n" );
 	}
 #endif
+	if( libcdata_array_initialize(
+	     &( internal_file->recovered_item_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create recovered item array.",
+		 function );
+
+		goto on_error;
+	}
 	if( libmsiecf_io_handle_read_record_scan(
 	     internal_file->item_array,
 	     internal_file->recovered_item_array,
@@ -1097,13 +1302,6 @@ int libmsiecf_file_open_read(
 	return( 1 );
 
 on_error:
-	if( internal_file->unallocated_block_list != NULL )
-	{
-		libcdata_range_list_free(
-		 &( internal_file->unallocated_block_list ),
-		 NULL,
-		 NULL );
-	}
 	if( internal_file->recovered_item_array != NULL )
 	{
 		libcdata_array_free(
@@ -1118,11 +1316,23 @@ on_error:
 		 (int (*)(intptr_t **, libcerror_error_t **)) &libmsiecf_item_descriptor_free,
 		 NULL );
 	}
-	if( internal_file->directory_array != NULL )
+	if( internal_file->unallocated_block_list != NULL )
 	{
-		libcdata_array_free(
-		 &( internal_file->directory_array ),
-		 (int (*)(intptr_t **, libcerror_error_t **)) &libmsiecf_directory_descriptor_free,
+		libcdata_range_list_free(
+		 &( internal_file->unallocated_block_list ),
+		 NULL,
+		 NULL );
+	}
+	if( internal_file->cache_directory_table != NULL )
+	{
+		libmsiecf_cache_directory_table_free(
+		 &( internal_file->cache_directory_table ),
+		 NULL );
+	}
+	if( internal_file->file_header != NULL )
+	{
+		libmsiecf_file_header_free(
+		 &( internal_file->file_header ),
 		 NULL );
 	}
 	return( -1 );
@@ -1174,8 +1384,38 @@ int libmsiecf_file_get_size(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*size = internal_file->file_header->file_size;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
@@ -1225,8 +1465,38 @@ int libmsiecf_file_get_ascii_codepage(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*ascii_codepage = internal_file->io_handle->ascii_codepage;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
@@ -1290,8 +1560,38 @@ int libmsiecf_file_set_ascii_codepage(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	internal_file->io_handle->ascii_codepage = ascii_codepage;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
@@ -1353,9 +1653,39 @@ int libmsiecf_file_get_format_version(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*major_version = internal_file->file_header->major_version;
 	*minor_version = internal_file->file_header->minor_version;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
@@ -1369,6 +1699,7 @@ int libmsiecf_file_get_number_of_unallocated_blocks(
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
 	static char *function                    = "libmsiecf_file_get_number_of_unallocated_blocks";
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -1383,10 +1714,27 @@ int libmsiecf_file_get_number_of_unallocated_blocks(
 	}
 	internal_file = (libmsiecf_internal_file_t *) file;
 
-	if( libcdata_range_list_get_number_of_elements(
-	     internal_file->unallocated_block_list,
-	     number_of_unallocated_blocks,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	result = libcdata_range_list_get_number_of_elements(
+	          internal_file->unallocated_block_list,
+	          number_of_unallocated_blocks,
+	          error );
+
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1395,9 +1743,24 @@ int libmsiecf_file_get_number_of_unallocated_blocks(
 		 "%s: unable to retrieve number of elements.",
 		 function );
 
+		result = -1;
+	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
 		return( -1 );
 	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Retrieves a specific unallocated block
@@ -1411,8 +1774,9 @@ int libmsiecf_file_get_unallocated_block(
      libcerror_error_t **error )
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
-	static char *function                    = "libmsiecf_file_get_unallocated_block";
 	intptr_t *value                          = NULL;
+	static char *function                    = "libmsiecf_file_get_unallocated_block";
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -1427,13 +1791,30 @@ int libmsiecf_file_get_unallocated_block(
 	}
 	internal_file = (libmsiecf_internal_file_t *) file;
 
-	if( libcdata_range_list_get_range_by_index(
-	     internal_file->unallocated_block_list,
-	     unallocated_block_index,
-	     (uint64_t *) offset,
-	     (uint64_t *) size,
-	     &value,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	result = libcdata_range_list_get_range_by_index(
+	          internal_file->unallocated_block_list,
+	          unallocated_block_index,
+	          (uint64_t *) offset,
+	          (uint64_t *) size,
+	          &value,
+	          error );
+
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1443,9 +1824,24 @@ int libmsiecf_file_get_unallocated_block(
 		 function,
 		 unallocated_block_index );
 
+		result = -1;
+	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
 		return( -1 );
 	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Retrieves the number of cache directories
@@ -1458,6 +1854,7 @@ int libmsiecf_file_get_number_of_cache_directories(
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
 	static char *function                    = "libmsiecf_file_get_number_of_cache_directories";
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -1472,10 +1869,27 @@ int libmsiecf_file_get_number_of_cache_directories(
 	}
 	internal_file = (libmsiecf_internal_file_t *) file;
 
-	if( libcdata_array_get_number_of_entries(
-	     internal_file->directory_array,
-	     number_of_cache_directories,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	result = libmsiecf_cache_directory_table_get_number_of_cache_directories(
+	          internal_file->cache_directory_table,
+	          number_of_cache_directories,
+	          error );
+
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1484,9 +1898,24 @@ int libmsiecf_file_get_number_of_cache_directories(
 		 "%s: unable to retrieve number of elements from directory array.",
 		 function );
 
+		result = -1;
+	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
 		return( -1 );
 	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Retrieves the extended ASCII encoded name of a certain cache directory
@@ -1503,7 +1932,7 @@ int libmsiecf_file_get_cache_directory_name(
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
 	static char *function                    = "libmsiecf_file_get_cache_directory_name";
-	intptr_t *cache_directory_entry          = 0;
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -1518,83 +1947,56 @@ int libmsiecf_file_get_cache_directory_name(
 	}
 	internal_file = (libmsiecf_internal_file_t *) file;
 
-	if( internal_file->directory_array == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid file - missing directory array.",
-		 function );
-
-		return( -1 );
-	}
-	if( string == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid string.",
-		 function );
-
-		return( -1 );
-	}
-	if( string_size < 9 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid string size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_file->directory_array,
-	     cache_directory_index,
-	     &cache_directory_entry,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve cache directory entry: %d.",
-		 function,
-		 cache_directory_index + 1 );
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
 
 		return( -1 );
 	}
-	if( cache_directory_entry == NULL )
+#endif
+	result = libmsiecf_cache_directory_table_get_directory_name_by_index(
+	          internal_file->cache_directory_table,
+	          cache_directory_index,
+	          string,
+	          string_size,
+	          error );
+
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing cache directory entry.",
-		 function );
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve cache directory: %d name.",
+		 function,
+		 cache_directory_index );
 
-		return( -1 );
+		result = -1;
 	}
-	/* Assumed that the directory name contains only basic ASCII characters
-	 */
-	if( memory_copy(
-	     string,
-	     ( (libmsiecf_directory_descriptor_t *) cache_directory_entry )->name,
-	     9 ) == NULL )
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to set cache directory name.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
 		 function );
 
 		return( -1 );
 	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Retrieves the number of items
@@ -1607,6 +2009,7 @@ int libmsiecf_file_get_number_of_items(
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
 	static char *function                    = "libmsiecf_file_get_number_of_items";
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -1621,10 +2024,27 @@ int libmsiecf_file_get_number_of_items(
 	}
 	internal_file = (libmsiecf_internal_file_t *) file;
 
-	if( libcdata_array_get_number_of_entries(
-	     internal_file->item_array,
-	     number_of_items,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	result = libcdata_array_get_number_of_entries(
+	          internal_file->item_array,
+	          number_of_items,
+	          error );
+
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1633,102 +2053,24 @@ int libmsiecf_file_get_number_of_items(
 		 "%s: unable to retrieve number of elements from item array.",
 		 function );
 
-		return( -1 );
+		result = -1;
 	}
-	return( 1 );
-}
-
-/* Retrieves the item for the specific index
- * Returns 1 if successful or -1 on error
- */
-int libmsiecf_file_get_item(
-     libmsiecf_file_t *file,
-     int item_index,
-     libmsiecf_item_t **item,
-     libcerror_error_t **error )
-{
-	libmsiecf_internal_file_t *internal_file     = NULL;
-	libmsiecf_item_descriptor_t *item_descriptor = NULL;
-	static char *function                        = "libmsiecf_file_get_item";
-
-	if( file == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file.",
-		 function );
-
-		return( -1 );
-	}
-	internal_file = (libmsiecf_internal_file_t *) file;
-
-	if( internal_file->item_array == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid file - missing item array.",
-		 function );
-
-		return( -1 );
-	}
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	if( *item != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: item already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_file->item_array,
-	     item_index,
-	     (intptr_t **) &item_descriptor,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve item descriptor.",
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
 		 function );
 
 		return( -1 );
 	}
-	if( libmsiecf_item_initialize(
-	     item,
-	     internal_file->file_io_handle,
-	     internal_file->io_handle,
-	     item_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create item.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Retrieves the item for the specific index
@@ -1743,6 +2085,7 @@ int libmsiecf_file_get_item_by_index(
 	libmsiecf_internal_file_t *internal_file     = NULL;
 	libmsiecf_item_descriptor_t *item_descriptor = NULL;
 	static char *function                        = "libmsiecf_file_get_item_by_index";
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -1790,6 +2133,21 @@ int libmsiecf_file_get_item_by_index(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	if( libcdata_array_get_entry_by_index(
 	     internal_file->item_array,
 	     item_index,
@@ -1803,14 +2161,12 @@ int libmsiecf_file_get_item_by_index(
 		 "%s: unable to retrieve item descriptor.",
 		 function );
 
-		return( -1 );
+		result = -1;
 	}
-	if( libmsiecf_item_initialize(
-	     item,
-	     internal_file->file_io_handle,
-	     internal_file->io_handle,
-	     item_descriptor,
-	     error ) != 1 )
+	else if( libmsiecf_item_initialize(
+	          item,
+	          item_descriptor,
+	          error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1819,9 +2175,44 @@ int libmsiecf_file_get_item_by_index(
 		 "%s: unable to create item.",
 		 function );
 
+		result = -1;
+	}
+/* TODO make more error tollerant for corrupt items */
+	else if( libmsiecf_internal_item_read_values(
+	          (libmsiecf_internal_item_t *) *item,
+	          internal_file->io_handle,
+	          internal_file->file_io_handle,
+	          error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read item values.",
+		 function );
+
+		libmsiecf_item_free(
+		 item,
+		 NULL );
+
+		result = -1;
+	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
 		return( -1 );
 	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Retrieves the number of recovered items
@@ -1834,6 +2225,7 @@ int libmsiecf_file_get_number_of_recovered_items(
 {
 	libmsiecf_internal_file_t *internal_file = NULL;
 	static char *function                    = "libmsiecf_file_get_number_of_recovered_items";
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -1848,10 +2240,27 @@ int libmsiecf_file_get_number_of_recovered_items(
 	}
 	internal_file = (libmsiecf_internal_file_t *) file;
 
-	if( libcdata_array_get_number_of_entries(
-	     internal_file->recovered_item_array,
-	     number_of_recovered_items,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	result = libcdata_array_get_number_of_entries(
+	          internal_file->recovered_item_array,
+	          number_of_recovered_items,
+	          error );
+
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1860,102 +2269,24 @@ int libmsiecf_file_get_number_of_recovered_items(
 		 "%s: unable to retrieve number of elements from recovered item array.",
 		 function );
 
-		return( -1 );
+		result = -1;
 	}
-	return( 1 );
-}
-
-/* Retrieves the recovered item for the specific index
- * Returns 1 if successful or -1 on error
- */
-int libmsiecf_file_get_recovered_item(
-     libmsiecf_file_t *file,
-     int recovered_item_index,
-     libmsiecf_item_t **recovered_item,
-     libcerror_error_t **error )
-{
-	libmsiecf_internal_file_t *internal_file     = NULL;
-	libmsiecf_item_descriptor_t *item_descriptor = NULL;
-	static char *function                        = "libmsiecf_file_get_recovered_item";
-
-	if( file == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file.",
-		 function );
-
-		return( -1 );
-	}
-	internal_file = (libmsiecf_internal_file_t *) file;
-
-	if( internal_file->recovered_item_array == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid file - missing recovered item array.",
-		 function );
-
-		return( -1 );
-	}
-	if( recovered_item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid recovered item.",
-		 function );
-
-		return( -1 );
-	}
-	if( *recovered_item != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: recovered item already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( libcdata_array_get_entry_by_index(
-	     internal_file->recovered_item_array,
-	     recovered_item_index,
-	     (intptr_t **) &item_descriptor,
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve recovered item descriptor.",
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
 		 function );
 
 		return( -1 );
 	}
-	if( libmsiecf_item_initialize(
-	     recovered_item,
-	     internal_file->file_io_handle,
-	     internal_file->io_handle,
-	     item_descriptor,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create recovered item.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
+#endif
+	return( result );
 }
 
 /* Retrieves the recovered item for the specific index
@@ -1970,6 +2301,7 @@ int libmsiecf_file_get_recovered_item_by_index(
 	libmsiecf_internal_file_t *internal_file     = NULL;
 	libmsiecf_item_descriptor_t *item_descriptor = NULL;
 	static char *function                        = "libmsiecf_file_get_recovered_item_by_index";
+	int result                               = 1;
 
 	if( file == NULL )
 	{
@@ -2017,6 +2349,21 @@ int libmsiecf_file_get_recovered_item_by_index(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	if( libcdata_array_get_entry_by_index(
 	     internal_file->recovered_item_array,
 	     recovered_item_index,
@@ -2030,14 +2377,12 @@ int libmsiecf_file_get_recovered_item_by_index(
 		 "%s: unable to retrieve recovered item descriptor.",
 		 function );
 
-		return( -1 );
+		result = -1;
 	}
-	if( libmsiecf_item_initialize(
-	     recovered_item,
-	     internal_file->file_io_handle,
-	     internal_file->io_handle,
-	     item_descriptor,
-	     error ) != 1 )
+	else if( libmsiecf_item_initialize(
+	          recovered_item,
+	          item_descriptor,
+	          error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -2046,8 +2391,43 @@ int libmsiecf_file_get_recovered_item_by_index(
 		 "%s: unable to create recovered item.",
 		 function );
 
+		result = -1;
+	}
+/* TODO make more error tollerant for corrupt items */
+	else if( libmsiecf_internal_item_read_values(
+	          (libmsiecf_internal_item_t *) *recovered_item,
+	          internal_file->io_handle,
+	          internal_file->file_io_handle,
+	          error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read recovered item values.",
+		 function );
+
+		libmsiecf_item_free(
+		 recovered_item,
+		 NULL );
+
+		result = -1;
+	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_file->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
 		return( -1 );
 	}
-	return( 1 );
+#endif
+	return( result );
 }
 

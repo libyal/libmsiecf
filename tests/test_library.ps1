@@ -1,14 +1,14 @@
 # Tests library functions and types.
 #
-# Version: 20200413
+# Version: 20200427
 
 $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "directory_descriptor error io_handle item item_descriptor leak_values notify property_type redirected_values url_values"
+$LibraryTests = "cache_directory_table directory_descriptor error file_header io_handle item item_descriptor leak_values notify property_type redirected_values url_values"
 $LibraryTestsWithInput = "file support"
-$OptionSets = "";
+$OptionSets = ""
 
 $InputGlob = "*"
 

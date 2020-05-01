@@ -347,20 +347,6 @@ int libmsiecf_file_get_number_of_items(
      libmsiecf_error_t **error );
 
 /* Retrieves the item for the specific index
- *
- * This function is deprecated instead use: libmsiecf_file_get_item_by_index
- *
- * Returns 1 if successful or -1 on error
- */
-LIBMSIECF_DEPRECATED \
-LIBMSIECF_EXTERN \
-int libmsiecf_file_get_item(
-     libmsiecf_file_t *file,
-     int item_index,
-     libmsiecf_item_t **item,
-     libmsiecf_error_t **error );
-
-/* Retrieves the item for the specific index
  * Returns 1 if successful or -1 on error
  */
 LIBMSIECF_EXTERN \
@@ -377,20 +363,6 @@ LIBMSIECF_EXTERN \
 int libmsiecf_file_get_number_of_recovered_items(
      libmsiecf_file_t *file,
      int *number_of_recovered_items,
-     libmsiecf_error_t **error );
-
-/* Retrieves the recovered item for the specific index
- *
- * This function is deprecated instead use: libmsiecf_file_get_recovered_item_by_index
- *
- * Returns 1 if successful or -1 on error
- */
-LIBMSIECF_DEPRECATED \
-LIBMSIECF_EXTERN \
-int libmsiecf_file_get_recovered_item(
-     libmsiecf_file_t *file,
-     int recovered_item_index,
-     libmsiecf_item_t **recovered_item,
      libmsiecf_error_t **error );
 
 /* Retrieves the recovered item for the specific index

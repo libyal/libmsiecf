@@ -128,9 +128,11 @@ stamp-h[1-9]
 /msiecftools/msiecfinfo
 /tests/*.exe
 /tests/input
+/tests/msiecf_test_cache_directory_table
 /tests/msiecf_test_directory_descriptor
 /tests/msiecf_test_error
 /tests/msiecf_test_file
+/tests/msiecf_test_file_header
 /tests/msiecf_test_io_handle
 /tests/msiecf_test_item
 /tests/msiecf_test_item_descriptor

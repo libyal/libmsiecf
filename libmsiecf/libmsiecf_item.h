@@ -30,6 +30,7 @@
 #include "libmsiecf_io_handle.h"
 #include "libmsiecf_libbfio.h"
 #include "libmsiecf_libcerror.h"
+#include "libmsiecf_libcthreads.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -39,14 +40,6 @@ typedef struct libmsiecf_internal_item libmsiecf_internal_item_t;
 
 struct libmsiecf_internal_item
 {
-	/* The file IO handle
-	 */
-	libbfio_handle_t *file_io_handle;
-
-	/* The internal file
-	 */
-	libmsiecf_io_handle_t *io_handle;
-
 	/* The item descriptor
 	 */
         libmsiecf_item_descriptor_t *item_descriptor;
@@ -60,12 +53,16 @@ struct libmsiecf_internal_item
 	int (*free_value)(
 	       intptr_t **value,
 	       libcerror_error_t **error );
+
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	/* The read/write lock
+	 */
+	libcthreads_read_write_lock_t *read_write_lock;
+#endif
 };
 
 int libmsiecf_item_initialize(
      libmsiecf_item_t **item,
-     libbfio_handle_t *file_io_handle,
-     libmsiecf_io_handle_t *io_handle,
      libmsiecf_item_descriptor_t *item_descriptor,
      libcerror_error_t **error );
 
@@ -99,8 +96,10 @@ int libmsiecf_item_get_offset_range(
      size64_t *size,
      libcerror_error_t **error );
 
-int libmsiecf_item_read_values(
+int libmsiecf_internal_item_read_values(
      libmsiecf_internal_item_t *internal_item,
+     libmsiecf_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="msiecf_test_leak"
-	ProjectGUID="{5BD72764-1D9E-4D80-9BAE-E2C2EEA94457}"
-	RootNamespace="msiecf_test_leak"
+	Name="msiecf_test_cache_directory_table"
+	ProjectGUID="{F82D992B-9636-41A5-92EE-FDA09A4344C9}"
+	RootNamespace="msiecf_test_cache_directory_table"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\msiecf_test_leak.c"
+				RelativePath="..\..\tests\msiecf_test_cache_directory_table.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\msiecf_test_functions.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\msiecf_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -185,6 +193,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\tests\msiecf_test_functions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\msiecf_test_libbfio.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\tests\msiecf_test_libcerror.h"
 				>
@@ -195,6 +211,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\msiecf_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\msiecf_test_memory.h"
 				>
 			</File>
 			<File

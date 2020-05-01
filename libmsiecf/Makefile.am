@@ -2,6 +2,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
@@ -22,6 +23,7 @@ lib_LTLIBRARIES = libmsiecf.la
 libmsiecf_la_SOURCES = \
 	libmsiecf.c \
 	libmsiecf_allocation_table.c libmsiecf_allocation_table.h \
+	libmsiecf_cache_directory_table.c libmsiecf_cache_directory_table.h \
 	libmsiecf_codepage.h \
 	libmsiecf_debug.c libmsiecf_debug.h \
 	libmsiecf_definitions.h \
@@ -42,6 +44,7 @@ libmsiecf_la_SOURCES = \
 	libmsiecf_libcerror.h \
 	libmsiecf_libclocale.h \
 	libmsiecf_libcnotify.h \
+	libmsiecf_libcthreads.h \
 	libmsiecf_libfdatetime.h \
 	libmsiecf_libfole.h \
 	libmsiecf_libfvalue.h \
@@ -55,6 +58,7 @@ libmsiecf_la_SOURCES = \
 	libmsiecf_unused.h \
 	libmsiecf_url.c libmsiecf_url.h \
 	libmsiecf_url_values.c libmsiecf_url_values.h \
+	msiecf_cache_directory_table.h \
 	msiecf_file_header.h \
 	msiecf_hash_record.h \
 	msiecf_leak_record.h \
@@ -64,6 +68,7 @@ libmsiecf_la_SOURCES = \
 
 libmsiecf_la_LIBADD = \
 	@LIBCERROR_LIBADD@ \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \

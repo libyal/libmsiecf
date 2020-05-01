@@ -35,6 +35,9 @@
 
 #include "../libmsiecf/libmsiecf_directory_descriptor.h"
 
+uint8_t msiecf_test_directory_descriptor_data1[ 12 ] = {
+	0x57, 0x00, 0x00, 0x00, 0x4e, 0x32, 0x41, 0x44, 0x33, 0x31, 0x30, 0x35 };
+
 #if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 /* Tests the libmsiecf_directory_descriptor_initialize function
@@ -113,6 +116,8 @@ int msiecf_test_directory_descriptor_initialize(
 	          &directory_descriptor,
 	          &error );
 
+	directory_descriptor = NULL;
+
 	MSIECF_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +129,6 @@ int msiecf_test_directory_descriptor_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	directory_descriptor = NULL;
 
 #if defined( HAVE_MSIECF_TEST_MEMORY )
 
@@ -270,6 +273,162 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libmsiecf_directory_descriptor_read_data function
+ * Returns 1 if successful or 0 if not
+ */
+int msiecf_test_directory_descriptor_read_data(
+     void )
+{
+	libcerror_error_t *error                               = NULL;
+	libmsiecf_directory_descriptor_t *directory_descriptor = NULL;
+	int result                                             = 0;
+
+	/* Initialize test
+	 */
+	result = libmsiecf_directory_descriptor_initialize(
+	          &directory_descriptor,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "directory_descriptor",
+	 directory_descriptor );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libmsiecf_directory_descriptor_read_data(
+	          directory_descriptor,
+	          msiecf_test_directory_descriptor_data1,
+	          12,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmsiecf_directory_descriptor_read_data(
+	          NULL,
+	          msiecf_test_directory_descriptor_data1,
+	          12,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_directory_descriptor_read_data(
+	          directory_descriptor,
+	          NULL,
+	          12,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_directory_descriptor_read_data(
+	          directory_descriptor,
+	          msiecf_test_directory_descriptor_data1,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_directory_descriptor_read_data(
+	          directory_descriptor,
+	          msiecf_test_directory_descriptor_data1,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libmsiecf_directory_descriptor_free(
+	          &directory_descriptor,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "directory_descriptor",
+	 directory_descriptor );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( directory_descriptor != NULL )
+	{
+		libmsiecf_directory_descriptor_free(
+		 &directory_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 /* The main program
@@ -296,6 +455,10 @@ int main(
 	MSIECF_TEST_RUN(
 	 "libmsiecf_directory_descriptor_free",
 	 msiecf_test_directory_descriptor_free );
+
+	MSIECF_TEST_RUN(
+	 "libmsiecf_directory_descriptor_read_data",
+	 msiecf_test_directory_descriptor_read_data );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 

@@ -19,18 +19,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMSIECF_INTERNAL_FILE_H )
-#define _LIBMSIECF_INTERNAL_FILE_H
+#if !defined( _LIBMSIECF_FILE_H )
+#define _LIBMSIECF_FILE_H
 
 #include <common.h>
 #include <types.h>
 
+#include "libmsiecf_cache_directory_table.h"
 #include "libmsiecf_extern.h"
 #include "libmsiecf_file_header.h"
 #include "libmsiecf_io_handle.h"
 #include "libmsiecf_libbfio.h"
 #include "libmsiecf_libcdata.h"
 #include "libmsiecf_libcerror.h"
+#include "libmsiecf_libcthreads.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -60,9 +62,9 @@ struct libmsiecf_internal_file
 	 */
 	uint8_t file_io_handle_opened_in_library;
 
-	/* The cache directory descriptors array
+	/* The cache directory table
 	 */
-	libcdata_array_t *directory_array;
+	libmsiecf_cache_directory_table_t *cache_directory_table;
 
 	/* The item descriptors array
 	 */
@@ -75,6 +77,12 @@ struct libmsiecf_internal_file
 	/* The unallocated block list
 	 */
 	libcdata_range_list_t *unallocated_block_list;
+
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	/* The read/write lock
+	 */
+	libcthreads_read_write_lock_t *read_write_lock;
+#endif
 };
 
 LIBMSIECF_EXTERN \
@@ -122,7 +130,7 @@ int libmsiecf_file_close(
      libmsiecf_file_t *file,
      libcerror_error_t **error );
 
-int libmsiecf_file_open_read(
+int libmsiecf_internal_file_open_read(
      libmsiecf_internal_file_t *internal_file,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
@@ -187,13 +195,6 @@ int libmsiecf_file_get_number_of_items(
      libcerror_error_t **error );
 
 LIBMSIECF_EXTERN \
-int libmsiecf_file_get_item(
-     libmsiecf_file_t *file,
-     int item_index,
-     libmsiecf_item_t **item,
-     libcerror_error_t **error );
-
-LIBMSIECF_EXTERN \
 int libmsiecf_file_get_item_by_index(
      libmsiecf_file_t *file,
      int item_index,
@@ -207,13 +208,6 @@ int libmsiecf_file_get_number_of_recovered_items(
      libcerror_error_t **error );
 
 LIBMSIECF_EXTERN \
-int libmsiecf_file_get_recovered_item(
-     libmsiecf_file_t *file,
-     int recovered_item_index,
-     libmsiecf_item_t **recovered_item,
-     libcerror_error_t **error );
-
-LIBMSIECF_EXTERN \
 int libmsiecf_file_get_recovered_item_by_index(
      libmsiecf_file_t *file,
      int recovered_item_index,
@@ -224,5 +218,5 @@ int libmsiecf_file_get_recovered_item_by_index(
 }
 #endif
 
-#endif /* !defined( _LIBMSIECF_INTERNAL_FILE_H ) */
+#endif /* !defined( _LIBMSIECF_FILE_H ) */
 

@@ -28,6 +28,7 @@
 #include "libmsiecf_io_handle.h"
 #include "libmsiecf_leak_values.h"
 #include "libmsiecf_libcerror.h"
+#include "libmsiecf_libcthreads.h"
 #include "libmsiecf_redirected_values.h"
 #include "libmsiecf_url_values.h"
 
@@ -37,8 +38,6 @@
  */
 int libmsiecf_item_initialize(
      libmsiecf_item_t **item,
-     libbfio_handle_t *file_io_handle,
-     libmsiecf_io_handle_t *io_handle,
      libmsiecf_item_descriptor_t *item_descriptor,
      libcerror_error_t **error )
 {
@@ -63,17 +62,6 @@ int libmsiecf_item_initialize(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid item value already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -115,10 +103,26 @@ int libmsiecf_item_initialize(
 		 "%s: unable to clear internal item.",
 		 function );
 
+		memory_free(
+		 internal_item );
+
+		return( -1 );
+	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_initialize(
+	     &( internal_item->read_write_lock ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize read/write lock.",
+		 function );
+
 		goto on_error;
 	}
-	internal_item->io_handle       = io_handle;
-	internal_item->file_io_handle  = file_io_handle;
+#endif
 	internal_item->item_descriptor = item_descriptor;
 
 	*item = (libmsiecf_item_t *) internal_item;
@@ -161,8 +165,22 @@ int libmsiecf_item_free(
 		internal_item = (libmsiecf_internal_item_t *) *item;
 		*item         = NULL;
 
-                /* The io_handle, file_io_handle and item_descriptor references
-		 * are freed elsewhere
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+		if( libcthreads_read_write_lock_free(
+		     &( internal_item->read_write_lock ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free read/write lock.",
+			 function );
+
+			result = -1;
+		}
+#endif
+                /* The item_descriptor reference is freed elsewhere
 		 */
 		if( internal_item->value != NULL )
 		{
@@ -236,8 +254,38 @@ int libmsiecf_item_get_type(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*item_type = internal_item->item_descriptor->type;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
@@ -287,8 +335,38 @@ int libmsiecf_item_get_flags(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*item_flags = internal_item->item_descriptor->flags;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
@@ -338,8 +416,38 @@ int libmsiecf_item_get_offset(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*offset = internal_item->item_descriptor->file_offset;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
@@ -401,21 +509,53 @@ int libmsiecf_item_get_offset_range(
 
 		return( -1 );
 	}
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	*offset = internal_item->item_descriptor->file_offset;
 	*size   = (size64_t) internal_item->item_descriptor->record_size;
 
+#if defined( HAVE_LIBMSIECF_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_item->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
 	return( 1 );
 }
 
 /* Reads the item values
  * Returns 1 if successful or -1 on error
  */
-int libmsiecf_item_read_values(
+int libmsiecf_internal_item_read_values(
      libmsiecf_internal_item_t *internal_item,
+     libmsiecf_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
 	const char *item_type_string = NULL;
-	static char *function        = "libmsiecf_item_read_values";
+	static char *function        = "libmsiecf_internal_item_read_values";
 	int result                   = 0;
 
 	if( internal_item == NULL )
@@ -503,8 +643,8 @@ int libmsiecf_item_read_values(
 		case LIBMSIECF_ITEM_TYPE_LEAK:
 			result = libmsiecf_leak_values_read(
 			          (libmsiecf_leak_values_t *) internal_item->value,
-			          internal_item->io_handle,
-			          internal_item->file_io_handle,
+			          io_handle,
+			          file_io_handle,
 			          internal_item->item_descriptor->file_offset,
 			          internal_item->item_descriptor->record_size,
 			          internal_item->item_descriptor->flags,
@@ -514,8 +654,8 @@ int libmsiecf_item_read_values(
 		case LIBMSIECF_ITEM_TYPE_REDIRECTED:
 			result = libmsiecf_redirected_values_read(
 			          (libmsiecf_redirected_values_t *) internal_item->value,
-			          internal_item->io_handle,
-			          internal_item->file_io_handle,
+			          io_handle,
+			          file_io_handle,
 			          internal_item->item_descriptor->file_offset,
 			          internal_item->item_descriptor->record_size,
 			          internal_item->item_descriptor->flags,
@@ -525,8 +665,8 @@ int libmsiecf_item_read_values(
 		case LIBMSIECF_ITEM_TYPE_URL:
 			result = libmsiecf_url_values_read(
 			          (libmsiecf_url_values_t *) internal_item->value,
-			          internal_item->io_handle,
-			          internal_item->file_io_handle,
+			          io_handle,
+			          file_io_handle,
 			          internal_item->item_descriptor->file_offset,
 			          internal_item->item_descriptor->record_size,
 			          internal_item->item_descriptor->flags,
