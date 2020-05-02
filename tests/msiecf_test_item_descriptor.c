@@ -113,6 +113,8 @@ int msiecf_test_item_descriptor_initialize(
 	          &item_descriptor,
 	          &error );
 
+	item_descriptor = NULL;
+
 	MSIECF_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int msiecf_test_item_descriptor_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	item_descriptor = NULL;
 
 #if defined( HAVE_MSIECF_TEST_MEMORY )
 

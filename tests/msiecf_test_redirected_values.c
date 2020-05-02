@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #endif
 
+#include "msiecf_test_functions.h"
+#include "msiecf_test_libbfio.h"
 #include "msiecf_test_libcerror.h"
 #include "msiecf_test_libmsiecf.h"
 #include "msiecf_test_macros.h"
@@ -34,6 +36,16 @@
 #include "msiecf_test_unused.h"
 
 #include "../libmsiecf/libmsiecf_redirected_values.h"
+
+uint8_t msiecf_test_redirected_values_data1[ 128 ] = {
+	0x52, 0x45, 0x44, 0x52, 0x01, 0x00, 0x00, 0x00, 0xc8, 0x53, 0x00, 0x00, 0x40, 0x8e, 0xf0, 0xae,
+	0x68, 0x74, 0x74, 0x70, 0x3a, 0x2f, 0x2f, 0x67, 0x6f, 0x2e, 0x6d, 0x69, 0x63, 0x72, 0x6f, 0x73,
+	0x6f, 0x66, 0x74, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x77, 0x6c, 0x69, 0x6e, 0x6b, 0x2f, 0x3f,
+	0x6c, 0x69, 0x6e, 0x6b, 0x69, 0x64, 0x3d, 0x32, 0x30, 0x39, 0x31, 0x39, 0x31, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 #if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
@@ -113,6 +125,8 @@ int msiecf_test_redirected_values_initialize(
 	          &redirected_values,
 	          &error );
 
+	redirected_values = NULL;
+
 	MSIECF_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +138,6 @@ int msiecf_test_redirected_values_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	redirected_values = NULL;
 
 #if defined( HAVE_MSIECF_TEST_MEMORY )
 
@@ -270,6 +282,420 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libmsiecf_redirected_values_read_data function
+ * Returns 1 if successful or 0 if not
+ */
+int msiecf_test_redirected_values_read_data(
+     void )
+{
+	libcerror_error_t *error                         = NULL;
+	libmsiecf_redirected_values_t *redirected_values = NULL;
+	int result                                       = 0;
+
+	/* Initialize test
+	 */
+	result = libmsiecf_redirected_values_initialize(
+	          &redirected_values,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "redirected_values",
+	 redirected_values );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libmsiecf_redirected_values_read_data(
+	          redirected_values,
+	          msiecf_test_redirected_values_data1,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmsiecf_redirected_values_read_data(
+	          NULL,
+	          msiecf_test_redirected_values_data1,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_redirected_values_read_data(
+	          redirected_values,
+	          NULL,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_redirected_values_read_data(
+	          redirected_values,
+	          msiecf_test_redirected_values_data1,
+	          (size_t) SSIZE_MAX + 1,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_redirected_values_read_data(
+	          redirected_values,
+	          msiecf_test_redirected_values_data1,
+	          0,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libmsiecf_redirected_values_free(
+	          &redirected_values,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "redirected_values",
+	 redirected_values );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( redirected_values != NULL )
+	{
+		libmsiecf_redirected_values_free(
+		 &redirected_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libmsiecf_redirected_values_read_file_io_handle function
+ * Returns 1 if successful or 0 if not
+ */
+int msiecf_test_redirected_values_read_file_io_handle(
+     void )
+{
+	libbfio_handle_t *file_io_handle                 = NULL;
+	libcerror_error_t *error                         = NULL;
+	libmsiecf_redirected_values_t *redirected_values = NULL;
+	int result                                       = 0;
+
+	/* Initialize test
+	 */
+	result = libmsiecf_redirected_values_initialize(
+	          &redirected_values,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "redirected_values",
+	 redirected_values );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize file IO handle
+	 */
+	result = msiecf_test_open_file_io_handle(
+	          &file_io_handle,
+	          msiecf_test_redirected_values_data1,
+	          128,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libmsiecf_redirected_values_read_file_io_handle(
+	          redirected_values,
+	          file_io_handle,
+	          0,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmsiecf_redirected_values_read_file_io_handle(
+	          NULL,
+	          file_io_handle,
+	          0,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_redirected_values_read_file_io_handle(
+	          redirected_values,
+	          NULL,
+	          0,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmsiecf_redirected_values_read_file_io_handle(
+	          redirected_values,
+	          file_io_handle,
+	          -1,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up file IO handle
+	 */
+	result = msiecf_test_close_file_io_handle(
+	          &file_io_handle,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test data too small
+	 */
+	result = msiecf_test_open_file_io_handle(
+	          &file_io_handle,
+	          msiecf_test_redirected_values_data1,
+	          8,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmsiecf_redirected_values_read_file_io_handle(
+	          redirected_values,
+	          file_io_handle,
+	          0,
+	          128,
+	          LIBMSIECF_CODEPAGE_WINDOWS_1252,
+	          0,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MSIECF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = msiecf_test_close_file_io_handle(
+	          &file_io_handle,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libmsiecf_redirected_values_free(
+	          &redirected_values,
+	          &error );
+
+	MSIECF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "redirected_values",
+	 redirected_values );
+
+	MSIECF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	if( redirected_values != NULL )
+	{
+		libmsiecf_redirected_values_free(
+		 &redirected_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 /* The main program
@@ -297,7 +723,13 @@ int main(
 	 "libmsiecf_redirected_values_free",
 	 msiecf_test_redirected_values_free );
 
-	/* TODO: add tests for libmsiecf_redirected_values_read */
+	MSIECF_TEST_RUN(
+	 "libmsiecf_redirected_values_read_data",
+	 msiecf_test_redirected_values_read_data );
+
+	MSIECF_TEST_RUN(
+	 "libmsiecf_redirected_values_read_file_io_handle",
+	 msiecf_test_redirected_values_read_file_io_handle );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 

@@ -569,6 +569,17 @@ int libmsiecf_internal_item_read_values(
 
 		return( -1 );
 	}
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_item->item_descriptor == NULL )
 	{
 		libcerror_error_set(
@@ -641,29 +652,29 @@ int libmsiecf_internal_item_read_values(
 	switch( internal_item->item_descriptor->type )
 	{
 		case LIBMSIECF_ITEM_TYPE_LEAK:
-			result = libmsiecf_leak_values_read(
+			result = libmsiecf_leak_values_read_file_io_handle(
 			          (libmsiecf_leak_values_t *) internal_item->value,
-			          io_handle,
 			          file_io_handle,
 			          internal_item->item_descriptor->file_offset,
 			          internal_item->item_descriptor->record_size,
+			          io_handle->ascii_codepage,
 			          internal_item->item_descriptor->flags,
 			          error );
 			break;
 
 		case LIBMSIECF_ITEM_TYPE_REDIRECTED:
-			result = libmsiecf_redirected_values_read(
+			result = libmsiecf_redirected_values_read_file_io_handle(
 			          (libmsiecf_redirected_values_t *) internal_item->value,
-			          io_handle,
 			          file_io_handle,
 			          internal_item->item_descriptor->file_offset,
 			          internal_item->item_descriptor->record_size,
+			          io_handle->ascii_codepage,
 			          internal_item->item_descriptor->flags,
 			          error );
 			break;
 
 		case LIBMSIECF_ITEM_TYPE_URL:
-			result = libmsiecf_url_values_read(
+			result = libmsiecf_url_values_read_file_io_handle(
 			          (libmsiecf_url_values_t *) internal_item->value,
 			          io_handle,
 			          file_io_handle,

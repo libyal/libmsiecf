@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "libmsiecf_io_handle.h"
 #include "libmsiecf_libbfio.h"
 #include "libmsiecf_libcerror.h"
 #include "libmsiecf_libfvalue.h"
@@ -51,12 +50,20 @@ int libmsiecf_redirected_values_free(
      libmsiecf_redirected_values_t **redirected_values,
      libcerror_error_t **error );
 
-int libmsiecf_redirected_values_read(
+int libmsiecf_redirected_values_read_data(
      libmsiecf_redirected_values_t *redirected_values,
-     libmsiecf_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     int ascii_codepage,
+     uint8_t item_flags,
+     libcerror_error_t **error );
+
+int libmsiecf_redirected_values_read_file_io_handle(
+     libmsiecf_redirected_values_t *redirected_values,
      libbfio_handle_t *file_io_handle,
-     off64_t redirected_offset,
+     off64_t record_offset,
      size32_t record_size,
+     int ascii_codepage,
      uint8_t item_flags,
      libcerror_error_t **error );
 

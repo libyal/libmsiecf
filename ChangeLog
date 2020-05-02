@@ -1,5 +1,9 @@
 TODO
+* address clean up TODOs
 * complete thread lock support
+** leak
+** redirected
+** url
 
 * pymsiecf
   - add support for leak: Last cache synchronization date and time

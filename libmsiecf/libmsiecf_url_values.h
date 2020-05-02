@@ -100,7 +100,15 @@ int libmsiecf_url_values_free(
      libmsiecf_url_values_t **url_values,
      libcerror_error_t **error );
 
-int libmsiecf_url_values_read(
+int libmsiecf_url_values_read_data(
+     libmsiecf_url_values_t *url_values,
+     libmsiecf_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
+     uint8_t item_flags,
+     libcerror_error_t **error );
+
+int libmsiecf_url_values_read_file_io_handle(
      libmsiecf_url_values_t *url_values,
      libmsiecf_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,

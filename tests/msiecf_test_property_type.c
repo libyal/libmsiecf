@@ -33,6 +33,8 @@
 #include "msiecf_test_memory.h"
 #include "msiecf_test_unused.h"
 
+#include "../libmsiecf/libmsiecf_property_type.h"
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )

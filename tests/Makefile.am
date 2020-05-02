@@ -199,7 +199,9 @@ msiecf_test_leak_LDADD = \
 	@LIBCERROR_LIBADD@
 
 msiecf_test_leak_values_SOURCES = \
+	msiecf_test_functions.c msiecf_test_functions.h \
 	msiecf_test_leak_values.c \
+	msiecf_test_libbfio.h \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_macros.h \
@@ -207,6 +209,14 @@ msiecf_test_leak_values_SOURCES = \
 	msiecf_test_unused.h
 
 msiecf_test_leak_values_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 
@@ -245,6 +255,8 @@ msiecf_test_redirected_LDADD = \
 	@LIBCERROR_LIBADD@
 
 msiecf_test_redirected_values_SOURCES = \
+	msiecf_test_functions.c msiecf_test_functions.h \
+	msiecf_test_libbfio.h \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_macros.h \
@@ -253,6 +265,14 @@ msiecf_test_redirected_values_SOURCES = \
 	msiecf_test_unused.h
 
 msiecf_test_redirected_values_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 
@@ -294,6 +314,8 @@ msiecf_test_url_LDADD = \
 	@LIBCERROR_LIBADD@
 
 msiecf_test_url_values_SOURCES = \
+	msiecf_test_functions.c msiecf_test_functions.h \
+	msiecf_test_libbfio.h \
 	msiecf_test_libcerror.h \
 	msiecf_test_libmsiecf.h \
 	msiecf_test_macros.h \
@@ -302,6 +324,14 @@ msiecf_test_url_values_SOURCES = \
 	msiecf_test_url_values.c
 
 msiecf_test_url_values_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 

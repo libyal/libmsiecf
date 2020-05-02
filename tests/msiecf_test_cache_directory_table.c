@@ -754,9 +754,11 @@ int main(
      char * const argv[] MSIECF_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 	libcerror_error_t *error                                 = NULL;
 	libmsiecf_cache_directory_table_t *cache_directory_table = NULL;
 	int result                                               = 0;
+#endif
 
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argc )
 	MSIECF_TEST_UNREFERENCED_PARAMETER( argv )
@@ -778,8 +780,6 @@ int main(
 	MSIECF_TEST_RUN(
 	 "libmsiecf_cache_directory_table_read_file_io_handle",
 	 msiecf_test_cache_directory_table_read_file_io_handle );
-
-#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 
@@ -819,16 +819,12 @@ int main(
 
 	/* Run tests
 	 */
-#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
-
 	MSIECF_TEST_RUN_WITH_ARGS(
 	 "libmsiecf_cache_directory_table_get_number_of_cache_directories",
 	 msiecf_test_cache_directory_table_get_number_of_cache_directories,
 	 cache_directory_table );
 
 	/* TODO: add tests for libmsiecf_cache_directory_table_get_directory_name_by_index */
-
-#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 
 	/* Clean up
 	 */
@@ -851,7 +847,11 @@ int main(
 
 #endif /* !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 ) */
 
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
+
 	return( EXIT_SUCCESS );
+
+#if defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT )
 
 on_error:
 	if( error != NULL )
@@ -866,5 +866,7 @@ on_error:
 		 NULL );
 	}
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBMSIECF_DLL_IMPORT ) */
 }
 

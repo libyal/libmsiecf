@@ -429,8 +429,6 @@ int main(
 	 "libmsiecf_io_handle_clear",
 	 msiecf_test_io_handle_clear );
 
-	/* TODO: add tests for libmsiecf_io_handle_read_file_header */
-
 	/* TODO: add tests for libmsiecf_io_handle_read_hash_table */
 
 	/* TODO: add tests for libmsiecf_io_handle_read_record_scan */

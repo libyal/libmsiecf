@@ -184,44 +184,38 @@ int libmsiecf_url_values_free(
 /* Reads the URL values from an URL record
  * Returns 1 if successful or -1 on error
  */
-int libmsiecf_url_values_read(
+int libmsiecf_url_values_read_data(
      libmsiecf_url_values_t *url_values,
      libmsiecf_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     off64_t url_record_offset,
-     size32_t record_size,
+     const uint8_t *data,
+     size_t data_size,
      uint8_t item_flags,
      libcerror_error_t **error )
 {
-	uint8_t *url_record_data                    = NULL;
-	static char *function                       = "libmsiecf_url_values_read";
-	ssize_t read_count                          = 0;
-	ssize_t value_size                          = 0;
-	uint32_t data_offset                        = 0;
-	uint32_t data_size                          = 0;
-	uint32_t filename_offset                    = 0;
-	uint32_t location_offset                    = 0;
-	uint32_t cache_entry_flags                  = 0;
-	uint32_t unknown_offset                     = 0;
-	uint16_t first_year                         = 0;
-	uint16_t second_year                        = 0;
-	uint8_t first_day_of_month                  = 0;
-	uint8_t first_month                         = 0;
-	uint8_t number_of_days                      = 0;
-	uint8_t second_day_of_month                 = 0;
-	uint8_t second_month                        = 0;
+	static char *function       = "libmsiecf_url_values_read_data";
+	size_t required_data_size   = 0;
+	ssize_t value_size          = 0;
+	uint32_t cache_entry_flags  = 0;
+	uint32_t filename_offset    = 0;
+	uint32_t location_offset    = 0;
+	uint32_t unknown_offset     = 0;
+	uint32_t url_data_offset    = 0;
+	uint32_t url_data_size      = 0;
+	uint16_t first_year         = 0;
+	uint16_t second_year        = 0;
+	uint8_t first_day_of_month  = 0;
+	uint8_t first_month         = 0;
+	uint8_t number_of_days      = 0;
+	uint8_t second_day_of_month = 0;
+	uint8_t second_month        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t date_time_string[ 32 ];
-
-	libfdatetime_filetime_t *filetime           = NULL;
-	libfdatetime_fat_date_time_t *fat_date_time = NULL;
-	uint8_t *visited_entry_data                 = NULL;
-	size_t string_index                         = 0;
-	uint32_t value_32bit                        = 0;
-	uint16_t value_16bit                        = 0;
-	int result                                  = 0;
-	int visited_entry_index                     = 0;
+	uint8_t *visited_entry_data = NULL;
+	size_t string_index         = 0;
+	uint32_t value_32bit        = 0;
+	uint16_t value_16bit        = 0;
+	int result                  = 0;
+	int visited_entry_index     = 0;
 #endif
 
 	if( url_values == NULL )
@@ -246,114 +240,61 @@ int libmsiecf_url_values_read(
 
 		return( -1 );
 	}
-	if( file_io_handle == NULL )
+	if( ( io_handle->major_version == 4 )
+	 && ( io_handle->minor_version == 7 ) )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file IO handle.",
-		 function );
-
-		return( -1 );
+		required_data_size = sizeof( msiecf_url_record_header_v47_t );
 	}
-	if( record_size == 0 )
+	else if( ( io_handle->major_version == 5 )
+	      && ( io_handle->minor_version == 2 ) )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid record size value zero or less.",
-		 function );
-
-		return( -1 );
+		required_data_size = sizeof( msiecf_url_record_header_v52_t );
 	}
-#if SIZEOF_SIZE_T <= 4
-	if( record_size > (size32_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid record size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-	if( ( record_size % 8 ) != 0 )
+	else
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported URL record size.",
+		 "%s: unsupported format version: %d.%d.",
+		 function,
+		 io_handle->major_version,
+		 io_handle->minor_version );
+
+		goto on_error;
+	}
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
 		 function );
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading URL record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 url_record_offset,
-		 url_record_offset );
-	}
-#endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     url_record_offset,
-	     SEEK_SET,
-	     error ) == -1 )
+	if( data_size < required_data_size )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek URL record offset: %" PRIi64 ".",
-		 function,
-		 url_record_offset );
-
-		goto on_error;
-	}
-	/* Add one block for tainted records
-	 */
-	if( ( item_flags & LIBMSIECF_ITEM_FLAG_TAINTED ) != 0 )
-	{
-		record_size += LIBMSIECF_DEFAULT_BLOCK_SIZE;
-	}
-	url_record_data = (uint8_t *) memory_allocate(
-	                               record_size );
-
-	if( url_record_data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create URL record data.",
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
-	read_count = libbfio_handle_read_buffer(
-	              file_io_handle,
-	              url_record_data,
-	              record_size,
-	              error );
-
-	if( read_count != (ssize_t) record_size )
+	if( data_size > (size_t) SSIZE_MAX )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read URL record data.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -362,13 +303,13 @@ int libmsiecf_url_values_read(
 		 "%s: URL record data:\n",
 		 function );
 		libcnotify_print_data(
-		 url_record_data,
-		 record_size,
+		 data,
+		 data_size,
 		 0 );
 	}
 #endif
 	if( memory_compare(
-	     url_record_data,
+	     data,
 	     "URL ",
 	     4 ) != 0 )
 	{
@@ -385,288 +326,180 @@ int libmsiecf_url_values_read(
 	 && ( io_handle->minor_version == 7 ) )
 	{
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->secondary_filetime,
+		 ( (msiecf_url_record_header_v47_t *) data )->secondary_filetime,
 		 url_values->secondary_time );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->primary_filetime,
+		 ( (msiecf_url_record_header_v47_t *) data )->primary_filetime,
 		 url_values->primary_time );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->expiration_time,
+		 ( (msiecf_url_record_header_v47_t *) data )->expiration_time,
 		 url_values->expiration_time );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->cached_file_size,
+		 ( (msiecf_url_record_header_v47_t *) data )->cached_file_size,
 		 url_values->cached_file_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown_offset,
+		 ( (msiecf_url_record_header_v47_t *) data )->unknown_offset,
 		 unknown_offset );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->location_offset,
+		 ( (msiecf_url_record_header_v47_t *) data )->location_offset,
 		 location_offset );
 
-		url_values->cache_directory_index = ( (msiecf_url_record_header_v47_t *) url_record_data )->cache_directory_index;
+		url_values->cache_directory_index = ( (msiecf_url_record_header_v47_t *) data )->cache_directory_index;
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->filename_offset,
+		 ( (msiecf_url_record_header_v47_t *) data )->filename_offset,
 		 filename_offset );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->data_offset,
-		 data_offset );
+		 ( (msiecf_url_record_header_v47_t *) data )->data_offset,
+		 url_data_offset );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->data_size,
-		 data_size );
+		 ( (msiecf_url_record_header_v47_t *) data )->data_size,
+		 url_data_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->last_checked_time,
+		 ( (msiecf_url_record_header_v47_t *) data )->last_checked_time,
 		 url_values->last_checked_time );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->number_of_hits,
+		 ( (msiecf_url_record_header_v47_t *) data )->number_of_hits,
 		 url_values->number_of_hits );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->cache_entry_flags,
+		 ( (msiecf_url_record_header_v47_t *) data )->cache_entry_flags,
 		 cache_entry_flags );
 	}
 	else if( ( io_handle->major_version == 5 )
 	      && ( io_handle->minor_version == 2 ) )
 	{
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->secondary_filetime,
+		 ( (msiecf_url_record_header_v52_t *) data )->secondary_filetime,
 		 url_values->secondary_time );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->primary_filetime,
+		 ( (msiecf_url_record_header_v52_t *) data )->primary_filetime,
 		 url_values->primary_time );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->expiration_time,
+		 ( (msiecf_url_record_header_v52_t *) data )->expiration_time,
 		 url_values->expiration_time );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->cached_file_size,
+		 ( (msiecf_url_record_header_v52_t *) data )->cached_file_size,
 		 url_values->cached_file_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown_offset,
+		 ( (msiecf_url_record_header_v52_t *) data )->unknown_offset,
 		 unknown_offset );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->location_offset,
+		 ( (msiecf_url_record_header_v52_t *) data )->location_offset,
 		 location_offset );
 
-		url_values->cache_directory_index = ( (msiecf_url_record_header_v52_t *) url_record_data )->cache_directory_index;
+		url_values->cache_directory_index = ( (msiecf_url_record_header_v52_t *) data )->cache_directory_index;
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->filename_offset,
+		 ( (msiecf_url_record_header_v52_t *) data )->filename_offset,
 		 filename_offset );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->data_offset,
-		 data_offset );
+		 ( (msiecf_url_record_header_v52_t *) data )->data_offset,
+		 url_data_offset );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->data_size,
-		 data_size );
+		 ( (msiecf_url_record_header_v52_t *) data )->data_size,
+		 url_data_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->last_checked_time,
+		 ( (msiecf_url_record_header_v52_t *) data )->last_checked_time,
 		 url_values->last_checked_time );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->number_of_hits,
+		 ( (msiecf_url_record_header_v52_t *) data )->number_of_hits,
 		 url_values->number_of_hits );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v52_t *) url_record_data )->cache_entry_flags,
+		 ( (msiecf_url_record_header_v52_t *) data )->cache_entry_flags,
 		 cache_entry_flags );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( libfdatetime_fat_date_time_initialize(
-		     &fat_date_time,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create FAT date time.",
-			 function );
-
-			goto on_error;
-		}
-		if( libfdatetime_filetime_initialize(
-		     &filetime,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create filetime.",
-			 function );
-
-			goto on_error;
-		}
 		libcnotify_printf(
-		 "%s: signature\t\t\t\t\t: %c%c%c%c\n",
+		 "%s: signature\t\t\t\t: %c%c%c%c\n",
 		 function,
-		 url_record_data[ 0 ],
-		 url_record_data[ 1 ],
-		 url_record_data[ 2 ],
-		 url_record_data[ 3 ] );
+		 data[ 0 ],
+		 data[ 1 ],
+		 data[ 2 ],
+		 data[ 3 ] );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (msiecf_url_record_header_v47_t *) url_record_data )->number_of_blocks,
+		 ( (msiecf_url_record_header_v47_t *) data )->number_of_blocks,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: number of blocks\t\t\t\t: %" PRIu32 "\n",
+		 "%s: number of blocks\t\t\t: %" PRIu32 "\n",
 		 function,
 		 value_32bit );
 
-		if( libfdatetime_filetime_copy_from_byte_stream(
-		     filetime,
-		     ( (msiecf_url_record_header_v47_t *) url_record_data )->secondary_filetime,
+		if( libmsiecf_debug_print_filetime_value(
+		     function,
+		     "secondary time\t\t\t\t",
+		     ( (msiecf_url_record_header_v47_t *) data )->secondary_filetime,
 		     8,
 		     LIBFDATETIME_ENDIAN_LITTLE,
+		     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy filetime from byte stream.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print FILETIME value.",
 			 function );
 
 			goto on_error;
 		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfdatetime_filetime_copy_to_utf16_string(
-		          filetime,
-		          (uint16_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-		          error );
-#else
-		result = libfdatetime_filetime_copy_to_utf8_string(
-		          filetime,
-		          (uint8_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy filetime to date time string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: secondary time\t\t\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 date_time_string );
-
-		if( libfdatetime_filetime_copy_from_byte_stream(
-		     filetime,
-		     ( (msiecf_url_record_header_v47_t *) url_record_data )->primary_filetime,
+		if( libmsiecf_debug_print_filetime_value(
+		     function,
+		     "primary time\t\t\t\t",
+		     ( (msiecf_url_record_header_v47_t *) data )->primary_filetime,
 		     8,
 		     LIBFDATETIME_ENDIAN_LITTLE,
+		     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy filetime from byte stream.",
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print FILETIME value.",
 			 function );
 
 			goto on_error;
 		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfdatetime_filetime_copy_to_utf16_string(
-		          filetime,
-		          (uint16_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-		          error );
-#else
-		result = libfdatetime_filetime_copy_to_utf8_string(
-		          filetime,
-		          (uint8_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy filetime to date time string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: primary time\t\t\t\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 date_time_string );
-
 		if( ( io_handle->major_version == 4 )
 		 && ( io_handle->minor_version == 7 ) )
 		{
-			if( libfdatetime_filetime_copy_from_byte_stream(
-			     filetime,
-			     ( (msiecf_url_record_header_v47_t *) url_record_data )->expiration_time,
+			if( libmsiecf_debug_print_filetime_value(
+			     function,
+			     "expiration time\t\t\t\t",
+			     ( (msiecf_url_record_header_v47_t *) data )->expiration_time,
 			     8,
 			     LIBFDATETIME_ENDIAN_LITTLE,
+			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to copy filetime from byte stream.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libfdatetime_filetime_copy_to_utf16_string(
-				  filetime,
-				  (uint16_t *) date_time_string,
-				  32,
-				  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-				  error );
-#else
-			result = libfdatetime_filetime_copy_to_utf8_string(
-				  filetime,
-				  (uint8_t *) date_time_string,
-				  32,
-				  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to copy filetime to date time string.",
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print FILETIME value.",
 				 function );
 
 				goto on_error;
@@ -675,69 +508,39 @@ int libmsiecf_url_values_read(
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
-			if( libfdatetime_fat_date_time_copy_from_byte_stream(
-			     fat_date_time,
-			     ( (msiecf_url_record_header_v52_t *) url_record_data )->expiration_time,
+			if( libmsiecf_debug_print_fat_date_time_value(
+			     function,
+			     "expiration time\t\t\t\t",
+			     ( (msiecf_url_record_header_v52_t *) data )->expiration_time,
 			     4,
 			     LIBFDATETIME_ENDIAN_LITTLE,
+			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
-				 LIBCERROR_ERROR_DOMAIN_CONVERSION,
-				 LIBCERROR_CONVERSION_ERROR_GENERIC,
-				 "%s: unable to copy FAT date time from byte stream.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libfdatetime_fat_date_time_copy_to_utf16_string(
-				  fat_date_time,
-				  (uint16_t *) date_time_string,
-				  32,
-				  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-				  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
-				  error );
-#else
-			result = libfdatetime_fat_date_time_copy_to_utf8_string(
-				  fat_date_time,
-				  (uint8_t *) date_time_string,
-				  32,
-				  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_CONVERSION,
-				 LIBCERROR_CONVERSION_ERROR_GENERIC,
-				 "%s: unable to copy FAT date time to date time string.",
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print FAT date time value.",
 				 function );
 
 				goto on_error;
 			}
 		}
-		libcnotify_printf(
-		 "%s: expiration time\t\t\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 date_time_string );
-
 		if( ( io_handle->major_version == 5 )
 		 && ( io_handle->minor_version == 2 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown1,
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown1,
 			 value_32bit );
 
 			libcnotify_printf(
-			 "%s: unknown1\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: cached file size\t\t\t\t: %" PRIu32 " bytes\n",
+		 "%s: cached file size\t\t\t: %" PRIu32 " bytes\n",
 		 function,
 		 url_values->cached_file_size );
 
@@ -745,11 +548,11 @@ int libmsiecf_url_values_read(
 		 && ( io_handle->minor_version == 7 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown1,
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown1,
 			 value_32bit );
 
 			libcnotify_printf(
-			 "%s: unknown1\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
@@ -757,18 +560,18 @@ int libmsiecf_url_values_read(
 		 && ( io_handle->minor_version == 7 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown3,
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown3,
 			 value_32bit );
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown3,
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown3,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown3\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown3\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
@@ -776,18 +579,18 @@ int libmsiecf_url_values_read(
 		 && ( io_handle->minor_version == 7 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown4,
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown4,
 			 value_32bit );
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown4,
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown4,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown4\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
@@ -795,18 +598,18 @@ int libmsiecf_url_values_read(
 		 && ( io_handle->minor_version == 7 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->non_releasable_time_delta,
+			 ( (msiecf_url_record_header_v47_t *) data )->non_releasable_time_delta,
 			 value_32bit );
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->non_releasable_time_delta,
+			 ( (msiecf_url_record_header_v52_t *) data )->non_releasable_time_delta,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: non-releasable time delta\t\t\t: %" PRIu32 " seconds\n",
+		 "%s: non-releasable time delta\t\t: %" PRIu32 " seconds\n",
 		 function,
 		 value_32bit );
 
@@ -829,21 +632,21 @@ int libmsiecf_url_values_read(
 		 && ( io_handle->minor_version == 7 ) )
 		{
 			libcnotify_printf(
-			 "%s: unknown6\t\t\t\t\t: 0x%02" PRIx8 " 0x%02" PRIx8 " 0x%02" PRIx8 "\n",
+			 "%s: unknown6\t\t\t\t: 0x%02" PRIx8 " 0x%02" PRIx8 " 0x%02" PRIx8 "\n",
 			 function,
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown6[ 0 ],
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown6[ 1 ],
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown6[ 2 ] );
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown6[ 0 ],
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown6[ 1 ],
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown6[ 2 ] );
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
 			libcnotify_printf(
-			 "%s: unknown6\t\t\t\t\t: 0x%02" PRIx8 " 0x%02" PRIx8 " 0x%02" PRIx8 "\n",
+			 "%s: unknown6\t\t\t\t: 0x%02" PRIx8 " 0x%02" PRIx8 " 0x%02" PRIx8 "\n",
 			 function,
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown6[ 0 ],
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown6[ 1 ],
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown6[ 2 ] );
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown6[ 0 ],
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown6[ 1 ],
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown6[ 2 ] );
 		}
 		libcnotify_printf(
 		 "%s: filename offset\t\t\t\t: %" PRIu32 "\n",
@@ -851,7 +654,7 @@ int libmsiecf_url_values_read(
 		 filename_offset );
 
 		libcnotify_printf(
-		 "%s: cache entry flags\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: cache entry flags\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 cache_entry_flags );
 		libmsiecf_debug_print_cache_entry_flags(
@@ -860,95 +663,77 @@ int libmsiecf_url_values_read(
 		 "\n" );
 
 		libcnotify_printf(
-		 "%s: data offset\t\t\t\t\t: %" PRIu32 "\n",
+		 "%s: data offset\t\t\t\t: %" PRIu32 "\n",
 		 function,
-		 data_offset );
+		 url_data_offset );
 		libcnotify_printf(
-		 "%s: data size\t\t\t\t\t: %" PRIu32 "\n",
+		 "%s: data size\t\t\t\t: %" PRIu32 "\n",
 		 function,
-		 data_size );
+		 url_data_size );
 
 		if( ( io_handle->major_version == 4 )
 		 && ( io_handle->minor_version == 7 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown8,
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown8,
 			 value_32bit );
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown8,
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown8,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown8\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown8\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
 		if( ( io_handle->major_version == 4 )
 		 && ( io_handle->minor_version == 7 ) )
 		{
-			result = libfdatetime_fat_date_time_copy_from_byte_stream(
-			          fat_date_time,
-			          ( (msiecf_url_record_header_v47_t *) url_record_data )->last_checked_time,
-			          4,
-			          LIBFDATETIME_ENDIAN_LITTLE,
-			          error );
+			if( libmsiecf_debug_print_fat_date_time_value(
+			     function,
+			     "last checked time\t\t\t",
+			     ( (msiecf_url_record_header_v47_t *) data )->last_checked_time,
+			     4,
+			     LIBFDATETIME_ENDIAN_LITTLE,
+			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print FAT date time value.",
+				 function );
+
+				goto on_error;
+			}
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
-			result = libfdatetime_fat_date_time_copy_from_byte_stream(
-			          fat_date_time,
-			          ( (msiecf_url_record_header_v52_t *) url_record_data )->last_checked_time,
-			          4,
-			          LIBFDATETIME_ENDIAN_LITTLE,
-			          error );
-		}
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_CONVERSION,
-			 LIBCERROR_CONVERSION_ERROR_GENERIC,
-			 "%s: unable to copy FAT date time from byte stream.",
-			 function );
+			if( libmsiecf_debug_print_fat_date_time_value(
+			     function,
+			     "last checked time\t\t\t",
+			     ( (msiecf_url_record_header_v52_t *) data )->last_checked_time,
+			     4,
+			     LIBFDATETIME_ENDIAN_LITTLE,
+			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print FAT date time value.",
+				 function );
 
-			goto on_error;
+				goto on_error;
+			}
 		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfdatetime_fat_date_time_copy_to_utf16_string(
-		          fat_date_time,
-		          (uint16_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-		          error );
-#else
-		result = libfdatetime_fat_date_time_copy_to_utf8_string(
-		          fat_date_time,
-		          (uint8_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_CONVERSION,
-			 LIBCERROR_CONVERSION_ERROR_GENERIC,
-			 "%s: unable to copy FAT date time to date time string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: last checked time\t\t\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 date_time_string );
-
 		libcnotify_printf(
 		 "%s: number of hits\t\t\t\t: %" PRIu32 "\n",
 		 function,
@@ -958,115 +743,71 @@ int libmsiecf_url_values_read(
 		 && ( io_handle->minor_version == 7 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown9,
+			 ( (msiecf_url_record_header_v47_t *) data )->unknown9,
 			 value_32bit );
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown9,
+			 ( (msiecf_url_record_header_v52_t *) data )->unknown9,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: unknown9\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown9\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
 		if( ( io_handle->major_version == 4 )
 		 && ( io_handle->minor_version == 7 ) )
 		{
-			result = libfdatetime_fat_date_time_copy_from_byte_stream(
-			          fat_date_time,
-			          ( (msiecf_url_record_header_v47_t *) url_record_data )->unknown_time,
-			          4,
-			          LIBFDATETIME_ENDIAN_LITTLE,
-			          error );
+			if( libmsiecf_debug_print_fat_date_time_value(
+			     function,
+			     "unknown time\t\t\t\t",
+			     ( (msiecf_url_record_header_v47_t *) data )->unknown_time,
+			     4,
+			     LIBFDATETIME_ENDIAN_LITTLE,
+			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print FAT date time value.",
+				 function );
+
+				goto on_error;
+			}
 		}
 		else if( ( io_handle->major_version == 5 )
 		      && ( io_handle->minor_version == 2 ) )
 		{
-			result = libfdatetime_fat_date_time_copy_from_byte_stream(
-			          fat_date_time,
-			          ( (msiecf_url_record_header_v52_t *) url_record_data )->unknown_time,
-			          4,
-			          LIBFDATETIME_ENDIAN_LITTLE,
-			          error );
-		}
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_CONVERSION,
-			 LIBCERROR_CONVERSION_ERROR_GENERIC,
-			 "%s: unable to copy FAT date time from byte stream.",
-			 function );
+			if( libmsiecf_debug_print_fat_date_time_value(
+			     function,
+			     "unknown time\t\t\t\t",
+			     ( (msiecf_url_record_header_v52_t *) data )->unknown_time,
+			     4,
+			     LIBFDATETIME_ENDIAN_LITTLE,
+			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print FAT date time value.",
+				 function );
 
-			goto on_error;
-		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfdatetime_fat_date_time_copy_to_utf16_string(
-		          fat_date_time,
-		          (uint16_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-		          error );
-#else
-		result = libfdatetime_fat_date_time_copy_to_utf8_string(
-		          fat_date_time,
-		          (uint8_t *) date_time_string,
-		          32,
-		          LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_CONVERSION,
-			 LIBCERROR_CONVERSION_ERROR_GENERIC,
-			 "%s: unable to create FAT date time string.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "%s: unknown time\t\t\t\t\t: %" PRIs_SYSTEM "\n",
-		 function,
-		 date_time_string );
-
-		if( libfdatetime_filetime_free(
-		     &filetime,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free filetime.",
-			 function );
-
-			goto on_error;
-		}
-		if( libfdatetime_fat_date_time_free(
-		     &fat_date_time,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free FAT date time.",
-			 function );
-
-			goto on_error;
+				goto on_error;
+			}
 		}
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
 	if( unknown_offset > 0 )
 	{
-		if( unknown_offset > record_size )
+		if( unknown_offset > data_size )
 		{
 			if( ( item_flags & LIBMSIECF_ITEM_FLAG_PARTIAL ) == 0 )
 			{
@@ -1082,7 +823,7 @@ int libmsiecf_url_values_read(
 			else
 			{
 				memory_free(
-				 url_record_data );
+				 data );
 
 				return( 1 );
 			}
@@ -1094,7 +835,7 @@ int libmsiecf_url_values_read(
 			 "%s: unknown:\n",
 			 function );
 			libcnotify_print_data(
-			 &( url_record_data[ unknown_offset ] ),
+			 &( data[ unknown_offset ] ),
 			 8,
 			 0 );
 		}
@@ -1102,7 +843,7 @@ int libmsiecf_url_values_read(
 	}
 	if( location_offset > 0 )
 	{
-		if( location_offset > record_size )
+		if( location_offset > data_size )
 		{
 			if( ( item_flags & LIBMSIECF_ITEM_FLAG_PARTIAL ) == 0 )
 			{
@@ -1134,8 +875,8 @@ int libmsiecf_url_values_read(
 			}
 			value_size = libfvalue_value_type_set_data_string(
 			              url_values->location,
-			              &( url_record_data[ location_offset ] ),
-			              record_size - location_offset,
+			              &( data[ location_offset ] ),
+			              data_size - location_offset,
 			              io_handle->ascii_codepage,
 			              LIBFVALUE_VALUE_DATA_FLAG_MANAGED,
 			              error );
@@ -1155,7 +896,7 @@ int libmsiecf_url_values_read(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: location\t\t\t\t\t: ",
+				 "%s: location\t\t\t\t: ",
 				 function );
 
 				if( libfvalue_value_print(
@@ -1178,8 +919,8 @@ int libmsiecf_url_values_read(
 
 				if( libmsiecf_hash_calculate(
 				     &value_32bit,
-				     &( url_record_data[ location_offset ] ),
-				     record_size - location_offset,
+				     &( data[ location_offset ] ),
+				     data_size - location_offset,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
@@ -1192,12 +933,12 @@ int libmsiecf_url_values_read(
 					goto on_error;
 				}
 				libcnotify_printf(
-				 "%s: hash value\t\t\t\t\t: 0x%08" PRIx32 "\n",
+				 "%s: hash value\t\t\t\t: 0x%08" PRIx32 "\n",
 				 function,
 				 value_32bit );
 			}
 #endif
-			if( ( url_record_data[ location_offset + value_size - 1 ] != 0 )
+			if( ( data[ location_offset + value_size - 1 ] != 0 )
 			 && ( ( item_flags & LIBMSIECF_ITEM_FLAG_PARTIAL ) == 0 ) )
 			{
 				libcerror_error_set(
@@ -1213,72 +954,72 @@ int libmsiecf_url_values_read(
 			{
 				if( value_size >= 18 )
 				{
-					if( ( url_record_data[ location_offset ] == (uint8_t) ':' )
-					 && ( url_record_data[ location_offset + 1 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 1 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 2 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 2 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 3 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 3 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 4 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 4 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 5 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 5 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 6 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 6 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 7 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 7 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 8 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 8 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 9 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 9 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 10 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 10 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 11 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 11 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 12 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 12 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 13 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 13 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 14 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 14 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 15 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 15 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 16 ] >= (uint8_t) '0' )
-					 && ( url_record_data[ location_offset + 16 ] <= (uint8_t) '9' )
-					 && ( url_record_data[ location_offset + 17 ] == (uint8_t) ':' ) )
+					if( ( data[ location_offset ] == (uint8_t) ':' )
+					 && ( data[ location_offset + 1 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 1 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 2 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 2 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 3 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 3 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 4 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 4 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 5 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 5 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 6 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 6 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 7 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 7 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 8 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 8 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 9 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 9 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 10 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 10 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 11 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 11 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 12 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 12 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 13 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 13 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 14 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 14 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 15 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 15 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 16 ] >= (uint8_t) '0' )
+					 && ( data[ location_offset + 16 ] <= (uint8_t) '9' )
+					 && ( data[ location_offset + 17 ] == (uint8_t) ':' ) )
 					{
-						first_year  = (uint16_t) url_record_data[ location_offset + 1 ] - (uint8_t) '0';
+						first_year  = (uint16_t) data[ location_offset + 1 ] - (uint8_t) '0';
 						first_year *= 10;
-						first_year += (uint16_t) url_record_data[ location_offset + 2 ] - (uint8_t) '0';
+						first_year += (uint16_t) data[ location_offset + 2 ] - (uint8_t) '0';
 						first_year *= 10;
-						first_year += (uint16_t) url_record_data[ location_offset + 3 ] - (uint8_t) '0';
+						first_year += (uint16_t) data[ location_offset + 3 ] - (uint8_t) '0';
 						first_year *= 10;
-						first_year += (uint16_t) url_record_data[ location_offset + 4 ] - (uint8_t) '0';
+						first_year += (uint16_t) data[ location_offset + 4 ] - (uint8_t) '0';
 
-						first_month  = url_record_data[ location_offset + 5 ] - (uint8_t) '0';
+						first_month  = data[ location_offset + 5 ] - (uint8_t) '0';
 						first_month *= 10;
-						first_month += url_record_data[ location_offset + 6 ] - (uint8_t) '0';
+						first_month += data[ location_offset + 6 ] - (uint8_t) '0';
 
-						first_day_of_month  = url_record_data[ location_offset + 7 ] - (uint8_t) '0';
+						first_day_of_month  = data[ location_offset + 7 ] - (uint8_t) '0';
 						first_day_of_month *= 10;
-						first_day_of_month += url_record_data[ location_offset + 8 ] - (uint8_t) '0';
+						first_day_of_month += data[ location_offset + 8 ] - (uint8_t) '0';
 
-						second_year  = (uint16_t) url_record_data[ location_offset + 9 ] - (uint8_t) '0';
+						second_year  = (uint16_t) data[ location_offset + 9 ] - (uint8_t) '0';
 						second_year *= 10;
-						second_year += (uint16_t) url_record_data[ location_offset + 10 ] - (uint8_t) '0';
+						second_year += (uint16_t) data[ location_offset + 10 ] - (uint8_t) '0';
 						second_year *= 10;
-						second_year += (uint16_t) url_record_data[ location_offset + 11 ] - (uint8_t) '0';
+						second_year += (uint16_t) data[ location_offset + 11 ] - (uint8_t) '0';
 						second_year *= 10;
-						second_year += (uint16_t) url_record_data[ location_offset + 12 ] - (uint8_t) '0';
+						second_year += (uint16_t) data[ location_offset + 12 ] - (uint8_t) '0';
 
-						second_month  = url_record_data[ location_offset + 13 ] - (uint8_t) '0';
+						second_month  = data[ location_offset + 13 ] - (uint8_t) '0';
 						second_month *= 10;
-						second_month += url_record_data[ location_offset + 14 ] - (uint8_t) '0';
+						second_month += data[ location_offset + 14 ] - (uint8_t) '0';
 
-						second_day_of_month  = url_record_data[ location_offset + 15 ] - (uint8_t) '0';
+						second_day_of_month  = data[ location_offset + 15 ] - (uint8_t) '0';
 						second_day_of_month *= 10;
-						second_day_of_month += url_record_data[ location_offset + 16 ] - (uint8_t) '0';
+						second_day_of_month += data[ location_offset + 16 ] - (uint8_t) '0';
 
 						number_of_days = 0;
 
@@ -1350,7 +1091,7 @@ int libmsiecf_url_values_read(
 				if( value_size >= 11 )
 				{
 					if( memory_compare(
-					     &( url_record_data[ location_offset ] ),
+					     &( data[ location_offset ] ),
 					     "iedownload:",
 					     11 ) == 0 )
 					{
@@ -1363,35 +1104,35 @@ int libmsiecf_url_values_read(
 				if( value_size >= 9 )
 				{
 					if( memory_compare(
-					     &( url_record_data[ location_offset ] ),
+					     &( data[ location_offset ] ),
 					     "DOMStore:",
 					     9 ) == 0 )
 					{
 						url_values->type = LIBMSIECF_URL_ITEM_TYPE_DOM_STORE;
 					}
 					else if( memory_compare(
-					          &( url_record_data[ location_offset ] ),
+					          &( data[ location_offset ] ),
 					          "feedplat:",
 					          9 ) == 0 )
 					{
 						url_values->type = LIBMSIECF_URL_ITEM_TYPE_RSS_FEED;
 					}
 					else if( memory_compare(
-					          &( url_record_data[ location_offset ] ),
+					          &( data[ location_offset ] ),
 					          "iecompat:",
 					          9 ) == 0 )
 					{
 						url_values->type = LIBMSIECF_URL_ITEM_TYPE_COMPATIBILITY;
 					}
 					else if( memory_compare(
-					          &( url_record_data[ location_offset ] ),
+					          &( data[ location_offset ] ),
 					          "PrivacIE:",
 					          9 ) == 0 )
 					{
 						url_values->type = LIBMSIECF_URL_ITEM_TYPE_INPRIVATE_FILTERING;
 					}
 					else if( memory_compare(
-					          &( url_record_data[ location_offset ] ),
+					          &( data[ location_offset ] ),
 					          "userdata:",
 					          9 ) == 0 )
 					{
@@ -1404,7 +1145,7 @@ int libmsiecf_url_values_read(
 				if( value_size >= 8 )
 				{
 					if( memory_compare(
-					     &( url_record_data[ location_offset ] ),
+					     &( data[ location_offset ] ),
 					     "Visited:",
 					     8 ) == 0 )
 					{
@@ -1417,7 +1158,7 @@ int libmsiecf_url_values_read(
 				if( value_size >= 7 )
 				{
 					if( memory_compare(
-					     &( url_record_data[ location_offset ] ),
+					     &( data[ location_offset ] ),
 					     "Cookie:",
 					     7 ) == 0 )
 					{
@@ -1430,7 +1171,7 @@ int libmsiecf_url_values_read(
 				if( value_size >= 6 )
 				{
 					if( memory_compare(
-					     &( url_record_data[ location_offset ] ),
+					     &( data[ location_offset ] ),
 					     "ietld:",
 					     6 ) == 0 )
 					{
@@ -1450,7 +1191,7 @@ int libmsiecf_url_values_read(
 	}
 	if( filename_offset > 0 )
 	{
-		if( filename_offset > record_size )
+		if( filename_offset > data_size )
 		{
 			if( ( item_flags & LIBMSIECF_ITEM_FLAG_PARTIAL ) == 0 )
 			{
@@ -1482,8 +1223,8 @@ int libmsiecf_url_values_read(
 			}
 			value_size = libfvalue_value_type_set_data_string(
 			              url_values->filename,
-			              &( url_record_data[ filename_offset ] ),
-			              record_size - filename_offset,
+			              &( data[ filename_offset ] ),
+			              data_size - filename_offset,
 			              io_handle->ascii_codepage,
 			              LIBFVALUE_VALUE_DATA_FLAG_MANAGED,
 			              error );
@@ -1503,7 +1244,7 @@ int libmsiecf_url_values_read(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: filename\t\t\t\t\t: ",
+				 "%s: filename\t\t\t\t: ",
 				 function );
 
 				if( libfvalue_value_print(
@@ -1525,7 +1266,7 @@ int libmsiecf_url_values_read(
 				 "\n" );
 			}
 #endif
-			if( ( url_record_data[ filename_offset + value_size - 1 ] != 0 )
+			if( ( data[ filename_offset + value_size - 1 ] != 0 )
 			 && ( ( item_flags & LIBMSIECF_ITEM_FLAG_PARTIAL ) == 0 ) )
 			{
 				libcerror_error_set(
@@ -1539,9 +1280,9 @@ int libmsiecf_url_values_read(
 			}
 		}
 	}
-	if( data_offset > 0 )
+	if( url_data_offset > 0 )
 	{
-		if( data_offset > record_size )
+		if( url_data_offset > data_size )
 		{
 			if( ( item_flags & LIBMSIECF_ITEM_FLAG_PARTIAL ) == 0 )
 			{
@@ -1557,7 +1298,7 @@ int libmsiecf_url_values_read(
 		}
 		else
 		{
-			if( ( data_offset + data_size ) > record_size )
+			if( ( url_data_offset + url_data_size ) > data_size )
 			{
 				if( ( item_flags & LIBMSIECF_ITEM_FLAG_PARTIAL ) == 0 )
 				{
@@ -1572,10 +1313,10 @@ int libmsiecf_url_values_read(
 				}
 				else
 				{
-					data_size = record_size - data_offset;
+					url_data_size = data_size - url_data_offset;
 				}
 			}
-			url_values->data_size = (size_t) data_size;
+			url_values->data_size = (size_t) url_data_size;
 
 			url_values->data = (uint8_t *) memory_allocate(
 			                                sizeof( uint8_t ) * url_values->data_size );
@@ -1593,7 +1334,7 @@ int libmsiecf_url_values_read(
 			}
 			if( memory_copy(
 			     url_values->data,
-			     &( url_record_data[ data_offset ] ),
+			     &( data[ url_data_offset ] ),
 			     url_values->data_size ) == NULL )
 			{
 				libcerror_error_set(
@@ -1612,8 +1353,8 @@ int libmsiecf_url_values_read(
 				 "%s: data:\n",
 				 function );
 				libcnotify_print_data(
-				 &( url_record_data[ data_offset ] ),
-				 data_size,
+				 &( data[ url_data_offset ] ),
+				 url_data_size,
 				 0 );
 
 				if( url_values->type == LIBMSIECF_URL_ITEM_TYPE_CACHE )
@@ -1621,23 +1362,23 @@ int libmsiecf_url_values_read(
 					/* The data string in not necessarily terminated by an end-of-string character
 					 */
 					libcnotify_printf(
-					 "%s: data string\t\t\t\t\t: ",
+					 "%s: data string\t\t\t\t: ",
 					 function );
 
 					for( string_index = 0;
-					     string_index < data_size;
+					     string_index < url_data_size;
 					     string_index++ )
 					{
 						libcnotify_printf(
 						 "%c",
-						 url_record_data[ data_offset + string_index ] );
+						 data[ url_data_offset + string_index ] );
 					}
 					libcnotify_printf(
 					 "\n" );
 				}
 				else if( url_values->type == LIBMSIECF_URL_ITEM_TYPE_HISTORY )
 				{
-					visited_entry_data = &( url_record_data[ data_offset ] );
+					visited_entry_data = &( data[ url_data_offset ] );
 
 					do
 					{
@@ -1703,11 +1444,6 @@ int libmsiecf_url_values_read(
 #endif
 		}
 	}
-	memory_free(
-	 url_record_data );
-
-	url_record_data = NULL;
-
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -1746,28 +1482,157 @@ int libmsiecf_url_values_read(
 			}
 			break;
 	}
-#endif
+#endif /* defined( HAVE_VERBOSE_OUTPUT ) */
+
 	return( 1 );
 
 on_error:
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( filetime != NULL )
+/* TODO clean up */
+	return( -1 );
+}
+
+/* Reads the URL values from an URL record
+ * Returns 1 if successful or -1 on error
+ */
+int libmsiecf_url_values_read_file_io_handle(
+     libmsiecf_url_values_t *url_values,
+     libmsiecf_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     off64_t url_record_offset,
+     size32_t record_size,
+     uint8_t item_flags,
+     libcerror_error_t **error )
+{
+	uint8_t *record_data  = NULL;
+	static char *function = "libmsiecf_url_values_read_file_io_handle";
+	ssize_t read_count    = 0;
+
+	if( url_values == NULL )
 	{
-		libfdatetime_filetime_free(
-		 &filetime,
-		 NULL );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid URL values.",
+		 function );
+
+		return( -1 );
 	}
-	if( fat_date_time != NULL )
+	if( record_size > (size32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
 	{
-		libfdatetime_fat_date_time_free(
-		 &fat_date_time,
-		 NULL );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid record size value exceeds maximum allocation size.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( record_size == 0 )
+	 || ( ( record_size % 8 ) != 0 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported record size.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: reading URL record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 url_record_offset,
+		 url_record_offset );
 	}
 #endif
-	if( url_record_data != NULL )
+	if( libbfio_handle_seek_offset(
+	     file_io_handle,
+	     url_record_offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek URL record offset: %" PRIi64 ".",
+		 function,
+		 url_record_offset );
+
+		goto on_error;
+	}
+	/* Add one block for tainted records
+	 */
+	if( ( item_flags & LIBMSIECF_ITEM_FLAG_TAINTED ) != 0 )
+	{
+		record_size += LIBMSIECF_DEFAULT_BLOCK_SIZE;
+	}
+	record_data = (uint8_t *) memory_allocate(
+	                           record_size );
+
+	if( record_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create URL record data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libbfio_handle_read_buffer(
+	              file_io_handle,
+	              record_data,
+	              record_size,
+	              error );
+
+	if( read_count != (ssize_t) record_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read URL record data.",
+		 function );
+
+		goto on_error;
+	}
+	if( libmsiecf_url_values_read_data(
+	     url_values,
+	     io_handle,
+	     record_data,
+	     (size_t) record_size,
+	     item_flags,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read URL record.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 record_data );
+
+	record_data = NULL;
+
+	return( 1 );
+
+on_error:
+	if( record_data != NULL )
 	{
 		memory_free(
-		 url_record_data );
+		 record_data );
 	}
 	return( -1 );
 }
