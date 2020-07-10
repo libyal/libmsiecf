@@ -434,19 +434,47 @@ PyObject *pymsiecf_open_new_file(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *pymsiecf_file = NULL;
+	pymsiecf_file_t *pymsiecf_file = NULL;
+	static char *function          = "pymsiecf_open_new_file";
 
 	PYMSIECF_UNREFERENCED_PARAMETER( self )
 
-	pymsiecf_file_init(
-	 (pymsiecf_file_t *) pymsiecf_file );
+	/* PyObject_New does not invoke tp_init
+	 */
+	pymsiecf_file = PyObject_New(
+	                 struct pymsiecf_file,
+	                 &pymsiecf_file_type_object );
 
-	pymsiecf_file_open(
-	 (pymsiecf_file_t *) pymsiecf_file,
-	 arguments,
-	 keywords );
+	if( pymsiecf_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create file.",
+		 function );
 
-	return( pymsiecf_file );
+		goto on_error;
+	}
+	if( pymsiecf_file_init(
+	     pymsiecf_file ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pymsiecf_file_open(
+	     pymsiecf_file,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pymsiecf_file );
+
+on_error:
+	if( pymsiecf_file != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pymsiecf_file );
+	}
+	return( NULL );
 }
 
 /* Creates a new file object and opens it using a file-like object
@@ -457,19 +485,47 @@ PyObject *pymsiecf_open_new_file_with_file_object(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *pymsiecf_file = NULL;
+	pymsiecf_file_t *pymsiecf_file = NULL;
+	static char *function          = "pymsiecf_open_new_file_with_file_object";
 
 	PYMSIECF_UNREFERENCED_PARAMETER( self )
 
-	pymsiecf_file_init(
-	 (pymsiecf_file_t *) pymsiecf_file );
+	/* PyObject_New does not invoke tp_init
+	 */
+	pymsiecf_file = PyObject_New(
+	                 struct pymsiecf_file,
+	                 &pymsiecf_file_type_object );
 
-	pymsiecf_file_open_file_object(
-	 (pymsiecf_file_t *) pymsiecf_file,
-	 arguments,
-	 keywords );
+	if( pymsiecf_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create file.",
+		 function );
 
-	return( pymsiecf_file );
+		goto on_error;
+	}
+	if( pymsiecf_file_init(
+	     pymsiecf_file ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pymsiecf_file_open_file_object(
+	     pymsiecf_file,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pymsiecf_file );
+
+on_error:
+	if( pymsiecf_file != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pymsiecf_file );
+	}
+	return( NULL );
 }
 
 #if PY_MAJOR_VERSION >= 3

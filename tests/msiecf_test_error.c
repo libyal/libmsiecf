@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "msiecf_test_libcerror.h"
 #include "msiecf_test_libmsiecf.h"
 #include "msiecf_test_macros.h"
 #include "msiecf_test_unused.h"
