@@ -199,6 +199,7 @@ int libmsiecf_io_handle_read_hash_table(
      libcerror_error_t **error )
 {
 	static char *function = "libmsiecf_io_handle_read_hash_table";
+	int recursion_depth   = 0;
 
 	if( io_handle == NULL )
 	{
@@ -213,6 +214,17 @@ int libmsiecf_io_handle_read_hash_table(
 	}
 	while( hash_table_offset != 0 )
 	{
+		if( recursion_depth >= LIBMSIECF_MAXIMUM_BTREE_NODE_RECURSION_DEPTH )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid recursion depth value out of bounds.",
+			 function );
+
+			return( -1 );
+		}
 		if( libmsiecf_hash_table_read(
 		     hash_table,
 		     &hash_table_offset,
@@ -231,6 +243,7 @@ int libmsiecf_io_handle_read_hash_table(
 
 			return( -1 );
 		}
+		recursion_depth++;
 	}
 	return( 1 );
 }
@@ -251,7 +264,7 @@ int libmsiecf_io_handle_read_record_scan(
 
 	libmsiecf_item_descriptor_t *item_descriptor      = NULL;
 	libmsiecf_item_descriptor_t *last_item_descriptor = NULL;
-	static char *function                             = "libmsiecf_io_handle_record_scan";
+	static char *function                             = "libmsiecf_io_handle_read_record_scan";
 	intptr_t *value                                   = NULL;
 	uint64_t range_offset                             = 0;
 	uint64_t range_size                               = 0;
@@ -455,6 +468,11 @@ int libmsiecf_io_handle_read_record_scan(
 			number_of_blocks = 1;
 			item_type        = LIBMSIECF_ITEM_TYPE_UNDEFINED;
 		}
+		if( ( number_of_blocks == 0 )
+		 || ( number_of_blocks > ( ( io_handle->file_size - file_offset ) / io_handle->block_size ) ) )
+		{
+			number_of_blocks = 1;
+		}
 		if( last_item_descriptor != NULL )
 		{
 			/* Flag the previous item descriptor it can contain an invalid
@@ -594,7 +612,8 @@ int libmsiecf_io_handle_read_record_scan(
 					 "\n" );
 				}
 			}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 			if( item_type != LIBMSIECF_ITEM_TYPE_UNDEFINED )
 			{
 				/* Add an allocated item

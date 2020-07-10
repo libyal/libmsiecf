@@ -426,6 +426,18 @@ int libmsiecf_cache_directory_table_read_file_io_handle(
 	table_data_size = sizeof( msiecf_cache_directory_table_header_t ) +
 	                  ( (size_t) number_of_cache_directories * sizeof( msiecf_cache_directory_entry_t ) );
 
+	if( ( table_data_size == 0 )
+	 || ( table_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid table data size value exceeds out of bounds.",
+		 function );
+
+		goto on_error;
+	}
 	table_data = (uint8_t *) memory_allocate(
 	                          table_data_size );
 

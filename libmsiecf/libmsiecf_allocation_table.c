@@ -127,6 +127,21 @@ int libmsiecf_allocation_table_read(
 	 */
 	read_size = number_of_blocks / 8;
 
+	if( read_size == 0 )
+	{
+		return( 1 );
+	}
+	if( read_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid allocation table data size value exceeds maximum allocation size.",
+		 function );
+
+		goto on_error;
+	}
 	if( (off64_t) read_size > ( base_offset - allocation_table_offset ) )
 	{
 		libcerror_error_set(
@@ -136,7 +151,7 @@ int libmsiecf_allocation_table_read(
 		 "%s: invalid allocation table size value exceeds base offset.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_handle_seek_offset(
 	     file_io_handle,
@@ -152,7 +167,7 @@ int libmsiecf_allocation_table_read(
 		 function,
 		 allocation_table_offset );
 
-		return( -1 );
+		goto on_error;
 	}
 	allocation_table_data = (uint8_t *) memory_allocate(
 	                                     read_size );
@@ -203,7 +218,9 @@ int libmsiecf_allocation_table_read(
 	{
 		allocation_table_entry = allocation_table_data[ table_iterator ];
 
-		for( bit_iterator = 0; bit_iterator < 8; bit_iterator++ )
+		for( bit_iterator = 0;
+		     bit_iterator < 8;
+		     bit_iterator++ )
 		{
 			if( ( allocation_table_entry & 0x01 ) == 0 )
 			{

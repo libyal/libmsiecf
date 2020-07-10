@@ -116,7 +116,6 @@ int libmsiecf_hash_table_read(
 		 hash_table_offset );
 	}
 #endif
-
 	if( libbfio_handle_seek_offset(
 	     file_io_handle,
 	     hash_table_offset,
@@ -131,7 +130,7 @@ int libmsiecf_hash_table_read(
 		 function,
 		 hash_table_offset );
 
-		return( -1 );
+		goto on_error;
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
@@ -148,7 +147,7 @@ int libmsiecf_hash_table_read(
 		 "%s: unable to read HASH record header.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -174,7 +173,7 @@ int libmsiecf_hash_table_read(
 		 "%s: unsupported signature.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	byte_stream_copy_to_uint32_little_endian(
 	 hash_record_header.number_of_blocks,
@@ -216,21 +215,23 @@ int libmsiecf_hash_table_read(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	read_size = ( number_of_blocks * block_size ) - sizeof( msiecf_hash_record_header_t );
 
-	if( read_size > (size_t) SSIZE_MAX )
+	if( read_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid read size value exceeds maximum.",
+		 "%s: invalid HASH record data size value exceeds maximum allocation size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	if( ( read_size % 8 ) != 0 )
+	if( ( read_size == 0 )
+	 || ( ( read_size % 8 ) != 0 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -239,7 +240,7 @@ int libmsiecf_hash_table_read(
 		 "%s: unsupported HASH record data size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	hash_record_data = (uint8_t *) memory_allocate(
 	                                read_size );
@@ -253,7 +254,7 @@ int libmsiecf_hash_table_read(
 		 "%s: unable to create HASH record data.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
@@ -270,10 +271,7 @@ int libmsiecf_hash_table_read(
 		 "%s: unable to read HASH record data.",
 		 function );
 
-		memory_free(
-		 hash_record_data );
-
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -284,7 +282,7 @@ int libmsiecf_hash_table_read(
 		libcnotify_print_data(
 		 hash_record_data,
 		 read_size,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	read_size /= 8;
@@ -322,7 +320,6 @@ int libmsiecf_hash_table_read(
 			 entry_offset );
 		}
 #endif
-
 		/* Skip empty entries
 		 */
 		if( entry_hash == entry_offset )
@@ -359,6 +356,8 @@ int libmsiecf_hash_table_read(
 	memory_free(
 	 hash_record_data );
 
+	hash_record_data = NULL;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -371,5 +370,13 @@ int libmsiecf_hash_table_read(
 	}
 #endif
 	return( 1 );
+
+on_error:
+	if( hash_record_data != NULL )
+	{
+		memory_free(
+		 hash_record_data );
+	}
+	return( -1 );
 }
 

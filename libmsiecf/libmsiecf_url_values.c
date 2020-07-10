@@ -192,30 +192,29 @@ int libmsiecf_url_values_read_data(
      uint8_t item_flags,
      libcerror_error_t **error )
 {
-	static char *function       = "libmsiecf_url_values_read_data";
-	size_t required_data_size   = 0;
-	ssize_t value_size          = 0;
-	uint32_t cache_entry_flags  = 0;
-	uint32_t filename_offset    = 0;
-	uint32_t location_offset    = 0;
-	uint32_t unknown_offset     = 0;
-	uint32_t url_data_offset    = 0;
-	uint32_t url_data_size      = 0;
-	uint16_t first_year         = 0;
-	uint16_t second_year        = 0;
-	uint8_t first_day_of_month  = 0;
-	uint8_t first_month         = 0;
-	uint8_t number_of_days      = 0;
-	uint8_t second_day_of_month = 0;
-	uint8_t second_month        = 0;
+	static char *function             = "libmsiecf_url_values_read_data";
+	size_t required_data_size         = 0;
+	ssize_t value_size                = 0;
+	uint32_t cache_entry_flags        = 0;
+	uint32_t filename_offset          = 0;
+	uint32_t location_offset          = 0;
+	uint32_t unknown_offset           = 0;
+	uint32_t url_data_offset          = 0;
+	uint32_t url_data_size            = 0;
+	uint16_t first_year               = 0;
+	uint16_t second_year              = 0;
+	uint8_t first_day_of_month        = 0;
+	uint8_t first_month               = 0;
+	uint8_t number_of_days            = 0;
+	uint8_t second_day_of_month       = 0;
+	uint8_t second_month              = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint8_t *visited_entry_data = NULL;
-	size_t string_index         = 0;
-	uint32_t value_32bit        = 0;
-	uint16_t value_16bit        = 0;
-	int result                  = 0;
-	int visited_entry_index     = 0;
+	const uint8_t *visited_entry_data = NULL;
+	size_t string_index               = 0;
+	uint32_t value_32bit              = 0;
+	uint16_t value_16bit              = 0;
+	int visited_entry_index           = 0;
 #endif
 
 	if( url_values == NULL )
@@ -1316,10 +1315,20 @@ int libmsiecf_url_values_read_data(
 					url_data_size = data_size - url_data_offset;
 				}
 			}
-			url_values->data_size = (size_t) url_data_size;
+			if( ( url_data_size == 0 )
+			 || ( url_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid URL data size value exceeds out of bounds.",
+				 function );
 
+				goto on_error;
+			}
 			url_values->data = (uint8_t *) memory_allocate(
-			                                sizeof( uint8_t ) * url_values->data_size );
+			                                sizeof( uint8_t ) * url_data_size );
 
 			if( url_values->data == NULL )
 			{
@@ -1332,6 +1341,8 @@ int libmsiecf_url_values_read_data(
 
 				goto on_error;
 			}
+			url_values->data_size = (size_t) url_data_size;
+
 			if( memory_copy(
 			     url_values->data,
 			     &( data[ url_data_offset ] ),

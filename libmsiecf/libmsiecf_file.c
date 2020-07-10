@@ -1205,7 +1205,7 @@ int libmsiecf_internal_file_open_read(
 		 "%s: unable to read allocation table.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 /* TODO
 	if( ! ( ( ( io_handle->major_version == 4 )
@@ -1220,7 +1220,7 @@ int libmsiecf_internal_file_open_read(
 		 "%s: unsupported format version.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 */
 #if defined( HAVE_DEBUG_OUTPUT )
