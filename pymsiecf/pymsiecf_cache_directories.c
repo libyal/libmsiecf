@@ -223,7 +223,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a cache directories object
+/* Initializes a cache directories object
  * Returns 0 if successful or -1 on error
  */
 int pymsiecf_cache_directories_init(

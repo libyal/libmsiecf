@@ -256,7 +256,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes an item flags object
+/* Initializes an item flags object
  * Returns 0 if successful or -1 on error
  */
 int pymsiecf_item_flags_init(

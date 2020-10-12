@@ -396,7 +396,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a url types object
+/* Initializes a url types object
  * Returns 0 if successful or -1 on error
  */
 int pymsiecf_url_types_init(
