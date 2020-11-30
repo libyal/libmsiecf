@@ -30,7 +30,11 @@
 
 #include <libmsiecf/extern.h>
 
+#if defined( __CYGWIN__ )
+#define LIBMSIECF_EXTERN_VARIABLE	extern
+#else
 #define LIBMSIECF_EXTERN_VARIABLE	LIBMSIECF_EXTERN
+#endif
 
 #else
 #define LIBMSIECF_EXTERN		/* extern */
