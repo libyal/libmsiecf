@@ -330,26 +330,11 @@ int libmsiecf_io_handle_read_record_scan(
 			 file_offset );
 		}
 #endif
-		if( libbfio_handle_seek_offset(
-		     file_io_handle,
-		     file_offset,
-		     SEEK_SET,
-		     error ) == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to seek offset: %" PRIi64 ".",
-			 function,
-			 file_offset );
-
-			goto on_error;
-		}
-		read_count = libbfio_handle_read_buffer(
+		read_count = libbfio_handle_read_buffer_at_offset(
 			      file_io_handle,
 			      (uint8_t *) &record_header,
 			      sizeof( msiecf_record_header_t ),
+			      file_offset,
 			      error );
 
 		if( read_count != (ssize_t) sizeof( msiecf_record_header_t ) )
@@ -358,8 +343,10 @@ int libmsiecf_io_handle_read_record_scan(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read record header.",
-			 function );
+			 "%s: unable to read record header at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 file_offset,
+			 file_offset );
 
 			goto on_error;
 		}

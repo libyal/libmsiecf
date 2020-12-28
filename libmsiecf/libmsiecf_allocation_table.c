@@ -153,22 +153,6 @@ int libmsiecf_allocation_table_read(
 
 		goto on_error;
 	}
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     allocation_table_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek allocation table offset: %" PRIi64 ".",
-		 function,
-		 allocation_table_offset );
-
-		goto on_error;
-	}
 	allocation_table_data = (uint8_t *) memory_allocate(
 	                                     read_size );
 
@@ -183,10 +167,11 @@ int libmsiecf_allocation_table_read(
 
 		goto on_error;
 	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              allocation_table_data,
 	              read_size,
+	              allocation_table_offset,
 	              error );
 
 	if( read_count != (ssize_t) read_size )
@@ -195,8 +180,10 @@ int libmsiecf_allocation_table_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read allocation table.",
-		 function );
+		 "%s: unable to read allocation table at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 allocation_table_offset,
+		 allocation_table_offset );
 
 		goto on_error;
 	}

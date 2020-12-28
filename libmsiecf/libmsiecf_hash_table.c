@@ -116,26 +116,11 @@ int libmsiecf_hash_table_read(
 		 hash_table_offset );
 	}
 #endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     hash_table_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek HASH record offset: %" PRIi64 ".",
-		 function,
-		 hash_table_offset );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              (uint8_t *) &hash_record_header,
 	              sizeof( msiecf_hash_record_header_t ),
+	              hash_table_offset,
 	              error );
 
 	if( read_count != (ssize_t) sizeof( msiecf_hash_record_header_t ) )
@@ -144,8 +129,10 @@ int libmsiecf_hash_table_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read HASH record header.",
-		 function );
+		 "%s: unable to read HASH record header at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 hash_table_offset,
+		 hash_table_offset );
 
 		goto on_error;
 	}

@@ -374,27 +374,11 @@ int libmsiecf_cache_directory_table_read_file_io_handle(
 		 file_offset );
 	}
 #endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek cache directory table offset: %" PRIi64 " (0x%08" PRIx64 ").",
-		 function,
-		 file_offset,
-		 file_offset );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              header_data,
 	              sizeof( msiecf_cache_directory_table_header_t ),
+	              file_offset,
 	              error );
 
 	if( read_count != (ssize_t) sizeof( msiecf_cache_directory_table_header_t ) )
@@ -403,8 +387,10 @@ int libmsiecf_cache_directory_table_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read cache directory table header data.",
-		 function );
+		 "%s: unable to read cache directory table header data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
 
 		goto on_error;
 	}

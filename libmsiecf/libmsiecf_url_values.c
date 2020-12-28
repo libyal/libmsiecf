@@ -1552,32 +1552,6 @@ int libmsiecf_url_values_read_file_io_handle(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading URL record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 url_record_offset,
-		 url_record_offset );
-	}
-#endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     url_record_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek URL record offset: %" PRIi64 ".",
-		 function,
-		 url_record_offset );
-
-		goto on_error;
-	}
 	/* Add one block for tainted records
 	 */
 	if( ( item_flags & LIBMSIECF_ITEM_FLAG_TAINTED ) != 0 )
@@ -1598,10 +1572,21 @@ int libmsiecf_url_values_read_file_io_handle(
 
 		goto on_error;
 	}
-	read_count = libbfio_handle_read_buffer(
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: reading URL record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 url_record_offset,
+		 url_record_offset );
+	}
+#endif
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              record_data,
 	              record_size,
+	              url_record_offset,
 	              error );
 
 	if( read_count != (ssize_t) record_size )
@@ -1610,8 +1595,10 @@ int libmsiecf_url_values_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read URL record data.",
-		 function );
+		 "%s: unable to read URL record data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 url_record_offset,
+		 url_record_offset );
 
 		goto on_error;
 	}
