@@ -144,6 +144,9 @@ stamp-h[1-9]
 /tests/msiecf_test_redirected
 /tests/msiecf_test_redirected_values
 /tests/msiecf_test_support
+/tests/msiecf_test_tools_info_handle
+/tests/msiecf_test_tools_output
+/tests/msiecf_test_tools_signal
 /tests/msiecf_test_url
 /tests/msiecf_test_url_values
 /tests/tmp*

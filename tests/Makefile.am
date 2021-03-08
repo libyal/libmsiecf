@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
@@ -25,6 +27,7 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_tools.sh \
 	test_msiecfinfo.sh \
 	test_msiecfexport.sh \
 	$(TESTS_PYMSIECF)
@@ -36,7 +39,8 @@ check_SCRIPTS = \
 	test_msiecfexport.sh \
 	test_msiecfinfo.sh \
 	test_python_module.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_tools.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -57,6 +61,9 @@ check_PROGRAMS = \
 	msiecf_test_redirected \
 	msiecf_test_redirected_values \
 	msiecf_test_support \
+	msiecf_test_tools_info_handle \
+	msiecf_test_tools_output \
+	msiecf_test_tools_signal \
 	msiecf_test_url \
 	msiecf_test_url_values
 
@@ -299,6 +306,42 @@ msiecf_test_support_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_tools_info_handle_SOURCES = \
+	../msiecftools/info_handle.c ../msiecftools/info_handle.h \
+	msiecf_test_libcerror.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_tools_info_handle.c \
+	msiecf_test_unused.h
+
+msiecf_test_tools_info_handle_LDADD = \
+	@LIBFDATETIME_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_tools_output_SOURCES = \
+	../msiecftools/msiecftools_output.c ../msiecftools/msiecftools_output.h \
+	msiecf_test_libcerror.h \
+	msiecf_test_macros.h \
+	msiecf_test_tools_output.c \
+	msiecf_test_unused.h
+
+msiecf_test_tools_output_LDADD = \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_tools_signal_SOURCES = \
+	../msiecftools/msiecftools_signal.c ../msiecftools/msiecftools_signal.h \
+	msiecf_test_libcerror.h \
+	msiecf_test_macros.h \
+	msiecf_test_tools_signal.c \
+	msiecf_test_unused.h
+
+msiecf_test_tools_signal_LDADD = \
 	../libmsiecf/libmsiecf.la \
 	@LIBCERROR_LIBADD@
 

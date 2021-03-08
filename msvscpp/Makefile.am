@@ -29,6 +29,9 @@ MSVSCPP_FILES = \
 	msiecf_test_redirected/msiecf_test_redirected.vcproj \
 	msiecf_test_redirected_values/msiecf_test_redirected_values.vcproj \
 	msiecf_test_support/msiecf_test_support.vcproj \
+	msiecf_test_tools_info_handle/msiecf_test_tools_info_handle.vcproj \
+	msiecf_test_tools_output/msiecf_test_tools_output.vcproj \
+	msiecf_test_tools_signal/msiecf_test_tools_signal.vcproj \
 	msiecf_test_url/msiecf_test_url.vcproj \
 	msiecf_test_url_values/msiecf_test_url_values.vcproj \
 	msiecfexport/msiecfexport.vcproj \
