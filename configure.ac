@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libmsiecf],
- [20210112],
+ [20210316],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
