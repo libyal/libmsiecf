@@ -38,15 +38,16 @@ class FileTypeTests(unittest.TestCase):
 
   def test_open(self):
     """Tests the open function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
 
     with self.assertRaises(IOError):
-      msiecf_file.open(unittest.source)
+      msiecf_file.open(test_source)
 
     msiecf_file.close()
 
@@ -54,19 +55,20 @@ class FileTypeTests(unittest.TestCase):
       msiecf_file.open(None)
 
     with self.assertRaises(ValueError):
-      msiecf_file.open(unittest.source, mode="w")
+      msiecf_file.open(test_source, mode="w")
 
   def test_open_file_object(self):
     """Tests the open_file_object function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
-    if not os.path.isfile(unittest.source):
+    if not os.path.isfile(test_source):
       raise unittest.SkipTest("source not a regular file")
 
     msiecf_file = pymsiecf.file()
 
-    with open(unittest.source, "rb") as file_object:
+    with open(test_source, "rb") as file_object:
 
       msiecf_file.open_file_object(file_object)
 
@@ -83,7 +85,8 @@ class FileTypeTests(unittest.TestCase):
 
   def test_close(self):
     """Tests the close function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
@@ -93,21 +96,22 @@ class FileTypeTests(unittest.TestCase):
 
   def test_open_close(self):
     """Tests the open and close functions."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       return
 
     msiecf_file = pymsiecf.file()
 
     # Test open and close.
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
     msiecf_file.close()
 
     # Test open and close a second time to validate clean up on close.
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
     msiecf_file.close()
 
-    if os.path.isfile(unittest.source):
-      with open(unittest.source, "rb") as file_object:
+    if os.path.isfile(test_source):
+      with open(test_source, "rb") as file_object:
 
         # Test open_file_object and close.
         msiecf_file.open_file_object(file_object)
@@ -146,12 +150,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_size(self):
     """Tests the get_size function and size property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
 
     size = msiecf_file.get_size()
     self.assertIsNotNone(size)
@@ -162,12 +167,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_ascii_codepage(self):
     """Tests the get_ascii_codepage function and ascii_codepage property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
 
     ascii_codepage = msiecf_file.get_ascii_codepage()
     self.assertIsNotNone(ascii_codepage)
@@ -178,12 +184,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_number_of_cache_directories(self):
     """Tests the get_number_of_cache_directories function and number_of_cache_directories property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
 
     number_of_cache_directories = msiecf_file.get_number_of_cache_directories()
     self.assertIsNotNone(number_of_cache_directories)
@@ -194,12 +201,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_number_of_items(self):
     """Tests the get_number_of_items function and number_of_items property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
 
     number_of_items = msiecf_file.get_number_of_items()
     self.assertIsNotNone(number_of_items)
@@ -210,12 +218,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_number_of_recovered_items(self):
     """Tests the get_number_of_recovered_items function and number_of_recovered_items property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(unittest.source)
+    msiecf_file.open(test_source)
 
     number_of_recovered_items = msiecf_file.get_number_of_recovered_items()
     self.assertIsNotNone(number_of_recovered_items)

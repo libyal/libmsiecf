@@ -32,12 +32,13 @@ class ItemTypeTests(unittest.TestCase):
 
   def test_get_type(self):
     """Tests the get_type function and type property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_item = pymsiecf.item()
 
-    msiecf_item.open(unittest.source)
+    msiecf_item.open(test_source)
 
     type = msiecf_item.get_type()
     self.assertIsNotNone(type)
@@ -48,12 +49,13 @@ class ItemTypeTests(unittest.TestCase):
 
   def test_get_flags(self):
     """Tests the get_flags function and flags property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_item = pymsiecf.item()
 
-    msiecf_item.open(unittest.source)
+    msiecf_item.open(test_source)
 
     flags = msiecf_item.get_flags()
     self.assertIsNotNone(flags)
@@ -64,12 +66,13 @@ class ItemTypeTests(unittest.TestCase):
 
   def test_get_offset(self):
     """Tests the get_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     msiecf_item = pymsiecf.item()
 
-    msiecf_item.open(unittest.source)
+    msiecf_item.open(test_source)
 
     offset = msiecf_item.get_offset()
     self.assertIsNotNone(offset)
