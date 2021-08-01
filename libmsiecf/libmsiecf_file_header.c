@@ -25,13 +25,13 @@
 #include <types.h>
 
 #include "libmsiecf_file_header.h"
-#include "libmsiecf_io_handle.h"
+#include "libmsiecf_libbfio.h"
 #include "libmsiecf_libcerror.h"
 #include "libmsiecf_libcnotify.h"
 
 #include "msiecf_file_header.h"
 
-/* Creates file header
+/* Creates a file header
  * Make sure the value file_header is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
@@ -104,7 +104,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees file header
+/* Frees a file header
  * Returns 1 if successful or -1 on error
  */
 int libmsiecf_file_header_free(
@@ -171,24 +171,14 @@ int libmsiecf_file_header_read_data(
 
 		return( -1 );
 	}
-	if( data_size < sizeof( msiecf_file_header_t ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_size > (size_t) SSIZE_MAX )
+	if( ( data_size < sizeof( msiecf_file_header_t ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -197,7 +187,7 @@ int libmsiecf_file_header_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: file header:\n",
+		 "%s: file header data:\n",
 		 function );
 		libcnotify_print_data(
 		 data,
@@ -213,7 +203,7 @@ int libmsiecf_file_header_read_data(
 	 || ( ( (msiecf_file_header_t *) data )->signature[ 24 ] > (uint8_t) '9' )
 	 || ( memory_compare(
 	       ( (msiecf_file_header_t *) data )->signature,
-	       msiecf_file_signature,
+	       "Client UrlCache MMF Ver ",
 	       24 ) != 0 ) )
 	{
 		libcerror_error_set(
@@ -241,8 +231,8 @@ int libmsiecf_file_header_read_data(
 	 file_header->number_of_blocks );
 
 	byte_stream_copy_to_uint32_little_endian(
-	 ( (msiecf_file_header_t *) data )->blocks_allocated,
-	 file_header->blocks_allocated );
+	 ( (msiecf_file_header_t *) data )->number_of_allocated_blocks,
+	 file_header->number_of_allocated_blocks );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -269,9 +259,9 @@ int libmsiecf_file_header_read_data(
 		 file_header->number_of_blocks );
 
 		libcnotify_printf(
-		 "%s: blocks allocated\t\t\t: %" PRIu32 "\n",
+		 "%s: number of allocated blocks\t\t: %" PRIu32 "\n",
 		 function,
-		 file_header->blocks_allocated );
+		 file_header->number_of_allocated_blocks );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (msiecf_file_header_t *) data )->unknown1,

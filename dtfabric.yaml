@@ -1,0 +1,74 @@
+name: msiecf
+type: format
+description: Microsoft Internet Explorer (MSIE) Cache File (index.dat) file format
+urls:
+- 'https://github.com/libyal/libmsiecf/blob/main/documentation/MSIE%20Cache%20File%20(index.dat)%20format.asciidoc'
+metadata:
+  authors: ['Joachim Metz <joachim.metz@gmail.com>']
+  year: 2009
+attributes:
+  byte_order: little-endian
+layout:
+- data_type: file_header
+---
+name: byte
+type: integer
+attributes:
+  format: unsigned
+  size: 1
+  units: bytes
+---
+name: uint8
+type: integer
+attributes:
+  format: unsigned
+  size: 1
+  units: bytes
+---
+name: uint32
+type: integer
+attributes:
+  format: unsigned
+  size: 4
+  units: bytes
+---
+name: uint64
+type: integer
+attributes:
+  format: unsigned
+  size: 8
+  units: bytes
+---
+name: file_header
+type: structure
+description: File header
+members:
+- name: signature
+  type: stream
+  element_data_type: byte
+  elements_data_size: 28
+  values:
+  - "Client UrlCache MMF Ver 4.7\x00"
+  - "Client UrlCache MMF Ver 5.2\x00"
+- name: file_size
+  data_type: uint32
+- name: hash_table_offset
+  data_type: uint32
+- name: number_of_blocks
+  data_type: uint32
+- name: number_of_allocated_blocks
+  data_type: uint32
+- name: unknown1
+  data_type: uint32
+- name: cache_size_limit
+  data_type: uint32
+- name: unknown2
+  data_type: uint32
+- name: cache_size
+  data_type: uint32
+- name: unknown3
+  data_type: uint32
+- name: non_releasable_cache_size
+  data_type: uint32
+- name: unknown4
+  data_type: uint32

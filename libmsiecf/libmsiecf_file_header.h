@@ -52,13 +52,13 @@ struct libmsiecf_file_header
 	 */
 	uint32_t hash_table_offset;
 
-	/* The total number of blocks
+	/* The number of blocks
 	 */
 	uint32_t number_of_blocks;
 
-	/* The number of blocks that are allocated
+	/* The number of allocated blocks
 	 */
-	uint32_t blocks_allocated;
+	uint32_t number_of_allocated_blocks;
 };
 
 int libmsiecf_file_header_initialize(

@@ -40,32 +40,32 @@ struct msiecf_file_header
 	 */
 	uint8_t signature[ 28 ];
 
-	/* The file size
+	/* File size
 	 * Consists of 4 bytes
 	 */
 	uint8_t file_size[ 4 ];
 
-	/* The first hash table offset
+	/* Hash table offset
 	 * Consists of 4 bytes
 	 */
 	uint8_t hash_table_offset[ 4 ];
 
-	/* The total number of blocks
+	/* Number of blocks
 	 * Consists of 4 bytes
 	 */
 	uint8_t number_of_blocks[ 4 ];
 
-	/* The number of blocks allocated
+	/* Number of allocated blocks
 	 * Consists of 4 bytes
 	 */
-	uint8_t blocks_allocated[ 4 ];
+	uint8_t number_of_allocated_blocks[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown1[ 4 ];
 
-	/* The (quota) limit of the size of the cache container
+	/* (Quota) limit of the size of the cache container
 	 * Consists of 4 bytes
 	 * Contains the number of bytes
 	 */
@@ -76,7 +76,7 @@ struct msiecf_file_header
 	 */
 	uint8_t unknown2[ 4 ];
 
-	/* The (current) size of the cache container
+	/* (Current) size of the cache container
 	 * Consists of 4 bytes
 	 * Contains the number of bytes
 	 */
@@ -87,7 +87,7 @@ struct msiecf_file_header
 	 */
 	uint8_t unknown3[ 4 ];
 
-	/* The size of the cache containter used by non-releasable files
+	/* Size of the cache container used by non-releasable files
 	 * Consists of 4 bytes
 	 * Contains the number of bytes
 	 */

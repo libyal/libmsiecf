@@ -41,21 +41,21 @@ int libmsiecf_allocation_table_read(
      off64_t base_offset,
      uint16_t block_size,
      uint32_t number_of_blocks,
-     uint32_t blocks_allocated,
+     uint32_t number_of_allocated_blocks,
      libcerror_error_t **error )
 {
-	uint8_t *allocation_table_data       = NULL;
-	static char *function                = "libmsiecf_allocation_table_read";
-	off64_t offset                       = 0;
-	off64_t unallocated_offset           = 0;
-	size_t read_size                     = 0;
-	size_t table_iterator                = 0;
-	size_t unallocated_size              = 0;
-	ssize_t read_count                   = 0;
-	uint32_t calculated_blocks_allocated = 0;
-	uint8_t bit_iterator                 = 0;
-	uint8_t allocation_table_entry       = 0;
-	int result                           = 0;
+	uint8_t *allocation_table_data                 = NULL;
+	static char *function                          = "libmsiecf_allocation_table_read";
+	size_t read_size                               = 0;
+	size_t table_iterator                          = 0;
+	size_t unallocated_size                        = 0;
+	ssize_t read_count                             = 0;
+	off64_t offset                                 = 0;
+	off64_t unallocated_offset                     = 0;
+	uint32_t calculated_number_of_allocated_blocks = 0;
+	uint8_t allocation_table_entry                 = 0;
+	uint8_t bit_iterator                           = 0;
+	int result                                     = 0;
 
 	if( unallocated_block_list == NULL )
 	{
@@ -243,7 +243,7 @@ int libmsiecf_allocation_table_read(
 			}
 			if( ( allocation_table_entry & 0x01 ) != 0 )
 			{
-				calculated_blocks_allocated++;
+				calculated_number_of_allocated_blocks++;
 			}
 			allocation_table_entry >>= 1;
 
@@ -291,13 +291,13 @@ int libmsiecf_allocation_table_read(
 #if defined( HAVE_VERBOSE_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( blocks_allocated != calculated_blocks_allocated )
+		if( number_of_allocated_blocks != calculated_number_of_allocated_blocks )
 		{
 			libcnotify_printf(
-			 "%s: mismatch in blocks allocated (stored: %" PRIu32 ", calculated: %" PRIu32 ")\n",
+			 "%s: mismatch in number of allocated blocks (stored: %" PRIu32 ", calculated: %" PRIu32 ")\n",
 			 function,
-			 blocks_allocated,
-			 calculated_blocks_allocated );
+			 number_of_allocated_blocks,
+			 calculated_number_of_allocated_blocks );
 		}
 	}
 #endif

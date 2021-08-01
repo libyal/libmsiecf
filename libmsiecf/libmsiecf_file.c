@@ -1195,7 +1195,7 @@ int libmsiecf_internal_file_open_read(
 	     0x4000,
 	     internal_file->io_handle->block_size,
 	     internal_file->file_header->number_of_blocks,
-	     internal_file->file_header->blocks_allocated,
+	     internal_file->file_header->number_of_allocated_blocks,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

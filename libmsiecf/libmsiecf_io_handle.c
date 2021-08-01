@@ -757,7 +757,8 @@ int libmsiecf_io_handle_read_record_scan(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	return( 1 );
 
 on_error:

@@ -41,7 +41,7 @@ int libmsiecf_allocation_table_read(
      off64_t base_offset,
      uint16_t block_size,
      uint32_t number_of_blocks,
-     uint32_t blocks_allocated,
+     uint32_t number_of_allocated_blocks,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
