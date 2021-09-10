@@ -397,6 +397,15 @@ void pymsiecf_file_free(
 
 		return;
 	}
+	if( pymsiecf_file->file_io_handle != NULL )
+	{
+		if( pymsiecf_file_close(
+		     pymsiecf_file,
+		     NULL ) == NULL )
+		{
+			return;
+		}
+	}
 	if( pymsiecf_file->file != NULL )
 	{
 		Py_BEGIN_ALLOW_THREADS

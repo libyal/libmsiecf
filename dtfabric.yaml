@@ -41,6 +41,8 @@ attributes:
 ---
 name: file_header
 type: structure
+attributes:
+  byte_order: little-endian
 description: File header
 members:
 - name: signature
