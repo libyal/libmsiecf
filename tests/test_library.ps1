@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "cache_directory_table directory_descriptor error file_header io_handle item item_descriptor leak_values notify property_type redirected_values url_values"
+$LibraryTests = "allocation_table cache_directory_table directory_descriptor error file_header hash_table io_handle item item_descriptor leak_values notify property_type redirected_values url_values"
 $LibraryTestsWithInput = "file support"
 $OptionSets = ""
 

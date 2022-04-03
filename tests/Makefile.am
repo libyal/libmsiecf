@@ -46,11 +46,13 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	msiecf_test_allocation_table \
 	msiecf_test_cache_directory_table \
 	msiecf_test_directory_descriptor \
 	msiecf_test_error \
 	msiecf_test_file \
 	msiecf_test_file_header \
+	msiecf_test_hash_table \
 	msiecf_test_io_handle \
 	msiecf_test_item \
 	msiecf_test_item_descriptor \
@@ -66,6 +68,29 @@ check_PROGRAMS = \
 	msiecf_test_tools_signal \
 	msiecf_test_url \
 	msiecf_test_url_values
+
+msiecf_test_allocation_table_SOURCES = \
+	msiecf_test_allocation_table.c \
+	msiecf_test_functions.c msiecf_test_functions.h \
+	msiecf_test_libbfio.h \
+	msiecf_test_libcdata.h \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_allocation_table_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
 
 msiecf_test_cache_directory_table_SOURCES = \
 	msiecf_test_cache_directory_table.c \
@@ -147,6 +172,29 @@ msiecf_test_file_header_SOURCES = \
 	msiecf_test_unused.h
 
 msiecf_test_file_header_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmsiecf/libmsiecf.la \
+	@LIBCERROR_LIBADD@
+
+msiecf_test_hash_table_SOURCES = \
+	msiecf_test_functions.c msiecf_test_functions.h \
+	msiecf_test_hash_table.c \
+	msiecf_test_libbfio.h \
+	msiecf_test_libcdata.h \
+	msiecf_test_libcerror.h \
+	msiecf_test_libmsiecf.h \
+	msiecf_test_macros.h \
+	msiecf_test_memory.c msiecf_test_memory.h \
+	msiecf_test_unused.h
+
+msiecf_test_hash_table_LDADD = \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \

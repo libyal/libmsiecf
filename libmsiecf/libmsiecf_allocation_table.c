@@ -33,7 +33,7 @@
 /* Reads an allocation table
  * Returns 1 if successful or -1 on error
  */
-int libmsiecf_allocation_table_read(
+int libmsiecf_allocation_table_read_file_io_handle(
      libcdata_range_list_t *unallocated_block_list,
      libbfio_handle_t *file_io_handle,
      off64_t allocation_table_offset,
@@ -45,7 +45,7 @@ int libmsiecf_allocation_table_read(
      libcerror_error_t **error )
 {
 	uint8_t *allocation_table_data                 = NULL;
-	static char *function                          = "libmsiecf_allocation_table_read";
+	static char *function                          = "libmsiecf_allocation_table_read_file_io_handle";
 	size_t read_size                               = 0;
 	size_t table_iterator                          = 0;
 	size_t unallocated_size                        = 0;

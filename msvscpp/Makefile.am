@@ -14,11 +14,13 @@ MSVSCPP_FILES = \
 	libfvalue/libfvalue.vcproj \
 	libmsiecf/libmsiecf.vcproj \
 	libuna/libuna.vcproj \
+	msiecf_test_allocation_table/msiecf_test_allocation_table.vcproj \
 	msiecf_test_cache_directory_table/msiecf_test_cache_directory_table.vcproj \
 	msiecf_test_directory_descriptor/msiecf_test_directory_descriptor.vcproj \
 	msiecf_test_error/msiecf_test_error.vcproj \
 	msiecf_test_file/msiecf_test_file.vcproj \
 	msiecf_test_file_header/msiecf_test_file_header.vcproj \
+	msiecf_test_hash_table/msiecf_test_hash_table.vcproj \
 	msiecf_test_io_handle/msiecf_test_io_handle.vcproj \
 	msiecf_test_item/msiecf_test_item.vcproj \
 	msiecf_test_item_descriptor/msiecf_test_item_descriptor.vcproj \

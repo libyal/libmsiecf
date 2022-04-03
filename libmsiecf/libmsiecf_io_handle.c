@@ -225,7 +225,7 @@ int libmsiecf_io_handle_read_hash_table(
 
 			return( -1 );
 		}
-		if( libmsiecf_hash_table_read(
+		if( libmsiecf_hash_table_read_file_io_handle(
 		     hash_table,
 		     &hash_table_offset,
 		     file_io_handle,
@@ -237,8 +237,9 @@ int libmsiecf_io_handle_read_hash_table(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read hash table at offset: %" PRIi64 ".",
+			 "%s: unable to read hash table at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 			 function,
+			 hash_table_offset,
 			 hash_table_offset );
 
 			return( -1 );

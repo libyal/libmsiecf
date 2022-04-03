@@ -1187,7 +1187,7 @@ int libmsiecf_internal_file_open_read(
 
 		goto on_error;
 	}
-	if( libmsiecf_allocation_table_read(
+	if( libmsiecf_allocation_table_read_file_io_handle(
 	     internal_file->unallocated_block_list,
 	     file_io_handle,
 	     0x250,
@@ -1207,22 +1207,6 @@ int libmsiecf_internal_file_open_read(
 
 		goto on_error;
 	}
-/* TODO
-	if( ! ( ( ( io_handle->major_version == 4 )
-	  &&      ( io_handle->minor_version == 7 ) )
-	 ||     ( ( io_handle->major_version == 5 )
-	  &&      ( io_handle->minor_version == 2 ) ) ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported format version.",
-		 function );
-
-		goto on_error;
-	}
-*/
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{

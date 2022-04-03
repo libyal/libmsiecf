@@ -176,8 +176,8 @@ int libmsiecf_file_header_read_data(
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid data size value out of bounds.",
 		 function );
 
@@ -333,8 +333,10 @@ int libmsiecf_file_header_read_data(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported format version.",
-		 function );
+		 "%s: unsupported format version: %d.%d.",
+		 function,
+		 file_header->major_version,
+		 file_header->minor_version );
 
 		return( -1 );
 	}

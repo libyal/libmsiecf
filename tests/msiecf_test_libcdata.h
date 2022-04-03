@@ -1,5 +1,5 @@
 /*
- * Hash table functions
+ * The libcdata header wrapper
  *
  * Copyright (C) 2009-2022, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,31 +19,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMSIECF_HASH_TABLE_H )
-#define _LIBMSIECF_HASH_TABLE_H
+#if !defined( _MSIECF_TEST_LIBCDATA_H )
+#define _MSIECF_TEST_LIBCDATA_H
 
 #include <common.h>
-#include <types.h>
 
-#include "libmsiecf_libbfio.h"
-#include "libmsiecf_libcdata.h"
-#include "libmsiecf_libcerror.h"
+/* Define HAVE_LOCAL_LIBCDATA for local use of libcdata
+ */
+#if defined( HAVE_LOCAL_LIBCDATA )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libcdata_array.h>
+#include <libcdata_btree.h>
+#include <libcdata_definitions.h>
+#include <libcdata_list.h>
+#include <libcdata_list_element.h>
+#include <libcdata_range_list.h>
+#include <libcdata_tree_node.h>
+#include <libcdata_types.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCDATA_DLL_IMPORT
+ * before including libcdata.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCDATA_DLL_IMPORT
 #endif
 
-int libmsiecf_hash_table_read_file_io_handle(
-     libcdata_array_t *hash_table,
-     off64_t *next_hash_table_offset,
-     libbfio_handle_t *file_io_handle,
-     off64_t hash_table_offset,
-     size32_t block_size,
-     libcerror_error_t **error );
+#include <libcdata.h>
 
-#if defined( __cplusplus )
-}
-#endif
+#endif /* defined( HAVE_LOCAL_LIBCDATA ) */
 
-#endif /* !defined( _LIBMSIECF_HASH_TABLE_H ) */
+#endif /* !defined( _MSIECF_TEST_LIBCDATA_H ) */
 

@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-int libmsiecf_allocation_table_read(
+int libmsiecf_allocation_table_read_file_io_handle(
      libcdata_range_list_t *unallocated_block_list,
      libbfio_handle_t *file_io_handle,
      off64_t allocation_table_offset,

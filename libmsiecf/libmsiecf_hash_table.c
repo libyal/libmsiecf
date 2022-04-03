@@ -37,7 +37,7 @@
 /* Reads a hash table
  * Returns 1 if successful or -1 on error
  */
-int libmsiecf_hash_table_read(
+int libmsiecf_hash_table_read_file_io_handle(
      libcdata_array_t *hash_table,
      off64_t *next_hash_table_offset,
      libbfio_handle_t *file_io_handle,
@@ -49,7 +49,7 @@ int libmsiecf_hash_table_read(
 
 	uint8_t *hash_record_data                    = NULL;
 	uint8_t *entry_data                          = NULL;
-	static char *function                        = "libmsiecf_hash_table_read";
+	static char *function                        = "libmsiecf_hash_table_read_file_io_handle";
 	size_t read_size                             = 0;
 	size_t table_iterator                        = 0;
 	ssize_t read_count                           = 0;
@@ -165,6 +165,7 @@ int libmsiecf_hash_table_read(
 	byte_stream_copy_to_uint32_little_endian(
 	 hash_record_header.number_of_blocks,
 	 number_of_blocks );
+
 	byte_stream_copy_to_uint32_little_endian(
 	 hash_record_header.next_offset,
 	 *next_hash_table_offset );
