@@ -1,7 +1,7 @@
 Source: libmsiecf
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
-Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config, python-dev, python-setuptools, python3-dev, python3-setuptools
+Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config, python3-dev, python3-setuptools
 Standards-Version: 4.1.4
 Section: libs
 Homepage: https://github.com/libyal/libmsiecf
@@ -45,23 +45,6 @@ Architecture: any
 Depends: libmsiecf-tools (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libmsiecf-tools
  Debugging symbols for libmsiecf-tools.
-
-Package: libmsiecf-python
-Section: python
-Architecture: any
-Depends: libmsiecf (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Conflicts: python-libmsiecf
-Replaces: python-libmsiecf
-Suggests: libmsiecf-python-dbg
-Description: Python 2 bindings for libmsiecf
- Python 2 bindings for libmsiecf.
-
-Package: libmsiecf-python-dbg
-Section: debug
-Architecture: any
-Depends: libmsiecf-python (= ${binary:Version}), ${misc:Depends}
-Description: Debugging symbols for libmsiecf-python
- Debugging symbols for libmsiecf-python.
 
 Package: libmsiecf-python3
 Section: python
