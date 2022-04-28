@@ -37,7 +37,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libmsiecf.install \
 	dpkg/libmsiecf-dev.install \
-	dpkg/libmsiecf-python.install \
 	dpkg/libmsiecf-python3.install \
 	dpkg/libmsiecf-tools.install \
 	dpkg/source/format
