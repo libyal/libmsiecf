@@ -124,6 +124,9 @@ PyObject *pymsiecf_file_get_number_of_items(
            pymsiecf_file_t *pymsiecf_file,
            PyObject *arguments );
 
+PyTypeObject *pymsiecf_file_get_item_type_object(
+               libmsiecf_item_t *item );
+
 PyObject *pymsiecf_file_get_item_by_index(
            PyObject *pymsiecf_file,
            int item_index );

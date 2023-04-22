@@ -1643,7 +1643,7 @@ PyTypeObject *pymsiecf_file_get_item_type_object(
                libmsiecf_item_t *item )
 {
 	libcerror_error_t *error = NULL;
-	static char *function    = "pymsiecf_file_get_item_by_index";
+	static char *function    = "pymsiecf_file_get_item_type_object";
 	uint8_t item_type        = 0;
 	int result               = 0;
 
