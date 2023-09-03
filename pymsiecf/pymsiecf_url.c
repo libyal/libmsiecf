@@ -327,7 +327,6 @@ PyObject *pymsiecf_url_get_type(
            PyObject *arguments PYMSIECF_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error  = NULL;
-	const char *errors        = NULL;
 	const char *type_string   = 0;
 	static char *function     = "pymsiecf_url_get_type";
 	size_t type_string_length = 0;
@@ -447,7 +446,7 @@ PyObject *pymsiecf_url_get_type(
 	return( PyUnicode_DecodeUTF8(
 	         type_string,
 	         (Py_ssize_t) type_string_length,
-	         errors ) );
+	         NULL ) );
 }
 
 /* Retrieves the primary date and time
@@ -1084,7 +1083,6 @@ PyObject *pymsiecf_url_get_location(
 {
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
-	const char *errors       = NULL;
 	uint8_t *location        = NULL;
 	static char *function    = "pymsiecf_url_get_location";
 	size_t location_size     = 0;
@@ -1137,7 +1135,7 @@ PyObject *pymsiecf_url_get_location(
 	if( location == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create location.",
 		 function );
 
@@ -1173,7 +1171,7 @@ PyObject *pymsiecf_url_get_location(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) location,
 			 (Py_ssize_t) location_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 location );
@@ -1198,7 +1196,6 @@ PyObject *pymsiecf_url_get_filename(
 {
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
-	const char *errors       = NULL;
 	uint8_t *filename        = NULL;
 	static char *function    = "pymsiecf_url_get_filename";
 	size_t filename_size     = 0;
@@ -1251,7 +1248,7 @@ PyObject *pymsiecf_url_get_filename(
 	if( filename == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create filename.",
 		 function );
 
@@ -1287,7 +1284,7 @@ PyObject *pymsiecf_url_get_filename(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) filename,
 			 (Py_ssize_t) filename_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 filename );
@@ -1364,7 +1361,7 @@ PyObject *pymsiecf_url_get_data(
 	if( data == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create data.",
 		 function );
 

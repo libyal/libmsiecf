@@ -163,7 +163,6 @@ PyObject *pymsiecf_redirected_get_location(
 {
 	PyObject *string_object  = NULL;
 	libcerror_error_t *error = NULL;
-	const char *errors       = NULL;
 	static char *function    = "pymsiecf_redirected_get_location";
 	char *utf8_string        = NULL;
 	size_t utf8_string_size  = 0;
@@ -251,7 +250,7 @@ PyObject *pymsiecf_redirected_get_location(
 	string_object = PyUnicode_DecodeUTF8(
 	                 utf8_string,
 	                 (Py_ssize_t) utf8_string_size - 1,
-	                 errors );
+	                 NULL );
 
 	if( string_object == NULL )
 	{
