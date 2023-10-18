@@ -30,63 +30,39 @@ import pymsiecf
 class ItemTypeTests(unittest.TestCase):
   """Tests the item type."""
 
-  def test_get_type(self):
-    """Tests the get_type function and type property."""
-    test_source = unittest.source
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    msiecf_item = pymsiecf.item()
-
-    msiecf_item.open(test_source)
-
-    type = msiecf_item.get_type()
-    self.assertIsNotNone(type)
-
-    self.assertIsNotNone(msiecf_item.type)
-
-    msiecf_item.close()
-
-  def test_get_flags(self):
-    """Tests the get_flags function and flags property."""
-    test_source = unittest.source
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    msiecf_item = pymsiecf.item()
-
-    msiecf_item.open(test_source)
-
-    flags = msiecf_item.get_flags()
-    self.assertIsNotNone(flags)
-
-    self.assertIsNotNone(msiecf_item.flags)
-
-    msiecf_item.close()
-
   def test_get_offset(self):
     """Tests the get_offset function."""
-    test_source = unittest.source
+    test_source = getattr(unittest, "source", None)
     if not test_source:
       raise unittest.SkipTest("missing source")
 
-    msiecf_item = pymsiecf.item()
+    msiecf_file = pymsiecf.file()
 
-    msiecf_item.open(test_source)
+    msiecf_file.open(test_source)
 
-    offset = msiecf_item.get_offset()
-    self.assertIsNotNone(offset)
+    try:
+      if not msiecf_file.number_of_items:
+        raise unittest.SkipTest("missing items")
 
-    msiecf_item.close()
+      msiecf_item = msiecf_file.get_item(0)
+
+      offset = msiecf_item.get_offset()
+      self.assertIsNotNone(offset)
+
+    finally:
+      msiecf_file.close()
 
 
 if __name__ == "__main__":
   argument_parser = argparse.ArgumentParser()
 
+  argument_parser.add_argument(
+      "source", nargs="?", action="store", metavar="PATH",
+      default=None, help="path of the source file.")
 
   options, unknown_options = argument_parser.parse_known_args()
   unknown_options.insert(0, sys.argv[0])
 
-
+  setattr(unittest, "source", options.source)
 
   unittest.main(argv=unknown_options, verbosity=2)

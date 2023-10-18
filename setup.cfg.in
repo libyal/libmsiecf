@@ -1,6 +1,6 @@
 [metadata]
 name = libmsiecf-python
-version = 20231018
+version = @VERSION@
 description = Python bindings module for libmsiecf
 long_description = Python bindings module for libmsiecf
 author = Joachim Metz
