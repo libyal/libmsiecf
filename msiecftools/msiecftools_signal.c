@@ -40,7 +40,7 @@ void (*msiecftools_signal_signal_handler)( msiecftools_signal_t ) = NULL;
 /* Signal handler for Ctrl+C or Ctrl+Break signals
  */
 BOOL WINAPI msiecftools_signal_handler(
-             unsigned long signal )
+             msiecftools_signal_t signal )
 {
 	static char *function = "msiecftools_signal_handler";
 
@@ -112,7 +112,7 @@ int msiecftools_signal_attach(
 	msiecftools_signal_signal_handler = signal_handler;
 
 	if( SetConsoleCtrlHandler(
-	     msiecftools_signal_handler,
+	     (PHANDLER_ROUTINE) msiecftools_signal_handler,
 	     TRUE ) == 0 )
 	{
 		libcerror_error_set(
@@ -179,7 +179,7 @@ int msiecftools_signal_detach(
 	static char *function = "msiecftools_signal_detach";
 
 	if( SetConsoleCtrlHandler(
-	     msiecftools_signal_handler,
+	     (PHANDLER_ROUTINE) msiecftools_signal_handler,
 	     FALSE ) == 0 )
 	{
 		libcerror_error_set(

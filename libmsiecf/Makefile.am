@@ -94,11 +94,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libmsiecf_definitions.h
-	/bin/rm -f libmsiecf.rc
-	/bin/rm -f Makefile
+	-rm -f libmsiecf_definitions.h
+	-rm -f libmsiecf.rc
+	-rm -f Makefile
 
-splint:
+sources-local: $(BUILT_SOURCES)
+
+splint-local:
 	@echo "Running splint on libmsiecf ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libmsiecf_la_SOURCES)
 

@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libmsiecf.h
-	/bin/rm -f libmsiecf/definitions.h
-	/bin/rm -f libmsiecf/features.h
-	/bin/rm -f libmsiecf/types.h
-	/bin/rm -f Makefile
+	-rm -f libmsiecf.h
+	-rm -f libmsiecf/definitions.h
+	-rm -f libmsiecf/features.h
+	-rm -f libmsiecf/types.h
+	-rm -f Makefile
 
