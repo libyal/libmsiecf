@@ -20,8 +20,6 @@ SUBDIRS = \
 	libmsiecf \
 	msiecftools \
 	pymsiecf \
-	pymsiecf-python2 \
-	pymsiecf-python3 \
 	po \
 	manuals \
 	tests \
