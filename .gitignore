@@ -155,6 +155,7 @@ stamp-h[1-9]
 /tests/msiecf_test_tools_signal
 /tests/msiecf_test_url
 /tests/msiecf_test_url_values
+/tests/notify_stream.log
 /tests/tmp*
 
 # Local library dependencies specific files

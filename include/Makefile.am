@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libmsiecf/features.h.in \
 	libmsiecf/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libmsiecf.h \
+	libmsiecf/definitions.h \
+	libmsiecf/features.h \
+	libmsiecf/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libmsiecf.h
-	-rm -f libmsiecf/definitions.h
-	-rm -f libmsiecf/features.h
-	-rm -f libmsiecf/types.h
-	-rm -f Makefile
 

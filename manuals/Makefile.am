@@ -8,9 +8,7 @@ EXTRA_DIST = \
 	msiecfexport.1 \
 	msiecfinfo.1
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 
