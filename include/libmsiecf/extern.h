@@ -31,14 +31,17 @@
  */
 #if defined( LIBMSIECF_DLL_EXPORT )
 #define LIBMSIECF_EXTERN __declspec(dllexport)
+#define LIBMSIECF_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBMSIECF_DLL_IMPORT )
-#define LIBMSIECF_EXTERN extern __declspec(dllimport)
+#define LIBMSIECF_EXTERN __declspec(dllimport)
+#define LIBMSIECF_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBMSIECF_EXTERN extern
+#define LIBMSIECF_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBMSIECF_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBMSIECF_EXTERN_H ) */
 

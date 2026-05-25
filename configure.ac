@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libmsiecf],
-  [20260507],
+  [20260525],
   [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -197,7 +197,7 @@ AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([libmsiecf/libmsiecf.rc])
 AC_CONFIG_FILES([libmsiecf.pc])
 AC_CONFIG_FILES([libmsiecf.spec])
-AC_CONFIG_FILES([setup.cfg])
+AC_CONFIG_FILES([pyproject.toml])
 dnl Generate a source configuration file
 AC_CONFIG_HEADERS([common/config.h])
 

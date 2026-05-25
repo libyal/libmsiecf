@@ -2,8 +2,8 @@
 #
 # Version: 20251217
 
-$Repository = "log2timeline/plaso"
-$TestDataPath = "test_data"
+$Repository = "dfirlabs/greendale-specimens"
+$TestDataPath = "msiecf/student-pc1/History.IE5"
 $TestSet = "public"
 $TestInputDirectory = "tests/input"
 $TestFiles = "index.dat"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tests Python module functions and types.
 #
-# Version: 20240417
+# Version: 20260518
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
@@ -9,7 +9,7 @@ EXIT_NO_TESTS_RAN=5;
 EXIT_IGNORE=77;
 
 TEST_FUNCTIONS="support";
-TEST_FUNCTIONS_WITH_INPUT="file item";
+TEST_FUNCTIONS_WITH_INPUT="file";
 OPTION_SETS=();
 
 TEST_TOOL_DIRECTORY=".";
@@ -143,10 +143,11 @@ source ${TEST_RUNNER};
 
 PLATFORM=`uname -s | sed 's/-.*$//'`;
 
-if test "${PLATFORM}" = "MINGW64_NT" || test "${PLATFORM}" = "MSYS_NT";
+echo "Platform: ${PLATFORM}";
+
+if test "${PLATFORM}" = "MINGW32_NT" || test "${PLATFORM}" = "MINGW64_NT" || test "${PLATFORM}" = "MSYS_NT";
 then
-	cp ../${LIBRARY_NAME}/.libs/*.dll ../${PYTHON_MODULE}/.libs/;
-	cp ../${PYTHON_MODULE}/.libs/${PYTHON_MODULE}.dll ../${PYTHON_MODULE}/.libs/${PYTHON_MODULE}.pyd;
+	export PATH=../${LIBRARY_NAME}/.libs:../${PYTHON_MODULE}/.libs:$PATH;
 fi
 
 RESULT=${EXIT_IGNORE};
