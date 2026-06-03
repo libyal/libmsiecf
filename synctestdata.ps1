@@ -1,11 +1,11 @@
 # Script that synchronizes the local test data
 #
-# Version: 20251217
+# Version: 20260531
 
 $Repository = "dfirlabs/greendale-specimens"
 $TestDataPath = "msiecf/student-pc1/History.IE5"
 $TestSet = "public"
-$TestInputDirectory = "tests/input"
+$TestInputDirectory = "tests\input"
 $TestFiles = "index.dat"
 
 If (-Not (Test-Path ${TestInputDirectory}))

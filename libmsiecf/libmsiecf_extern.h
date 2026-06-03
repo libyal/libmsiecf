@@ -24,6 +24,19 @@
 
 #include <common.h>
 
+#if !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute )
+#if __has_attribute( visibility )
+#define LIBMSIECF_INTERNAL	__attribute__((visibility("hidden"))) extern
+
+#else
+#define LIBMSIECF_INTERNAL	extern
+
+#endif /* __has_attribute( visibility ) */
+#else
+#define LIBMSIECF_INTERNAL	extern
+
+#endif /* !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute ) */
+
 /* Define HAVE_LOCAL_LIBMSIECF for local use of libmsiecf
  */
 #if !defined( HAVE_LOCAL_LIBMSIECF )
@@ -32,7 +45,7 @@
 
 #else
 #define LIBMSIECF_EXTERN		/* extern */
-#define LIBMSIECF_EXTERN_VARIABLE	extern
+#define LIBMSIECF_EXTERN_VARIABLE	LIBMSIECF_INTERNAL
 
 #endif /* !defined( HAVE_LOCAL_LIBMSIECF ) */
 

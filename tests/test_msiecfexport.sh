@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Export tool testing script
 #
-# Version: 20240413
+# Version: 20260602
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
 PROFILES=("msiecfexport");
-OPTIONS_PER_PROFILE=("");
+PTIONS_PER_PROFILE=("");
 OPTION_SETS=();
 
 INPUT_GLOB="*";
@@ -143,5 +143,4 @@ do
 done
 
 exit ${RESULT};
-
 

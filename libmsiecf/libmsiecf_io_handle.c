@@ -319,6 +319,17 @@ int libmsiecf_io_handle_read_record_scan(
 
 		return( -1 );
 	}
+	if( io_handle->block_size == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid IO handle - block size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	while( file_offset < (off64_t) io_handle->file_size )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )

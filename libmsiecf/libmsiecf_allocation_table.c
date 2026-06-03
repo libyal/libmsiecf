@@ -281,7 +281,6 @@ int libmsiecf_allocation_table_read_file_io_handle(
 
 			goto on_error;
 		}
-		unallocated_size = 0;
 	}
 	memory_free(
 	 allocation_table_data );
