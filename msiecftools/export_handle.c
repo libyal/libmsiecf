@@ -1426,7 +1426,7 @@ int export_handle_export_item(
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve item type.",
 		 function );
-		
+
 		goto on_error;
 	}
 	fprintf(
@@ -1486,7 +1486,7 @@ int export_handle_export_item(
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve offset range.",
 		 function );
-		
+
 		goto on_error;
 	}
 	fprintf(

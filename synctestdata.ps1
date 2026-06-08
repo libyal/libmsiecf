@@ -1,6 +1,6 @@
 # Script that synchronizes the local test data
 #
-# Version: 20260531
+# Version: 20260607
 
 $Repository = "dfirlabs/greendale-specimens"
 $TestDataPath = "msiecf/student-pc1/History.IE5"
@@ -20,6 +20,7 @@ ForEach ($TestFile in ${TestFiles} -split " ")
 {
 	$Url = "https://raw.githubusercontent.com/${Repository}/refs/heads/main/${TestDataPath}/${TestFile}"
 
+	$ProgressPreference = 'SilentlyContinue'
 	Invoke-WebRequest -Uri ${Url} -OutFile "${TestInputDirectory}\${TestSet}\${TestFile}"
 }
 
