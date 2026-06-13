@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -131,7 +131,12 @@ stamp-h[1-9]
 /msiecftools/*.exe
 /msiecftools/msiecfexport
 /msiecftools/msiecfinfo
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
+/tests/atconfig
+/tests/atlocal
 /tests/input
 /tests/msiecf_test_allocation_table
 /tests/msiecf_test_cache_directory_table
@@ -156,6 +161,12 @@ stamp-h[1-9]
 /tests/msiecf_test_url
 /tests/msiecf_test_url_values
 /tests/notify_stream.log
+/tests/package.m4
+/tests/test_inputs_*.at
+/tests/test_library
+/tests/test_manpages
+/tests/test_python_module
+/tests/test_tools
 /tests/tmp*
 
 # Local library dependencies specific files
