@@ -33,6 +33,7 @@
 #include "msiecftools_libcnotify.h"
 #include "msiecftools_libfdatetime.h"
 #include "msiecftools_libmsiecf.h"
+#include "msiecftools_unused.h"
 
 #define EXPORT_HANDLE_NOTIFY_STREAM		stdout
 
@@ -467,7 +468,7 @@ int export_handle_close(
 int export_handle_export_item_leak(
      export_handle_t *export_handle,
      libmsiecf_item_t *item,
-     log_handle_t *log_handle,
+     log_handle_t *log_handle MSIECFTOOLS_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
 	char cache_directory_name[ 9 ];
@@ -477,6 +478,8 @@ int export_handle_export_item_leak(
 	size_t filename_size          = 0;
 	uint8_t cache_directory_index = 0;
 	int result                    = 0;
+
+	MSIECFTOOLS_UNREFERENCED_PARAMETER( log_handle )
 
 	if( export_handle == NULL )
 	{
@@ -640,13 +643,15 @@ on_error:
 int export_handle_export_item_redirected(
      export_handle_t *export_handle,
      libmsiecf_item_t *item,
-     log_handle_t *log_handle,
+     log_handle_t *log_handle MSIECFTOOLS_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
 	system_character_t *location = NULL;
 	static char *function        = "export_handle_export_item_redirected";
 	size_t location_size         = 0;
 	int result                   = 0;
+
+	MSIECFTOOLS_UNREFERENCED_PARAMETER( log_handle )
 
 	if( export_handle == NULL )
 	{
@@ -761,7 +766,7 @@ on_error:
 int export_handle_export_item_url(
      export_handle_t *export_handle,
      libmsiecf_item_t *item,
-     log_handle_t *log_handle,
+     log_handle_t *log_handle MSIECFTOOLS_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
 	char cache_directory_name[ 9 ];
@@ -778,6 +783,8 @@ int export_handle_export_item_url(
 	uint32_t value_32bit                        = 0;
 	uint8_t cache_directory_index               = 0;
 	int result                                  = 0;
+
+	MSIECFTOOLS_UNREFERENCED_PARAMETER( log_handle )
 
 	if( export_handle == NULL )
 	{

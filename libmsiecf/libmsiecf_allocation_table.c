@@ -52,10 +52,13 @@ int libmsiecf_allocation_table_read_file_io_handle(
 	ssize_t read_count                             = 0;
 	off64_t offset                                 = 0;
 	off64_t unallocated_offset                     = 0;
-	uint32_t calculated_number_of_allocated_blocks = 0;
 	uint8_t allocation_table_entry                 = 0;
 	uint8_t bit_iterator                           = 0;
 	int result                                     = 0;
+
+#if defined( HAVE_VERBOSE_OUTPUT )
+	uint32_t calculated_number_of_allocated_blocks = 0;
+#endif
 
 	if( unallocated_block_list == NULL )
 	{
@@ -241,10 +244,12 @@ int libmsiecf_allocation_table_read_file_io_handle(
 				}
 				unallocated_size = 0;
 			}
+#if defined( HAVE_VERBOSE_OUTPUT )
 			if( ( allocation_table_entry & 0x01 ) != 0 )
 			{
 				calculated_number_of_allocated_blocks++;
 			}
+#endif
 			allocation_table_entry >>= 1;
 
 			offset += block_size;

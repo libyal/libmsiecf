@@ -195,7 +195,6 @@ int libmsiecf_url_values_read_data(
 	static char *function             = "libmsiecf_url_values_read_data";
 	size_t required_data_size         = 0;
 	ssize_t value_size                = 0;
-	uint32_t cache_entry_flags        = 0;
 	uint32_t filename_offset          = 0;
 	uint32_t location_offset          = 0;
 	uint32_t unknown_offset           = 0;
@@ -215,6 +214,9 @@ int libmsiecf_url_values_read_data(
 	uint32_t value_32bit              = 0;
 	uint16_t value_16bit              = 0;
 	int visited_entry_index           = 0;
+#endif
+#if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
+	uint32_t cache_entry_flags        = 0;
 #endif
 
 	if( url_values == NULL )
@@ -370,9 +372,11 @@ int libmsiecf_url_values_read_data(
 		 ( (msiecf_url_record_header_v47_t *) data )->number_of_hits,
 		 url_values->number_of_hits );
 
+#if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (msiecf_url_record_header_v47_t *) data )->cache_entry_flags,
 		 cache_entry_flags );
+#endif
 	}
 	else if( ( io_handle->major_version == 5 )
 	      && ( io_handle->minor_version == 2 ) )
@@ -423,9 +427,11 @@ int libmsiecf_url_values_read_data(
 		 ( (msiecf_url_record_header_v52_t *) data )->number_of_hits,
 		 url_values->number_of_hits );
 
+#if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (msiecf_url_record_header_v52_t *) data )->cache_entry_flags,
 		 cache_entry_flags );
+#endif
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1463,35 +1469,38 @@ int libmsiecf_url_values_read_data(
 	}
 #endif
 #if defined( HAVE_VERBOSE_OUTPUT )
-	switch( url_values->type )
+	if( libcnotify_verbose != 0 )
 	{
-		case LIBMSIECF_URL_ITEM_TYPE_COOKIE:
-			if ( ( cache_entry_flags & LIBMSIECF_CACHE_ENTRY_FLAG_COOKIE ) == 0 )
-			{
-				libcnotify_printf(
-				 "%s: detected type cookie but corresponding cache entry flag (COOKIE_CACHE_ENTRY) is not set.\n",
-				 function );
-			}
-			break;
+		switch( url_values->type )
+		{
+			case LIBMSIECF_URL_ITEM_TYPE_COOKIE:
+				if ( ( cache_entry_flags & LIBMSIECF_CACHE_ENTRY_FLAG_COOKIE ) == 0 )
+				{
+					libcnotify_printf(
+					 "%s: detected type cookie but corresponding cache entry flag (COOKIE_CACHE_ENTRY) is not set.\n",
+					 function );
+				}
+				break;
 
-		case LIBMSIECF_URL_ITEM_TYPE_HISTORY:
-			if ( ( cache_entry_flags & LIBMSIECF_CACHE_ENTRY_FLAG_URLHISTORY ) == 0 )
-			{
-				libcnotify_printf(
-				 "%s: detected type history but corresponding cache entry flag (URLHISTORY_CACHE_ENTRY) is not set.\n",
-				 function );
-			}
-			break;
+			case LIBMSIECF_URL_ITEM_TYPE_HISTORY:
+				if ( ( cache_entry_flags & LIBMSIECF_CACHE_ENTRY_FLAG_URLHISTORY ) == 0 )
+				{
+					libcnotify_printf(
+					 "%s: detected type history but corresponding cache entry flag (URLHISTORY_CACHE_ENTRY) is not set.\n",
+					 function );
+				}
+				break;
 
-		case LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY:
-		case LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY:
-			if ( ( cache_entry_flags & LIBMSIECF_CACHE_ENTRY_FLAG_URLHISTORY ) == 0 )
-			{
-				libcnotify_printf(
-				 "%s: detected type history periodic but corresponding cache entry flag (URLHISTORY_CACHE_ENTRY) is not set.\n",
-				 function );
-			}
-			break;
+			case LIBMSIECF_URL_ITEM_TYPE_HISTORY_DAILY:
+			case LIBMSIECF_URL_ITEM_TYPE_HISTORY_WEEKLY:
+				if ( ( cache_entry_flags & LIBMSIECF_CACHE_ENTRY_FLAG_URLHISTORY ) == 0 )
+				{
+					libcnotify_printf(
+					 "%s: detected type history periodic but corresponding cache entry flag (URLHISTORY_CACHE_ENTRY) is not set.\n",
+					 function );
+				}
+				break;
+		}
 	}
 #endif /* defined( HAVE_VERBOSE_OUTPUT ) */
 
