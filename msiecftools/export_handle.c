@@ -427,7 +427,7 @@ int export_handle_open(
 }
 
 /* Closes the export handle
- * Returns the 0 if succesful or -1 on error
+ * Returns the 0 if successful or -1 on error
  */
 int export_handle_close(
      export_handle_t *export_handle,
@@ -1804,7 +1804,7 @@ int export_handle_export_recovered_items(
 }
 
 /* Exports the items from the file
- * Returns the 1 if succesful, 0 if no items are available or -1 on error
+ * Returns the 1 if successful, 0 if no items are available or -1 on error
  */
 int export_handle_export_file(
      export_handle_t *export_handle,
