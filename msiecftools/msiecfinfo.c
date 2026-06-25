@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a MSIE Cache File (index.dat)
+ * Shows information obtained from a MSIE Cache File (index.dat).
  *
  * Copyright (C) 2009-2026, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,11 +20,9 @@
  */
 
 #include <common.h>
-#include <memory.h>
+#include <file_stream.h>
 #include <system_string.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #if defined( HAVE_FCNTL_H ) || defined( WINAPI )
 #include <fcntl.h>
@@ -54,33 +52,6 @@
 
 info_handle_t *msiecfinfo_info_handle = NULL;
 int msiecfinfo_abort                  = 0;
-
-/* Prints the msiecfcutable usage information
- */
-void usage_fprint(
-      FILE *stream )
-{
-	if( stream == NULL )
-	{
-		return;
-	}
-	fprintf( stream, "Use msiecfinfo to determine information about a MSIE\n"
-	                 "Cache File (index.dat).\n\n" );
-
-	fprintf( stream, "Usage: msiecfinfo [ -c codepage ] [ -ahvV ] source\n\n" );
-
-	fprintf( stream, "\tsource: the source file\n\n" );
-
-	fprintf( stream, "\t-a:     shows allocation information\n" );
-	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-874,\n"
-	                 "\t        windows-932, windows-936, windows-949, windows-950,\n"
-	                 "\t        windows-1250, windows-1251, windows-1252 (default),\n"
-	                 "\t        windows-1253, windows-1254, windows-1255, windows-1256,\n"
-	                 "\t        windows-1257 or windows-1258\n" );
-	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-v:     verbose output to stderr\n" );
-	fprintf( stream, "\t-V:     print version\n" );
-}
 
 /* Signal handler for msiecfinfo
  */
@@ -134,14 +105,28 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error                  = NULL;
-	system_character_t *option_ascii_codepage = NULL;
-	system_character_t *source                = NULL;
-	char *program                             = "msiecfinfo";
-	system_integer_t option                   = 0;
-	int result                                = 0;
-	int show_allocation_information           = 0;
-	int verbose                               = 0;
+	const char *description = \
+		"Use msiecfinfo to determine information about a MSIE Cache File (index.dat).";
+
+	msiecftools_option_t options[ ] = {
+		{ 'a', NULL, "shows allocation information" },
+		{ 'c', "codepage", "codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258" },
+		{ 'h', NULL, "shows this help" },
+		{ 'v', NULL, "verbose output to stderr" },
+		{ 'V', NULL, "print version" },
+		{ 0, "source", "the source file" },
+	};
+	system_character_t options_string[ 32 ];
+
+	libmsiecf_error_t *error            = NULL;
+	system_character_t *option_codepage = NULL;
+	system_character_t *source          = NULL;
+	char *program                       = "msiecfinfo";
+	system_integer_t option             = 0;
+	int number_of_options               = (int) ( sizeof( options ) / sizeof( msiecftools_option_t ) );
+	int result                          = 0;
+	int show_allocation_information     = 0;
+	int verbose                         = 0;
 
 #if defined( __MINGW32__ ) && defined( HAVE_MINGW_BINMODE )
 	_setmode( _fileno( stdout ), _O_BINARY );
@@ -178,10 +163,22 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
+	if( msiecftools_getopt_get_options_string(
+	     options,
+	     number_of_options,
+	     options_string,
+	     32 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to determine options string.\n" );
+
+		goto on_error;
+	}
 	while( ( option = msiecftools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "ac:hvV" ) ) ) != (system_integer_t) -1 )
+	                   options_string ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -192,8 +189,12 @@ int main( int argc, char * const argv[] )
 				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
-				usage_fprint(
-				 stdout );
+				msiecftools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_FAILURE );
 
@@ -203,13 +204,17 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'c':
-				option_ascii_codepage = optarg;
+				option_codepage = optarg;
 
 				break;
 
 			case (system_integer_t) 'h':
-				usage_fprint(
-				 stdout );
+				msiecftools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_SUCCESS );
 
@@ -231,8 +236,12 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Missing source file.\n" );
 
-		usage_fprint(
-		 stdout );
+		msiecftools_getopt_usage_fprint(
+		 stdout,
+		 program,
+		 description,
+		 options,
+		 number_of_options );
 
 		return( EXIT_FAILURE );
 	}
@@ -256,11 +265,11 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( option_ascii_codepage != NULL )
+	if( option_codepage != NULL )
 	{
 		result = info_handle_set_ascii_codepage(
 		          msiecfinfo_info_handle,
-		          option_ascii_codepage,
+		          option_codepage,
 		          &error );
 
 		if( result == -1 )
@@ -285,8 +294,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open: %" PRIs_SYSTEM ".\n",
-		 source );
+		 "Unable to open source file.\n" );
 
 		goto on_error;
 	}

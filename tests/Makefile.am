@@ -461,11 +461,11 @@ test_inputs_libmsiecf.at: generate_test_inputs.sh
 test_inputs_pymsiecf.at: generate_test_inputs.sh
 	$(SHELL) $(srcdir)/generate_test_inputs.sh $(PACKAGE_NAME) pymsiecf
 
-test_inputs_msiecfinfo.at: generate_test_inputs.sh
-	$(SHELL) $(srcdir)/generate_test_inputs.sh $(PACKAGE_NAME) msiecfinfo
-
 test_inputs_msiecfexport.at: generate_test_inputs.sh
 	$(SHELL) $(srcdir)/generate_test_inputs.sh $(PACKAGE_NAME) msiecfexport
+
+test_inputs_msiecfinfo.at: generate_test_inputs.sh
+	$(SHELL) $(srcdir)/generate_test_inputs.sh $(PACKAGE_NAME) msiecfinfo
 
 test_library: \
 	package.m4 \
