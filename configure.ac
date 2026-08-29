@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libmsiecf],
-  [20260625],
+  [20260829],
   [https://github.com/libyal/libmsiecf/issues])
 
 AC_CONFIG_SRCDIR(
