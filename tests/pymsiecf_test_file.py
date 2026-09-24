@@ -28,222 +28,254 @@ import pymsiecf
 
 
 class FileTypeTests(unittest.TestCase):
-  """Tests the file type."""
+    """Tests the file type."""
 
-  def test_signal_abort(self):
-    """Tests the signal_abort function."""
-    msiecf_file = pymsiecf.file()
+    def test_signal_abort(self):
+        """Tests the signal_abort function."""
+        msiecf_file = pymsiecf.file()
 
-    msiecf_file.signal_abort()
+        msiecf_file.signal_abort()
 
-  def test_open(self):
-    """Tests the open function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+    def test_open(self):
+        """Tests the open function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    msiecf_file = pymsiecf.file()
+        msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(test_source)
+        msiecf_file.open(test_source)
 
-    with self.assertRaises(IOError):
-      msiecf_file.open(test_source)
+        with self.assertRaises(IOError):
+            msiecf_file.open(test_source)
 
-    msiecf_file.close()
-
-    with self.assertRaises(TypeError):
-      msiecf_file.open(None)
-
-    with self.assertRaises(ValueError):
-      msiecf_file.open(test_source, mode="w")
-
-  def test_open_file_object(self):
-    """Tests the open_file_object function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    if not os.path.isfile(test_source):
-      raise unittest.SkipTest("source not a regular file")
-
-    msiecf_file = pymsiecf.file()
-
-    with open(test_source, "rb") as file_object:
-
-      msiecf_file.open_file_object(file_object)
-
-      with self.assertRaises(IOError):
-        msiecf_file.open_file_object(file_object)
-
-      msiecf_file.close()
-
-      with self.assertRaises(TypeError):
-        msiecf_file.open_file_object(None)
-
-      with self.assertRaises(ValueError):
-        msiecf_file.open_file_object(file_object, mode="w")
-
-  def test_close(self):
-    """Tests the close function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    msiecf_file = pymsiecf.file()
-
-    with self.assertRaises(IOError):
-      msiecf_file.close()
-
-  def test_open_close(self):
-    """Tests the open and close functions."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      return
-
-    msiecf_file = pymsiecf.file()
-
-    # Test open and close.
-    msiecf_file.open(test_source)
-    msiecf_file.close()
-
-    # Test open and close a second time to validate clean up on close.
-    msiecf_file.open(test_source)
-    msiecf_file.close()
-
-    if os.path.isfile(test_source):
-      with open(test_source, "rb") as file_object:
-
-        # Test open_file_object and close.
-        msiecf_file.open_file_object(file_object)
         msiecf_file.close()
 
-        # Test open_file_object and close a second time to validate clean up on close.
-        msiecf_file.open_file_object(file_object)
+        with self.assertRaises(TypeError):
+            msiecf_file.open(None)
+
+        with self.assertRaises(ValueError):
+            msiecf_file.open(test_source, mode="w")
+
+    def test_open_file_object(self):
+        """Tests the open_file_object function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        if not os.path.isfile(test_source):
+            raise unittest.SkipTest("source not a regular file")
+
+        msiecf_file = pymsiecf.file()
+
+        with open(test_source, "rb") as file_object:
+
+            msiecf_file.open_file_object(file_object)
+
+            with self.assertRaises(IOError):
+                msiecf_file.open_file_object(file_object)
+
+            msiecf_file.close()
+
+            with self.assertRaises(TypeError):
+                msiecf_file.open_file_object(None)
+
+            with self.assertRaises(ValueError):
+                msiecf_file.open_file_object(file_object, mode="w")
+
+    def test_close(self):
+        """Tests the close function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        msiecf_file = pymsiecf.file()
+
+        with self.assertRaises(IOError):
+            msiecf_file.close()
+
+    def test_open_close(self):
+        """Tests the open and close functions."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            return
+
+        msiecf_file = pymsiecf.file()
+
+        # Test open and close.
+        msiecf_file.open(test_source)
         msiecf_file.close()
 
-        # Test open_file_object and close and dereferencing file_object.
-        msiecf_file.open_file_object(file_object)
-        del file_object
+        # Test open and close a second time to validate clean up on close.
+        msiecf_file.open(test_source)
         msiecf_file.close()
 
-  def test_set_ascii_codepage(self):
-    """Tests the set_ascii_codepage function."""
-    supported_codepages = (
-        "ascii", "cp874", "cp932", "cp936", "cp949", "cp950", "cp1250",
-        "cp1251", "cp1252", "cp1253", "cp1254", "cp1255", "cp1256", "cp1257",
-        "cp1258")
+        if os.path.isfile(test_source):
+            with open(test_source, "rb") as file_object:
 
-    msiecf_file = pymsiecf.file()
+                # Test open_file_object and close.
+                msiecf_file.open_file_object(file_object)
+                msiecf_file.close()
 
-    for codepage in supported_codepages:
-      msiecf_file.set_ascii_codepage(codepage)
+                # Test open_file_object and close a second time to validate clean up on close.
+                msiecf_file.open_file_object(file_object)
+                msiecf_file.close()
 
-    unsupported_codepages = (
-        "iso-8859-1", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5",
-        "iso-8859-6", "iso-8859-7", "iso-8859-8", "iso-8859-9", "iso-8859-10",
-        "iso-8859-11", "iso-8859-13", "iso-8859-14", "iso-8859-15",
-        "iso-8859-16", "koi8_r", "koi8_u")
+                # Test open_file_object and close and dereferencing file_object.
+                msiecf_file.open_file_object(file_object)
+                del file_object
+                msiecf_file.close()
 
-    for codepage in unsupported_codepages:
-      with self.assertRaises(RuntimeError):
-        msiecf_file.set_ascii_codepage(codepage)
+    def test_set_ascii_codepage(self):
+        """Tests the set_ascii_codepage function."""
+        supported_codepages = (
+            "ascii",
+            "cp874",
+            "cp932",
+            "cp936",
+            "cp949",
+            "cp950",
+            "cp1250",
+            "cp1251",
+            "cp1252",
+            "cp1253",
+            "cp1254",
+            "cp1255",
+            "cp1256",
+            "cp1257",
+            "cp1258",
+        )
 
-  def test_get_size(self):
-    """Tests the get_size function and size property."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        msiecf_file = pymsiecf.file()
 
-    msiecf_file = pymsiecf.file()
+        for codepage in supported_codepages:
+            msiecf_file.set_ascii_codepage(codepage)
 
-    msiecf_file.open(test_source)
+        unsupported_codepages = (
+            "iso-8859-1",
+            "iso-8859-2",
+            "iso-8859-3",
+            "iso-8859-4",
+            "iso-8859-5",
+            "iso-8859-6",
+            "iso-8859-7",
+            "iso-8859-8",
+            "iso-8859-9",
+            "iso-8859-10",
+            "iso-8859-11",
+            "iso-8859-13",
+            "iso-8859-14",
+            "iso-8859-15",
+            "iso-8859-16",
+            "koi8_r",
+            "koi8_u",
+        )
 
-    size = msiecf_file.get_size()
-    self.assertIsNotNone(size)
+        for codepage in unsupported_codepages:
+            with self.assertRaises(RuntimeError):
+                msiecf_file.set_ascii_codepage(codepage)
 
-    self.assertIsNotNone(msiecf_file.size)
+    def test_get_size(self):
+        """Tests the get_size function and size property."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    msiecf_file.close()
+        msiecf_file = pymsiecf.file()
 
-  def test_get_ascii_codepage(self):
-    """Tests the get_ascii_codepage function and ascii_codepage property."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        msiecf_file.open(test_source)
 
-    msiecf_file = pymsiecf.file()
+        size = msiecf_file.get_size()
+        self.assertIsNotNone(size)
 
-    msiecf_file.open(test_source)
+        self.assertIsNotNone(msiecf_file.size)
 
-    ascii_codepage = msiecf_file.get_ascii_codepage()
-    self.assertIsNotNone(ascii_codepage)
+        msiecf_file.close()
 
-    self.assertIsNotNone(msiecf_file.ascii_codepage)
+    def test_get_ascii_codepage(self):
+        """Tests the get_ascii_codepage function and ascii_codepage property."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    msiecf_file.close()
+        msiecf_file = pymsiecf.file()
 
-  def test_get_number_of_cache_directories(self):
-    """Tests the get_number_of_cache_directories function and number_of_cache_directories property."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        msiecf_file.open(test_source)
 
-    msiecf_file = pymsiecf.file()
+        ascii_codepage = msiecf_file.get_ascii_codepage()
+        self.assertIsNotNone(ascii_codepage)
 
-    msiecf_file.open(test_source)
+        self.assertIsNotNone(msiecf_file.ascii_codepage)
 
-    number_of_cache_directories = msiecf_file.get_number_of_cache_directories()
-    self.assertIsNotNone(number_of_cache_directories)
+        msiecf_file.close()
 
-    self.assertIsNotNone(msiecf_file.number_of_cache_directories)
+    def test_get_number_of_cache_directories(self):
+        """Tests the get_number_of_cache_directories function and number_of_cache_directories property."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    msiecf_file.close()
+        msiecf_file = pymsiecf.file()
 
-  def test_get_number_of_items(self):
-    """Tests the get_number_of_items function and number_of_items property."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        msiecf_file.open(test_source)
 
-    msiecf_file = pymsiecf.file()
+        number_of_cache_directories = msiecf_file.get_number_of_cache_directories()
+        self.assertIsNotNone(number_of_cache_directories)
 
-    msiecf_file.open(test_source)
+        self.assertIsNotNone(msiecf_file.number_of_cache_directories)
 
-    number_of_items = msiecf_file.get_number_of_items()
-    self.assertIsNotNone(number_of_items)
+        msiecf_file.close()
 
-    self.assertIsNotNone(msiecf_file.number_of_items)
+    def test_get_number_of_items(self):
+        """Tests the get_number_of_items function and number_of_items property."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    msiecf_file.close()
+        msiecf_file = pymsiecf.file()
 
-  def test_get_number_of_recovered_items(self):
-    """Tests the get_number_of_recovered_items function and number_of_recovered_items property."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        msiecf_file.open(test_source)
 
-    msiecf_file = pymsiecf.file()
+        number_of_items = msiecf_file.get_number_of_items()
+        self.assertIsNotNone(number_of_items)
 
-    msiecf_file.open(test_source)
+        self.assertIsNotNone(msiecf_file.number_of_items)
 
-    number_of_recovered_items = msiecf_file.get_number_of_recovered_items()
-    self.assertIsNotNone(number_of_recovered_items)
+        msiecf_file.close()
 
-    self.assertIsNotNone(msiecf_file.number_of_recovered_items)
+    def test_get_number_of_recovered_items(self):
+        """Tests the get_number_of_recovered_items function and number_of_recovered_items property."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    msiecf_file.close()
+        msiecf_file = pymsiecf.file()
+
+        msiecf_file.open(test_source)
+
+        number_of_recovered_items = msiecf_file.get_number_of_recovered_items()
+        self.assertIsNotNone(number_of_recovered_items)
+
+        self.assertIsNotNone(msiecf_file.number_of_recovered_items)
+
+        msiecf_file.close()
 
 
 if __name__ == "__main__":
-  argument_parser = argparse.ArgumentParser()
+    argument_parser = argparse.ArgumentParser()
 
-  argument_parser.add_argument(
-      "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="path of the source file.")
+    argument_parser.add_argument(
+        "source",
+        nargs="?",
+        action="store",
+        metavar="PATH",
+        default=None,
+        help="path of the source file.",
+    )
 
-  options, unknown_options = argument_parser.parse_known_args()
-  unknown_options.insert(0, sys.argv[0])
+    options, unknown_options = argument_parser.parse_known_args()
+    unknown_options.insert(0, sys.argv[0])
 
-  setattr(unittest, "source", options.source)
+    setattr(unittest, "source", options.source)
 
-  unittest.main(argv=unknown_options, verbosity=2)
+    unittest.main(argv=unknown_options, verbosity=2)

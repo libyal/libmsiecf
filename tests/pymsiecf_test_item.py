@@ -28,41 +28,46 @@ import pymsiecf
 
 
 class ItemTypeTests(unittest.TestCase):
-  """Tests the item type."""
+    """Tests the item type."""
 
-  def test_get_offset(self):
-    """Tests the get_offset function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+    def test_get_offset(self):
+        """Tests the get_offset function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    msiecf_file = pymsiecf.file()
+        msiecf_file = pymsiecf.file()
 
-    msiecf_file.open(test_source)
+        msiecf_file.open(test_source)
 
-    try:
-      if not msiecf_file.number_of_items:
-        raise unittest.SkipTest("missing items")
+        try:
+            if not msiecf_file.number_of_items:
+                raise unittest.SkipTest("missing items")
 
-      msiecf_item = msiecf_file.get_item(0)
+            msiecf_item = msiecf_file.get_item(0)
 
-      offset = msiecf_item.get_offset()
-      self.assertIsNotNone(offset)
+            offset = msiecf_item.get_offset()
+            self.assertIsNotNone(offset)
 
-    finally:
-      msiecf_file.close()
+        finally:
+            msiecf_file.close()
 
 
 if __name__ == "__main__":
-  argument_parser = argparse.ArgumentParser()
+    argument_parser = argparse.ArgumentParser()
 
-  argument_parser.add_argument(
-      "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="path of the source file.")
+    argument_parser.add_argument(
+        "source",
+        nargs="?",
+        action="store",
+        metavar="PATH",
+        default=None,
+        help="path of the source file.",
+    )
 
-  options, unknown_options = argument_parser.parse_known_args()
-  unknown_options.insert(0, sys.argv[0])
+    options, unknown_options = argument_parser.parse_known_args()
+    unknown_options.insert(0, sys.argv[0])
 
-  setattr(unittest, "source", options.source)
+    setattr(unittest, "source", options.source)
 
-  unittest.main(argv=unknown_options, verbosity=2)
+    unittest.main(argv=unknown_options, verbosity=2)
