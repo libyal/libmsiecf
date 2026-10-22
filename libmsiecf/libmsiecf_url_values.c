@@ -827,9 +827,6 @@ int libmsiecf_url_values_read_data(
 			}
 			else
 			{
-				memory_free(
-				 data );
-
 				return( 1 );
 			}
 		}
